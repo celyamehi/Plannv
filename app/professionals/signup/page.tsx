@@ -46,7 +46,7 @@ export default function ProfessionalSignupPage() {
 
   const handlePersonalSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     // Validation
     if (personalInfo.password !== personalInfo.confirmPassword) {
       setError('Les mots de passe ne correspondent pas')
@@ -155,10 +155,10 @@ export default function ProfessionalSignupPage() {
           {/* Logo */}
           <div className="flex justify-center mb-8">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-2xl">P</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
+                <span className="text-white font-bold text-xl">K</span>
               </div>
-              <span className="text-3xl font-semibold">PlannV</span>
+              <span className="text-3xl font-semibold">Kalendo</span>
             </Link>
           </div>
 
@@ -265,25 +265,25 @@ export default function ProfessionalSignupPage() {
                 </div>
 
                 <Button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-pink-600" disabled={loading}>
-                {loading ? 'Continuer' : 'Continuer →'}
-              </Button>
-            </form>
+                  {loading ? 'Continuer' : 'Continuer →'}
+                </Button>
+              </form>
 
-            <div className="mt-6 space-y-3">
-              <div className="text-center text-sm">
-                <span className="text-gray-600">Vous avez déjà un compte ? </span>
-                <Link href="/professionals/login" className="text-purple-600 hover:text-purple-700 font-medium">
-                  Se connecter
-                </Link>
+              <div className="mt-6 space-y-3">
+                <div className="text-center text-sm">
+                  <span className="text-gray-600">Vous avez déjà un compte ? </span>
+                  <Link href="/professionals/login" className="text-purple-600 hover:text-purple-700 font-medium">
+                    Se connecter
+                  </Link>
+                </div>
+
+                <div className="text-center text-sm">
+                  <Link href="/signup" className="text-purple-600 hover:text-purple-700">
+                    Vous êtes un client ? Inscription client →
+                  </Link>
+                </div>
               </div>
-              
-              <div className="text-center text-sm">
-                <Link href="/signup" className="text-purple-600 hover:text-purple-700">
-                  Vous êtes un client ? Inscription client →
-                </Link>
-              </div>
-            </div>
-          </CardContent>
+            </CardContent>
           </Card>
         </div>
       </div>
@@ -297,10 +297,10 @@ export default function ProfessionalSignupPage() {
           {/* Logo */}
           <div className="flex justify-center mb-8">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-2xl">P</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
+                <span className="text-white font-bold text-xl">K</span>
               </div>
-              <span className="text-3xl font-semibold">PlannV</span>
+              <span className="text-3xl font-semibold">Kalendo</span>
             </Link>
           </div>
 
@@ -439,7 +439,7 @@ export default function ProfessionalSignupPage() {
                     Se connecter
                   </Link>
                 </div>
-                
+
                 <div className="text-center text-sm">
                   <Link href="/signup" className="text-purple-600 hover:text-purple-700">
                     Vous êtes un client ? Inscription client →

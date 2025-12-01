@@ -59,7 +59,7 @@ export default function FeaturesSection() {
                     transition={{ duration: 0.6 }}
                     className="text-center mb-16"
                 >
-                    <h2 className="text-4xl font-bold mb-4">Pourquoi choisir PlannV ?</h2>
+                    <h2 className="text-4xl font-bold mb-4">Pourquoi choisir Kalendo ?</h2>
                     <p className="text-xl text-gray-600 max-w-2xl mx-auto">
                         La meilleure expérience de réservation pour vos soins beauté et bien-être
                     </p>

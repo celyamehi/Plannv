@@ -152,7 +152,7 @@ export default function Navbar({ currentPage = 'default' }: NavbarProps) {
               <span className="text-white font-bold text-xl">P</span>
             </div>
             <span className="text-2xl font-semibold">
-              {user?.role === 'professional' || user?.role === 'admin' ? 'PlannV Pro' : 'PlannV'}
+              {user?.role === 'professional' || user?.role === 'admin' ? 'Kalendo Pro' : 'Kalendo'}
             </span>
           </Link>
 

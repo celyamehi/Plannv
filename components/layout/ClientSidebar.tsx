@@ -81,11 +81,11 @@ export default function ClientSidebar({ children }: { children: React.ReactNode 
                 <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100 flex-shrink-0">
                     <div className="flex items-center space-x-3">
                         <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                            <span className="text-white font-bold text-sm">P</span>
+                            <span className="text-white font-bold text-sm">K</span>
                         </div>
                         {sidebarOpen && (
                             <span className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-                                PlannV
+                                Kalendo
                             </span>
                         )}
                     </div>
@@ -162,9 +162,9 @@ export default function ClientSidebar({ children }: { children: React.ReactNode 
                             <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100">
                                 <div className="flex items-center space-x-3">
                                     <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                                        <span className="text-white font-bold text-sm">P</span>
+                                        <span className="text-white font-bold text-sm">K</span>
                                     </div>
-                                    <span className="text-lg font-bold text-gray-900">PlannV</span>
+                                    <span className="text-lg font-bold text-gray-900">Kalendo</span>
                                 </div>
                                 <Button
                                     variant="ghost"
@@ -224,7 +224,7 @@ export default function ClientSidebar({ children }: { children: React.ReactNode 
                     >
                         <Menu className="w-5 h-5" />
                     </Button>
-                    <span className="text-lg font-bold text-gray-900">PlannV</span>
+                    <span className="text-lg font-bold text-gray-900">Kalendo</span>
                     <div className="w-8" /> {/* Spacer for centering */}
                 </header>
 

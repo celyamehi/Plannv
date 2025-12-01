@@ -24,7 +24,7 @@ export default function CTASection() {
                             Vous êtes un professionnel ?
                         </h2>
                         <p className="text-xl md:text-2xl mb-10 text-purple-100">
-                            Rejoignez PlannV et développez votre activité avec notre plateforme de réservation tout-en-un.
+                            Rejoignez Kalendo et développez votre activité avec notre plateforme de réservation tout-en-un.
                         </p>
                         <Link
                             href="/professionals/signup"

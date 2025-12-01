@@ -22,7 +22,7 @@ export default function ProfessionalSetupPage() {
   const checkAuth = async () => {
     try {
       const { data: { session } } = await supabase.auth.getSession()
-      
+
       if (!session) {
         router.push('/login')
         return
@@ -73,11 +73,11 @@ export default function ProfessionalSetupPage() {
 
     try {
       console.log('🔍 SETUP - Début de la soumission')
-      
+
       // Récupérer l'utilisateur
       const { data: { session } } = await supabase.auth.getSession()
       if (!session) throw new Error('Non authentifié')
-      
+
       console.log('🔍 SETUP - Session trouvée:', session.user.id)
 
       // Générer le slug
@@ -117,7 +117,7 @@ export default function ProfessionalSetupPage() {
 
       console.log('✅ SETUP - Établissement créé avec succès')
       setSuccess(true)
-      
+
       // Rediriger après 2 secondes
       setTimeout(() => {
         console.log('🔄 SETUP - Redirection vers dashboard pro')
@@ -167,11 +167,11 @@ export default function ProfessionalSetupPage() {
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-gray-50 to-white p-4">
       <div className="w-full max-w-md">
         {/* Logo */}
-        <div className="flex justify-center mb-8">
-          <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-            <span className="text-white font-bold text-2xl">P</span>
+        <div className="flex items-center justify-center mb-8">
+          <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
+            <span className="text-white font-bold text-xl">K</span>
           </div>
-          <span className="text-3xl font-semibold ml-2">PlannV</span>
+          <span className="text-3xl font-semibold ml-2">Kalendo</span>
         </div>
 
         <Card>

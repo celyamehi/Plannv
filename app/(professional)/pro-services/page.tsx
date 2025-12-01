@@ -72,7 +72,7 @@ export default function ServicesPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!establishmentId) return
 
     try {
@@ -163,10 +163,10 @@ export default function ServicesPage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-xl">P</span>
+              <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">K</span>
               </div>
-              <span className="text-2xl font-semibold">PlannV Pro</span>
+              <span className="text-2xl font-semibold">Kalendo Pro</span>
             </Link>
           </div>
 
@@ -353,11 +353,10 @@ export default function ServicesPage() {
                         <p className="text-sm text-gray-600 line-clamp-2">{service.description}</p>
                       )}
                     </div>
-                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      service.is_active
+                    <span className={`px-2 py-1 rounded-full text-xs font-medium ${service.is_active
                         ? 'bg-green-100 text-green-700'
                         : 'bg-gray-100 text-gray-700'
-                    }`}>
+                      }`}>
                       {service.is_active ? 'Actif' : 'Inactif'}
                     </span>
                   </div>

@@ -67,21 +67,21 @@ export default function SignupPage() {
       if (data.user) {
         console.log('✅ SIGNUP - Compte auth créé:', data.user.id)
         console.log('🔍 SIGNUP - user_type à insérer:', userType)
-        
+
         // Attendre un peu pour laisser les triggers s'exécuter
         await new Promise(resolve => setTimeout(resolve, 500))
-        
+
         // Vérifier si le profil existe déjà (créé par un trigger)
         const { data: existingProfile } = await supabase
           .from('profiles')
           .select('id, user_type')
           .eq('id', data.user.id)
           .single()
-        
+
         if (existingProfile) {
           console.log('⚠️ SIGNUP - Profil existe déjà avec user_type:', existingProfile.user_type)
           console.log('🔄 SIGNUP - Mise à jour du user_type vers:', userType)
-          
+
           // Mettre à jour le profil existant
           const { error: updateError } = await supabase
             .from('profiles')
@@ -91,16 +91,16 @@ export default function SignupPage() {
               user_type: userType,
             })
             .eq('id', data.user.id)
-          
+
           if (updateError) {
             console.error('❌ SIGNUP - Erreur mise à jour profil:', updateError)
             throw updateError
           }
-          
+
           console.log('✅ SIGNUP - Profil mis à jour avec user_type:', userType)
         } else {
           console.log('🆕 SIGNUP - Création du profil')
-          
+
           // Créer le profil s'il n'existe pas
           const { error: insertError } = await supabase
             .from('profiles')
@@ -111,18 +111,18 @@ export default function SignupPage() {
               phone: phone,
               user_type: userType,
             })
-          
+
           if (insertError) {
             console.error('❌ SIGNUP - Erreur création profil:', insertError)
             throw insertError
           }
-          
+
           console.log('✅ SIGNUP - Profil créé avec user_type:', userType)
         }
       }
 
       setSuccess(true)
-      
+
       // Redirection automatique selon le type
       setTimeout(() => {
         if (userType === 'professional') {
@@ -162,21 +162,22 @@ export default function SignupPage() {
           {/* Logo */}
           <div className="flex justify-center mb-8">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-2xl">P</span>
+              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
+                <span className="text-white font-bold text-xl">K</span>
               </div>
-              <span className="text-3xl font-semibold">PlannV</span>
+              <span className="text-3xl font-semibold">Kalendo</span>
             </Link>
           </div>
 
           <div className="text-center mb-8">
             <h1 className="text-3xl font-bold mb-2">Créer votre compte</h1>
+            <p className="text-gray-600">Rejoignez Kalendo pour gérer vos rendez-vous beauté</p>
             <p className="text-gray-600">Choisissez votre type de compte pour continuer</p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-6">
             {/* Client Card */}
-            <Card 
+            <Card
               className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-purple-600"
               onClick={() => setUserType('client')}
             >
@@ -216,7 +217,7 @@ export default function SignupPage() {
             </Card>
 
             {/* Professional Card */}
-            <Card 
+            <Card
               className="hover:shadow-lg transition-shadow cursor-pointer border-2 hover:border-pink-600"
               onClick={() => setUserType('professional')}
             >
@@ -284,7 +285,7 @@ export default function SignupPage() {
               <span className="text-white font-bold text-xl">P</span>
             </div>
             <span className="text-2xl font-semibold">
-              PlannV {userType === 'professional' ? 'Pro' : ''}
+              Kalendo {userType === 'professional' ? 'Pro' : ''}
             </span>
           </Link>
         </div>
@@ -300,8 +301,8 @@ export default function SignupPage() {
               Inscription {userType === 'professional' ? 'Professionnelle' : 'Client'}
             </CardTitle>
             <CardDescription>
-              {userType === 'professional' 
-                ? 'Créez votre espace professionnel' 
+              {userType === 'professional'
+                ? 'Créez votre espace professionnel'
                 : 'Rejoignez notre communauté de clients'
               }
             </CardDescription>
@@ -316,7 +317,7 @@ export default function SignupPage() {
                 </div>
                 <h3 className="text-lg font-semibold mb-2">Compte créé avec succès !</h3>
                 <p className="text-gray-600 mb-4">
-                  {userType === 'professional' 
+                  {userType === 'professional'
                     ? 'Redirection vers la configuration de votre établissement...'
                     : 'Redirection vers votre dashboard...'
                   }
@@ -400,13 +401,12 @@ export default function SignupPage() {
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
-                  className={`w-full ${
-                    userType === 'professional' 
-                      ? 'bg-gradient-to-r from-purple-600 to-pink-600' 
-                      : 'bg-purple-600'
-                  }`} 
+                <Button
+                  type="submit"
+                  className={`w-full ${userType === 'professional'
+                    ? 'bg-gradient-to-r from-purple-600 to-pink-600'
+                    : 'bg-purple-600'
+                    }`}
                   disabled={loading}
                 >
                   {loading ? 'Création...' : 'Créer mon compte'}
@@ -464,7 +464,7 @@ export default function SignupPage() {
                   ← Changer de type de compte
                 </button>
               </div>
-              
+
               <div className="text-center text-sm">
                 <span className="text-gray-600">Vous avez déjà un compte ? </span>
                 <Link href="/login" className="text-purple-600 hover:text-purple-700 font-medium">

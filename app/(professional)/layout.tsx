@@ -37,10 +37,10 @@ export default async function ProfessionalLayout({
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-4">
               <Link href="/" className="flex items-center space-x-2">
-                <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-                  <span className="text-white font-bold text-xl">P</span>
+                <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                  <span className="text-white font-bold text-sm">K</span>
                 </div>
-                <span className="text-2xl font-semibold">PlannV Pro</span>
+                <span className="text-2xl font-semibold">Kalendo Pro</span>
               </Link>
             </div>
 

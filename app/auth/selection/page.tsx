@@ -13,14 +13,14 @@ export default function SelectionPage() {
                 <div className="flex justify-center mb-8">
                     <Link href="/" className="flex items-center space-x-2">
                         <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-                            <span className="text-white font-bold text-2xl">P</span>
+                            <span className="text-white font-bold text-2xl">K</span>
                         </div>
-                        <span className="text-3xl font-semibold">PlannV</span>
+                        <span className="text-3xl font-semibold">Kalendo</span>
                     </Link>
                 </div>
 
                 <div className="text-center mb-8">
-                    <h1 className="text-3xl font-bold mb-2">Bienvenue sur PlannV</h1>
+                    <h1 className="text-3xl font-bold mb-2">Bienvenue sur Kalendo</h1>
                     <p className="text-gray-600">Choisissez votre espace de connexion</p>
                 </div>
 

@@ -70,7 +70,7 @@ export default function StaffPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!establishmentId) return
 
     try {
@@ -160,10 +160,10 @@ export default function StaffPage() {
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-4">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-                <span className="text-white font-bold text-xl">P</span>
+              <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                <span className="text-white font-bold text-sm">K</span>
               </div>
-              <span className="text-2xl font-semibold">PlannV Pro</span>
+              <span className="text-2xl font-semibold">Kalendo Pro</span>
             </Link>
           </div>
 
@@ -365,11 +365,10 @@ export default function StaffPage() {
                       {member.specialties && (
                         <p className="text-sm text-gray-600">{member.specialties}</p>
                       )}
-                      <span className={`inline-block mt-2 px-2 py-1 rounded-full text-xs font-medium ${
-                        member.is_active
+                      <span className={`inline-block mt-2 px-2 py-1 rounded-full text-xs font-medium ${member.is_active
                           ? 'bg-green-100 text-green-700'
                           : 'bg-gray-100 text-gray-700'
-                      }`}>
+                        }`}>
                         {member.is_active ? 'Actif' : 'Inactif'}
                       </span>
                     </div>

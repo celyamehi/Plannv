@@ -1,6 +1,6 @@
-# PlannV - Plateforme de Réservation Beauté & Bien-être
+# Kalendo - Plateforme de Réservation Beauté & Bien-être
 
-Une plateforme moderne de réservation en ligne pour salons de coiffure, instituts de beauté et spas, inspirée par Planity avec un design épuré style Apple et Calendly.
+Kalendo est une application moderne de réservation en ligne dédiée aux professionnels de la beauté et du bien-être (coiffeurs, instituts, spas, barbiers, etc.) et à leurs clients. Une plateforme inspirée par Planity avec un design épuré style Apple et Calendly.
 
 ## 🚀 Technologies
 

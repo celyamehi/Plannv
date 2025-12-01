@@ -23,7 +23,7 @@ export default function ClientLayout({
     const checkAuth = async () => {
       try {
         const { data: { session } } = await supabase.auth.getSession()
-        
+
         if (!session) {
           router.push('/login')
           return
@@ -62,39 +62,39 @@ export default function ClientLayout({
   }
 
   const navItems = [
-    { 
-      name: 'Tableau de bord', 
-      href: '/client/dashboard', 
+    {
+      name: 'Tableau de bord',
+      href: '/client/dashboard',
       icon: <Home className="h-5 w-5" />,
       active: pathname === '/client/dashboard'
     },
-    { 
-      name: 'Prendre RDV', 
-      href: '/search', 
+    {
+      name: 'Prendre RDV',
+      href: '/search',
       icon: <Calendar className="h-5 w-5" />,
       active: pathname.startsWith('/booking') || pathname === '/search' || pathname === '/client/search'
     },
-    { 
-      name: 'Mes rendez-vous', 
-      href: '/client/appointments', 
+    {
+      name: 'Mes rendez-vous',
+      href: '/client/appointments',
       icon: <Clock className="h-5 w-5" />,
       active: pathname.startsWith('/client/appointments') || pathname.startsWith('/appointments')
     },
-    { 
-      name: 'Favoris', 
-      href: '/client/favorites', 
+    {
+      name: 'Favoris',
+      href: '/client/favorites',
       icon: <MapPin className="h-5 w-5" />,
       active: pathname.startsWith('/client/favorites') || pathname.startsWith('/favorites')
     },
-    { 
-      name: 'Notifications', 
-      href: '/client/notifications', 
+    {
+      name: 'Notifications',
+      href: '/client/notifications',
       icon: <Bell className="h-5 w-5" />,
       active: pathname.startsWith('/client/notifications')
     },
-    { 
-      name: 'Mon profil', 
-      href: '/client/profile', 
+    {
+      name: 'Mon profil',
+      href: '/client/profile',
       icon: <User className="h-5 w-5" />,
       active: pathname.startsWith('/client/profile') || pathname.startsWith('/profile')
     },
@@ -109,9 +109,9 @@ export default function ClientLayout({
     <div className="min-h-screen bg-gray-50 flex">
       {/* Mobile menu button */}
       <div className="lg:hidden fixed top-4 left-4 z-50">
-        <Button 
-          variant="outline" 
-          size="icon" 
+        <Button
+          variant="outline"
+          size="icon"
           onClick={() => setIsMenuOpen(!isMenuOpen)}
           className="bg-white"
         >
@@ -124,23 +124,22 @@ export default function ClientLayout({
         <div className="flex items-center justify-center h-16 px-4 border-b border-gray-200">
           <Link href="/" className="flex items-center space-x-2">
             <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-xl">P</span>
+              <span className="text-white font-bold text-xl">K</span>
             </div>
-            <span className="text-xl font-semibold">PlannV</span>
+            <span className="text-xl font-semibold">Kalendo</span>
           </Link>
         </div>
-        
+
         <div className="flex-1 overflow-y-auto py-4">
           <nav className="px-4 space-y-1">
             {navItems.map((item) => (
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
-                  item.active
+                className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${item.active
                     ? 'bg-purple-50 text-purple-700'
                     : 'text-gray-700 hover:bg-gray-100'
-                }`}
+                  }`}
                 onClick={() => setIsMenuOpen(false)}
               >
                 <span className="mr-3">{item.icon}</span>
@@ -164,7 +163,7 @@ export default function ClientLayout({
               </p>
             </div>
           </div>
-          
+
           <div className="mt-4 space-y-1">
             <Link
               href="/settings"
@@ -189,12 +188,12 @@ export default function ClientLayout({
         <main className="flex-1 pb-8">
           {/* Overlay pour le menu mobile */}
           {isMenuOpen && (
-            <div 
+            <div
               className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
               onClick={() => setIsMenuOpen(false)}
             />
           )}
-          
+
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
             {children}
           </div>

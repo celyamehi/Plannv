@@ -5,8 +5,8 @@ import './globals.css'
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'PlannV - Réservation Beauté & Bien-être',
-  description: 'Plateforme de réservation en ligne pour salons de coiffure, instituts de beauté et spas',
+  title: 'Kalendo - Réservation Beauté & Bien-être',
+  description: 'Réservez vos rendez-vous beauté et bien-être en ligne avec Kalendo',
 }
 
 export default function RootLayout({

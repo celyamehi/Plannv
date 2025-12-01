@@ -15,7 +15,7 @@ export default function Home() {
               <span className="text-white font-bold text-xl">P</span>
             </div>
             <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              PlannV
+              Kalendo
             </span>
           </div>
 
@@ -63,9 +63,9 @@ export default function Home() {
             <div>
               <div className="flex items-center space-x-2 mb-4">
                 <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold">P</span>
+                  <span className="text-white font-bold">K</span>
                 </div>
-                <span className="text-xl font-bold text-gray-900">PlannV</span>
+                <span className="text-xl font-bold text-gray-900">Kalendo</span>
               </div>
               <p className="text-gray-600 text-sm leading-relaxed">
                 La plateforme de réservation beauté et bien-être qui simplifie votre quotidien.
@@ -101,7 +101,7 @@ export default function Home() {
           </div>
 
           <div className="border-t border-gray-200 mt-12 pt-8 text-center text-sm text-gray-500">
-            <p>&copy; {new Date().getFullYear()} PlannV. Tous droits réservés.</p>
+            <p>&copy; {new Date().getFullYear()} Kalendo. Tous droits réservés.</p>
           </div>
         </div>
       </footer>

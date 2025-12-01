@@ -115,11 +115,15 @@ export default function LoginPage() {
         {/* Logo */}
         <div className="flex justify-center mb-8">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-2xl">P</span>
+            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
+              <span className="text-white font-bold text-xl">K</span>
             </div>
-            <span className="text-3xl font-semibold">PlannV</span>
+            <span className="text-3xl font-semibold">Kalendo</span>
           </Link>
+          <h1 className="text-2xl font-bold mt-8 mb-2">Bon retour parmi nous</h1>
+          <p className="text-gray-600">
+            Connectez-vous à votre espace Kalendo
+          </p>
         </div>
 
         <Card>

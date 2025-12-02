@@ -16,7 +16,8 @@ import {
   Building,
   TrendingUp,
   Phone,
-  DollarSign
+  DollarSign,
+  User
 } from 'lucide-react'
 import { Button } from '../ui/button'
 

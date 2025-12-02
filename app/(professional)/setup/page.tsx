@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { Building, Check } from 'lucide-react'
+import { Building, Check, MapPin, Navigation, Loader2, Search, X } from 'lucide-react'
 
 export default function ProfessionalSetupPage() {
   const router = useRouter()
@@ -53,9 +53,121 @@ export default function ProfessionalSetupPage() {
     address: '',
     city: '',
     postalCode: '',
+    latitude: null as number | null,
+    longitude: null as number | null,
     phone: '',
     description: '',
   })
+
+  // États pour la sélection d'adresse
+  const [showLocationPicker, setShowLocationPicker] = useState(false)
+  const [gettingLocation, setGettingLocation] = useState(false)
+  const [addressSearch, setAddressSearch] = useState('')
+  const [searchResults, setSearchResults] = useState<any[]>([])
+  const [searching, setSearching] = useState(false)
+
+  // Fonction pour obtenir la position GPS
+  const getCurrentLocation = async () => {
+    if (!navigator.geolocation) {
+      alert('La géolocalisation n\'est pas supportée par votre navigateur')
+      return
+    }
+
+    setGettingLocation(true)
+    try {
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        })
+      })
+
+      const { latitude, longitude } = position.coords
+
+      // Reverse geocoding pour obtenir l'adresse complète
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1&accept-language=fr`
+      )
+      const data = await response.json()
+      const addr = data.address
+
+      const streetNumber = addr?.house_number || ''
+      const street = addr?.road || addr?.pedestrian || addr?.street || ''
+      const city = addr?.city || addr?.town || addr?.village || addr?.municipality || ''
+      const postalCode = addr?.postcode || ''
+
+      setFormData({
+        ...formData,
+        address: [streetNumber, street].filter(Boolean).join(' '),
+        city: city,
+        postalCode: postalCode,
+        latitude: latitude,
+        longitude: longitude,
+      })
+      setShowLocationPicker(false)
+    } catch (error: any) {
+      if (error.code === 1) {
+        alert('Veuillez autoriser l\'accès à votre position')
+      } else {
+        alert('Impossible d\'obtenir votre position')
+      }
+    } finally {
+      setGettingLocation(false)
+    }
+  }
+
+  // Recherche d'adresse
+  const searchAddress = async (query: string) => {
+    if (query.length < 3) {
+      setSearchResults([])
+      return
+    }
+
+    setSearching(true)
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=fr,dz&addressdetails=1&limit=5`
+      )
+      const data = await response.json()
+      setSearchResults(data)
+    } catch (error) {
+      console.error('Erreur recherche adresse:', error)
+    } finally {
+      setSearching(false)
+    }
+  }
+
+  // Debounce pour la recherche d'adresse
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (addressSearch) {
+        searchAddress(addressSearch)
+      }
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [addressSearch])
+
+  // Sélectionner une adresse
+  const selectAddress = (result: any) => {
+    const addr = result.address
+    const streetNumber = addr?.house_number || ''
+    const street = addr?.road || addr?.pedestrian || addr?.street || ''
+    const city = addr?.city || addr?.town || addr?.village || addr?.municipality || ''
+    const postalCode = addr?.postcode || ''
+
+    setFormData({
+      ...formData,
+      address: [streetNumber, street].filter(Boolean).join(' '),
+      city: city,
+      postalCode: postalCode,
+      latitude: parseFloat(result.lat),
+      longitude: parseFloat(result.lon),
+    })
+    setShowLocationPicker(false)
+    setAddressSearch('')
+    setSearchResults([])
+  }
 
   const categories = [
     { value: 'coiffeur', label: 'Coiffeur' },
@@ -95,6 +207,8 @@ export default function ProfessionalSetupPage() {
           address: formData.address,
           city: formData.city,
           postal_code: formData.postalCode,
+          latitude: formData.latitude,
+          longitude: formData.longitude,
           phone: formData.phone,
           description: formData.description,
           is_active: true,
@@ -210,49 +324,144 @@ export default function ProfessionalSetupPage() {
                 </select>
               </div>
 
+              {/* Sélection d'adresse avec GPS */}
               <div className="space-y-2">
-                <label htmlFor="address" className="text-sm font-medium">
-                  Adresse *
+                <label className="text-sm font-medium">
+                  Adresse de l'établissement *
                 </label>
-                <Input
-                  id="address"
-                  type="text"
-                  placeholder="123 Rue de la Paix"
-                  value={formData.address}
-                  onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                  required
-                />
+                
+                {/* Affichage de l'adresse sélectionnée ou bouton pour ouvrir le sélecteur */}
+                <div 
+                  className="flex items-center px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 cursor-pointer hover:border-purple-300 transition-colors"
+                  onClick={() => setShowLocationPicker(true)}
+                >
+                  <MapPin className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+                  <span className={`flex-1 ${formData.address ? 'text-gray-900' : 'text-gray-400'}`}>
+                    {formData.address 
+                      ? `${formData.address}, ${formData.postalCode} ${formData.city}`
+                      : 'Cliquez pour sélectionner votre adresse...'
+                    }
+                  </span>
+                  {formData.address && (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        setFormData({ ...formData, address: '', city: '', postalCode: '', latitude: null, longitude: null })
+                      }}
+                      className="p-1 hover:bg-gray-200 rounded-full"
+                    >
+                      <X className="w-4 h-4 text-gray-400" />
+                    </button>
+                  )}
+                </div>
+                <p className="text-xs text-gray-500">
+                  Utilisez votre position GPS ou recherchez votre adresse
+                </p>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <label htmlFor="postalCode" className="text-sm font-medium">
-                    Code postal *
-                  </label>
-                  <Input
-                    id="postalCode"
-                    type="text"
-                    placeholder="75001"
-                    value={formData.postalCode}
-                    onChange={(e) => setFormData({ ...formData, postalCode: e.target.value })}
-                    required
-                  />
-                </div>
+              {/* Modal de sélection d'adresse */}
+              {showLocationPicker && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                  <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg mx-4 max-h-[80vh] overflow-hidden">
+                    {/* Header */}
+                    <div className="flex items-center justify-between p-4 border-b">
+                      <h3 className="text-lg font-semibold">Sélectionner une adresse</h3>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setShowLocationPicker(false)
+                          setAddressSearch('')
+                          setSearchResults([])
+                        }}
+                        className="p-2 hover:bg-gray-100 rounded-full"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
 
-                <div className="space-y-2">
-                  <label htmlFor="city" className="text-sm font-medium">
-                    Ville *
-                  </label>
-                  <Input
-                    id="city"
-                    type="text"
-                    placeholder="Paris"
-                    value={formData.city}
-                    onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                    required
-                  />
+                    {/* Contenu */}
+                    <div className="p-4 space-y-4">
+                      {/* Bouton GPS */}
+                      <Button
+                        type="button"
+                        onClick={getCurrentLocation}
+                        disabled={gettingLocation}
+                        className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+                      >
+                        {gettingLocation ? (
+                          <>
+                            <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                            Localisation en cours...
+                          </>
+                        ) : (
+                          <>
+                            <Navigation className="w-5 h-5 mr-2" />
+                            Utiliser ma position actuelle
+                          </>
+                        )}
+                      </Button>
+
+                      <div className="flex items-center gap-4">
+                        <div className="flex-1 h-px bg-gray-200"></div>
+                        <span className="text-sm text-gray-500">ou</span>
+                        <div className="flex-1 h-px bg-gray-200"></div>
+                      </div>
+
+                      {/* Recherche d'adresse */}
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                        <input
+                          type="text"
+                          placeholder="Rechercher une adresse..."
+                          value={addressSearch}
+                          onChange={(e) => setAddressSearch(e.target.value)}
+                          className="w-full pl-10 pr-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-purple-600"
+                          autoFocus
+                        />
+                        {searching && (
+                          <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-600 animate-spin" />
+                        )}
+                      </div>
+
+                      {/* Résultats de recherche */}
+                      {searchResults.length > 0 && (
+                        <div className="max-h-60 overflow-y-auto border rounded-lg divide-y">
+                          {searchResults.map((result) => (
+                            <button
+                              key={result.place_id}
+                              type="button"
+                              onClick={() => selectAddress(result)}
+                              className="w-full p-3 text-left hover:bg-purple-50 transition-colors"
+                            >
+                              <div className="flex items-start gap-3">
+                                <MapPin className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
+                                <div>
+                                  <p className="text-sm font-medium text-gray-900">
+                                    {[result.address?.house_number, result.address?.road].filter(Boolean).join(' ') || result.display_name.split(',')[0]}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {[
+                                      result.address?.postcode,
+                                      result.address?.city || result.address?.town || result.address?.village || result.address?.municipality
+                                    ].filter(Boolean).join(' ')}
+                                  </p>
+                                </div>
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+
+                      {addressSearch.length >= 3 && searchResults.length === 0 && !searching && (
+                        <p className="text-center text-gray-500 py-4">
+                          Aucune adresse trouvée
+                        </p>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
 
               <div className="space-y-2">
                 <label htmlFor="phone" className="text-sm font-medium">

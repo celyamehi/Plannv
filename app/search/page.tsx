@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Search, MapPin, Star } from 'lucide-react'
+import { Search, MapPin, Star, Navigation, Loader2 } from 'lucide-react'
 import { supabase } from '../../lib/supabase/client'
 import { Card, CardContent } from '../../components/ui/card'
 import { Button } from '../../components/ui/button'
@@ -36,8 +36,12 @@ export default function SearchPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [cityQuery, setCityQuery] = useState('')
+  const [debouncedCityQuery, setDebouncedCityQuery] = useState('')
+  const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('')
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [checkingAuth, setCheckingAuth] = useState(true)
+  const [gettingLocation, setGettingLocation] = useState(false)
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
 
   const categories = [
     { value: 'all', label: 'Tous' },
@@ -48,6 +52,21 @@ export default function SearchPage() {
     { value: 'onglerie', label: 'Onglerie' },
     { value: 'massage', label: 'Massage' },
   ]
+
+  // Debounce pour la recherche
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedCityQuery(cityQuery)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [cityQuery])
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearchQuery(searchQuery)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [searchQuery])
 
   const checkAuth = async () => {
     try {
@@ -60,7 +79,7 @@ export default function SearchPage() {
     }
   }
 
-  const fetchEstablishments = async () => {
+  const fetchEstablishments = useCallback(async () => {
     setLoading(true)
     try {
       let query = supabase
@@ -72,8 +91,12 @@ export default function SearchPage() {
         query = query.eq('category', selectedCategory)
       }
 
-      if (cityQuery) {
-        query = query.ilike('city', `%${cityQuery}%`)
+      if (debouncedCityQuery) {
+        query = query.or(`city.ilike.%${debouncedCityQuery}%,postal_code.ilike.%${debouncedCityQuery}%`)
+      }
+
+      if (debouncedSearchQuery) {
+        query = query.or(`name.ilike.%${debouncedSearchQuery}%,description.ilike.%${debouncedSearchQuery}%`)
       }
 
       const { data, error } = await query
@@ -87,6 +110,65 @@ export default function SearchPage() {
     } finally {
       setLoading(false)
     }
+  }, [selectedCategory, debouncedCityQuery, debouncedSearchQuery])
+
+  // Fonction pour obtenir la position GPS
+  const getCurrentLocation = async () => {
+    if (!navigator.geolocation) {
+      alert('La géolocalisation n\'est pas supportée par votre navigateur')
+      return
+    }
+
+    setGettingLocation(true)
+    try {
+      const position = await new Promise<GeolocationPosition>((resolve, reject) => {
+        navigator.geolocation.getCurrentPosition(resolve, reject, {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0
+        })
+      })
+
+      const { latitude, longitude } = position.coords
+      setUserLocation({ lat: latitude, lng: longitude })
+
+      // Reverse geocoding pour obtenir l'adresse complète
+      try {
+        const response = await fetch(
+          `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&addressdetails=1&accept-language=fr`
+        )
+        const data = await response.json()
+        const address = data.address
+        // Construire l'adresse complète
+        const streetNumber = address?.house_number || ''
+        const street = address?.road || address?.pedestrian || address?.street || ''
+        const city = address?.city || address?.town || address?.village || address?.municipality || ''
+        const postalCode = address?.postcode || ''
+        
+        // Créer une adresse lisible
+        const fullAddress = [
+          [streetNumber, street].filter(Boolean).join(' '),
+          postalCode,
+          city
+        ].filter(Boolean).join(', ')
+        
+        if (fullAddress) {
+          setCityQuery(fullAddress)
+        } else if (city) {
+          setCityQuery(city)
+        }
+      } catch (geoError) {
+        console.error('Erreur reverse geocoding:', geoError)
+      }
+    } catch (error: any) {
+      if (error.code === 1) {
+        alert('Veuillez autoriser l\'accès à votre position')
+      } else {
+        alert('Impossible d\'obtenir votre position')
+      }
+    } finally {
+      setGettingLocation(false)
+    }
   }
 
   useEffect(() => {
@@ -96,9 +178,10 @@ export default function SearchPage() {
 
   useEffect(() => {
     fetchEstablishments()
-  }, [selectedCategory, cityQuery])
+  }, [selectedCategory, debouncedCityQuery, debouncedSearchQuery, fetchEstablishments])
 
-  const SearchContent = () => (
+  // Contenu de recherche (défini comme variable JSX, pas comme fonction)
+  const searchContent = (
     <>
       <h1 className="text-3xl font-bold mb-6">Rechercher un salon</h1>
 
@@ -106,25 +189,38 @@ export default function SearchPage() {
         <h2 className="text-2xl font-bold mb-6">Trouvez votre salon idéal</h2>
         <div className="flex flex-col md:flex-row gap-4 mb-6">
           <div className="flex-1 flex items-center px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
-            <Search className="w-5 h-5 text-gray-400 mr-3" />
-            <Input
+            <Search className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+            <input
               type="text"
               placeholder="Nom du salon, service..."
               value={searchQuery}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchQuery(e.target.value)}
-              className="flex-1 border-0 bg-transparent focus:ring-0"
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="flex-1 bg-transparent border-0 outline-none focus:ring-0 text-gray-900 placeholder-gray-400"
             />
           </div>
 
           <div className="flex-1 flex items-center px-4 py-3 bg-gray-50 rounded-xl border border-gray-200">
-            <MapPin className="w-5 h-5 text-gray-400 mr-3" />
-            <Input
+            <MapPin className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
+            <input
               type="text"
               placeholder="Ville ou code postal"
               value={cityQuery}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setCityQuery(e.target.value)}
-              className="flex-1 border-0 bg-transparent focus:ring-0"
+              onChange={(e) => setCityQuery(e.target.value)}
+              className="flex-1 bg-transparent border-0 outline-none focus:ring-0 text-gray-900 placeholder-gray-400"
             />
+            <button
+              type="button"
+              onClick={getCurrentLocation}
+              disabled={gettingLocation}
+              className="ml-2 p-2 hover:bg-gray-200 rounded-full transition-colors flex-shrink-0"
+              title="Utiliser ma position"
+            >
+              {gettingLocation ? (
+                <Loader2 className="w-5 h-5 text-purple-600 animate-spin" />
+              ) : (
+                <Navigation className="w-5 h-5 text-purple-600" />
+              )}
+            </button>
           </div>
         </div>
 
@@ -248,7 +344,7 @@ export default function SearchPage() {
   if (isLoggedIn) {
     return (
       <ClientSidebar>
-        <SearchContent />
+        {searchContent}
       </ClientSidebar>
     )
   }
@@ -258,7 +354,7 @@ export default function SearchPage() {
     <div className="min-h-screen bg-gray-50">
       <Navbar currentPage="search" />
       <main className="container mx-auto px-4 py-8">
-        <SearchContent />
+        {searchContent}
       </main>
     </div>
   )

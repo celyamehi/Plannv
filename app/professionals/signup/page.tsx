@@ -8,6 +8,7 @@ import { Button } from '../../../components/ui/button'
 import { Input } from '../../../components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card'
 import { ArrowLeft, Building, MapPin, Phone, Mail, Check } from 'lucide-react'
+import LocationPicker from '../../../components/ui/LocationPicker'
 
 export default function ProfessionalSignupPage() {
   const router = useRouter()
@@ -31,6 +32,8 @@ export default function ProfessionalSignupPage() {
     address: '',
     city: '',
     postalCode: '',
+    latitude: null as number | null,
+    longitude: null as number | null,
     phone: '',
     description: '',
   })
@@ -131,6 +134,8 @@ export default function ProfessionalSignupPage() {
             address: establishmentInfo.address,
             city: establishmentInfo.city,
             postal_code: establishmentInfo.postalCode,
+            latitude: establishmentInfo.latitude,
+            longitude: establishmentInfo.longitude,
             phone: establishmentInfo.phone,
             description: establishmentInfo.description,
             is_active: true,
@@ -356,47 +361,29 @@ export default function ProfessionalSignupPage() {
                 </div>
 
                 <div className="space-y-2">
-                  <label htmlFor="address" className="text-sm font-medium">
-                    Adresse *
+                  <label className="text-sm font-medium">
+                    Adresse de l'établissement *
                   </label>
-                  <Input
-                    id="address"
-                    type="text"
-                    placeholder="123 Rue de la Paix"
-                    value={establishmentInfo.address}
-                    onChange={(e) => setEstablishmentInfo({ ...establishmentInfo, address: e.target.value })}
-                    required
+                  <LocationPicker
+                    onLocationSelect={(location) => {
+                      setEstablishmentInfo({
+                        ...establishmentInfo,
+                        address: location.address,
+                        city: location.city,
+                        postalCode: location.postalCode,
+                        latitude: location.latitude,
+                        longitude: location.longitude,
+                      })
+                    }}
+                    initialLocation={{
+                      address: establishmentInfo.address,
+                      city: establishmentInfo.city,
+                      postalCode: establishmentInfo.postalCode,
+                    }}
                   />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label htmlFor="postalCode" className="text-sm font-medium">
-                      Code postal *
-                    </label>
-                    <Input
-                      id="postalCode"
-                      type="text"
-                      placeholder="75001"
-                      value={establishmentInfo.postalCode}
-                      onChange={(e) => setEstablishmentInfo({ ...establishmentInfo, postalCode: e.target.value })}
-                      required
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <label htmlFor="city" className="text-sm font-medium">
-                      Ville *
-                    </label>
-                    <Input
-                      id="city"
-                      type="text"
-                      placeholder="Paris"
-                      value={establishmentInfo.city}
-                      onChange={(e) => setEstablishmentInfo({ ...establishmentInfo, city: e.target.value })}
-                      required
-                    />
-                  </div>
+                  <p className="text-xs text-gray-500">
+                    Utilisez votre position GPS ou recherchez votre adresse
+                  </p>
                 </div>
 
                 <div className="space-y-2">

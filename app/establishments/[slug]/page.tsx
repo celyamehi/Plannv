@@ -55,7 +55,7 @@ export default async function EstablishmentPage({ params }: PageProps) {
   const content = (
     <>
       {/* Cover Image */}
-      <div className="relative h-96 bg-gradient-to-br from-purple-100 to-pink-100">
+      <div className="relative h-96 bg-gradient-to-br from-nude-100 to-warm-100">
         {coverImage ? (
           <img
             src={coverImage}
@@ -64,7 +64,7 @@ export default async function EstablishmentPage({ params }: PageProps) {
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center">
-            <span className="text-9xl font-bold text-purple-200">
+            <span className="text-9xl font-bold text-nude-200">
               {establishment.name.charAt(0)}
             </span>
           </div>
@@ -171,12 +171,12 @@ export default async function EstablishmentPage({ params }: PageProps) {
                             </span>
                             <span className="flex items-center">
                               <Euro className="w-4 h-4 mr-1" />
-                              {service.price}€
+                              {service.price}DA
                             </span>
                           </div>
                         </div>
                         <Link href={`/booking/${establishment.slug}?service=${service.id}`}>
-                          <Button className="bg-gradient-to-r from-purple-600 to-pink-600">
+                          <Button className="bg-gradient-to-r from-nude-600 to-warm-600">
                             Réserver
                           </Button>
                         </Link>
@@ -202,7 +202,7 @@ export default async function EstablishmentPage({ params }: PageProps) {
                         key={member.id}
                         className="flex items-center space-x-4 p-4 bg-gray-50 rounded-lg"
                       >
-                        <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-purple-600 to-pink-600 flex items-center justify-center text-white font-bold text-xl">
+                        <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-nude-600 to-warm-600 flex items-center justify-center text-white font-bold text-xl">
                           {member.avatar_url ? (
                             <img src={member.avatar_url} alt={`${member.first_name} ${member.last_name}`} className="w-full h-full object-cover" />
                           ) : (
@@ -243,7 +243,7 @@ export default async function EstablishmentPage({ params }: PageProps) {
               </CardHeader>
               <CardContent className="space-y-4">
                 <Link href={`/booking/${establishment.slug}`}>
-                  <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-lg py-6">
+                  <Button className="w-full bg-gradient-to-r from-nude-600 to-warm-600 text-lg py-6">
                     <Calendar className="w-5 h-5 mr-2" />
                     Prendre rendez-vous
                   </Button>
@@ -264,7 +264,7 @@ export default async function EstablishmentPage({ params }: PageProps) {
                     <Phone className="w-5 h-5 text-gray-400" />
                     <a
                       href={`tel:${establishment.phone}`}
-                      className="text-sm text-purple-600 hover:text-purple-700"
+                      className="text-sm text-nude-600 hover:text-nude-700"
                     >
                       {establishment.phone}
                     </a>
@@ -321,10 +321,10 @@ export default async function EstablishmentPage({ params }: PageProps) {
         <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-b border-gray-100 z-50">
           <div className="container mx-auto px-4 py-4 flex items-center justify-between">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
+              <div className="w-10 h-10 bg-gradient-to-br from-nude-600 to-warm-600 rounded-xl flex items-center justify-center shadow-lg shadow-nude-200">
                 <span className="text-white font-bold text-xl">K</span>
               </div>
-              <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold bg-gradient-to-r from-nude-600 to-warm-600 bg-clip-text text-transparent">
                 Kalendo
               </span>
             </Link>

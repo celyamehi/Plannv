@@ -16,6 +16,7 @@ const publicPaths = [
   '/signup',
   '/professionals/signup',
   '/professionals/login',
+  '/admin/login',
   '/auth/selection',
   '/search',
   '/establishments',
@@ -30,7 +31,11 @@ const publicPaths = [
   '/client/booking',
   '/_next',
   '/favicon.ico',
-  '/assets'
+  '/assets',
+  '/mentions-legales',
+  '/cgu',
+  '/confidentialite',
+  '/contact'
 ]
 
 export async function middleware(req: NextRequest) {

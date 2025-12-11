@@ -13,7 +13,7 @@ export default function CTASection() {
                     whileInView={{ opacity: 1, scale: 1 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.8 }}
-                    className="relative rounded-[2.5rem] overflow-hidden bg-gradient-to-r from-purple-600 to-pink-600 px-6 py-20 text-center text-white shadow-2xl"
+                    className="relative rounded-[2.5rem] overflow-hidden bg-gradient-to-r from-nude-600 to-warm-600 px-6 py-20 text-center text-white shadow-2xl"
                 >
                     {/* Decorative circles */}
                     <div className="absolute top-0 left-0 w-64 h-64 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
@@ -23,12 +23,12 @@ export default function CTASection() {
                         <h2 className="text-4xl md:text-5xl font-bold mb-6">
                             Vous êtes un professionnel ?
                         </h2>
-                        <p className="text-xl md:text-2xl mb-10 text-purple-100">
+                        <p className="text-xl md:text-2xl mb-10 text-nude-100">
                             Rejoignez Kalendo et développez votre activité avec notre plateforme de réservation tout-en-un.
                         </p>
                         <Link
                             href="/professionals/signup"
-                            className="group inline-flex items-center gap-2 px-8 py-4 bg-white text-purple-600 rounded-full font-bold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
+                            className="group inline-flex items-center gap-2 px-8 py-4 bg-white text-nude-600 rounded-full font-bold text-lg hover:shadow-xl hover:scale-105 transition-all duration-300"
                         >
                             Créer mon espace professionnel
                             <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />

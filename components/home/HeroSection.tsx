@@ -1,24 +1,76 @@
 "use client"
 
+import { useState, useEffect, useRef } from "react"
+import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
-import { Search, MapPin } from "lucide-react"
+import { Search, MapPin, X } from "lucide-react"
 
 export default function HeroSection() {
+  const router = useRouter()
+  const [searchQuery, setSearchQuery] = useState('')
+  const [cityQuery, setCityQuery] = useState('')
+  const [citySuggestions, setCitySuggestions] = useState<string[]>([])
+  const [showCitySuggestions, setShowCitySuggestions] = useState(false)
+  const cityInputRef = useRef<HTMLInputElement>(null)
+
+  // Auto-complétion des villes
+  useEffect(() => {
+    const fetchCitySuggestions = async () => {
+      if (cityQuery.length < 2) {
+        setCitySuggestions([])
+        return
+      }
+
+      try {
+        const response = await fetch('/api/search', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ query: cityQuery })
+        })
+        const data = await response.json()
+        setCitySuggestions(data.cities || [])
+      } catch (error) {
+        console.error('Erreur auto-complétion:', error)
+      }
+    }
+
+    const timer = setTimeout(fetchCitySuggestions, 300)
+    return () => clearTimeout(timer)
+  }, [cityQuery])
+
+  const handleSearch = () => {
+    const params = new URLSearchParams()
+    if (searchQuery) params.set('q', searchQuery)
+    if (cityQuery) params.set('ville', cityQuery)
+    router.push(`/search?${params.toString()}`)
+  }
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter') {
+      handleSearch()
+    }
+  }
+
+  const selectCity = (city: string) => {
+    setCityQuery(city)
+    setShowCitySuggestions(false)
+  }
+
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-purple-50/50 to-white">
+    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden bg-gradient-to-b from-nude-50/50 to-white">
       {/* Background Elements */}
       <div className="absolute inset-0 overflow-hidden -z-10">
         <motion.div 
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.5, ease: "easeOut" }}
-          className="absolute -top-[40%] -right-[20%] w-[800px] h-[800px] rounded-full bg-purple-200/30 blur-3xl"
+          className="absolute -top-[40%] -right-[20%] w-[800px] h-[800px] rounded-full bg-nude-200/30 blur-3xl"
         />
         <motion.div 
           initial={{ opacity: 0, scale: 0.8 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1.5, delay: 0.2, ease: "easeOut" }}
-          className="absolute -bottom-[40%] -left-[20%] w-[800px] h-[800px] rounded-full bg-pink-200/30 blur-3xl"
+          className="absolute -bottom-[40%] -left-[20%] w-[800px] h-[800px] rounded-full bg-warm-200/30 blur-3xl"
         />
       </div>
 
@@ -30,7 +82,7 @@ export default function HeroSection() {
         >
           <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">
             Réservez votre{' '}
-            <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-nude-600 to-warm-600 bg-clip-text text-transparent">
               moment beauté
             </span>
           </h1>
@@ -48,25 +100,88 @@ export default function HeroSection() {
         >
           <div className="bg-white/80 backdrop-blur-xl p-3 rounded-3xl shadow-2xl border border-white/50">
             <div className="flex flex-col md:flex-row gap-3">
-              <div className="flex-1 flex items-center px-6 py-4 bg-white rounded-2xl border border-gray-100 focus-within:border-purple-200 focus-within:ring-4 focus-within:ring-purple-50 transition-all duration-300">
-                <Search className="w-6 h-6 text-purple-500 mr-4" />
+              <div className="flex-1 flex items-center px-6 py-4 bg-white rounded-2xl border border-gray-100 focus-within:border-nude-200 focus-within:ring-4 focus-within:ring-nude-50 transition-all duration-300">
+                <Search className="w-6 h-6 text-nude-500 mr-4" />
                 <input 
                   type="text" 
-                  placeholder="Coiffeur, esthéticienne, spa..." 
+                  placeholder="Nom du salon ou prestation (ex : coupe homme, manucure...)" 
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  onKeyPress={handleKeyPress}
                   className="flex-1 outline-none text-lg text-gray-700 placeholder:text-gray-400 bg-transparent"
                 />
+                {searchQuery && (
+                  <button 
+                    onClick={() => setSearchQuery('')}
+                    className="ml-2 text-gray-400 hover:text-gray-600 transition-colors"
+                    title="Effacer la recherche"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                )}
               </div>
               
-              <div className="flex-1 flex items-center px-6 py-4 bg-white rounded-2xl border border-gray-100 focus-within:border-purple-200 focus-within:ring-4 focus-within:ring-purple-50 transition-all duration-300">
-                <MapPin className="w-6 h-6 text-pink-500 mr-4" />
-                <input 
-                  type="text" 
-                  placeholder="Ville ou code postal" 
-                  className="flex-1 outline-none text-lg text-gray-700 placeholder:text-gray-400 bg-transparent"
-                />
+              <div className="relative flex-1">
+                <div className="flex items-center px-6 py-4 bg-white rounded-2xl border border-gray-100 focus-within:border-nude-200 focus-within:ring-4 focus-within:ring-nude-50 transition-all duration-300">
+                  <MapPin className="w-6 h-6 text-warm-500 mr-4" />
+                  <input 
+                    ref={cityInputRef}
+                    type="text" 
+                    placeholder="Ville / Commune (ex : Alger, Oran, Constantine...)" 
+                    value={cityQuery}
+                    onChange={(e) => {
+                      setCityQuery(e.target.value)
+                      setShowCitySuggestions(true)
+                    }}
+                    onFocus={() => setShowCitySuggestions(true)}
+                    onBlur={() => setTimeout(() => setShowCitySuggestions(false), 200)}
+                    onKeyPress={handleKeyPress}
+                    className="flex-1 outline-none text-lg text-gray-700 placeholder:text-gray-400 bg-transparent"
+                  />
+                  {cityQuery && (
+                    <button 
+                      onClick={() => setCityQuery('')}
+                      className="ml-2 text-gray-400 hover:text-gray-600 transition-colors"
+                      title="Effacer la ville"
+                    >
+                      <X className="w-5 h-5" />
+                    </button>
+                  )}
+                </div>
+                
+                {/* Suggestions de villes */}
+                {showCitySuggestions && (citySuggestions.length > 0 || cityQuery.length > 0) && (
+                  <div className="absolute z-50 w-full mt-2 bg-white border border-gray-200 rounded-2xl shadow-xl max-h-60 overflow-y-auto">
+                    {/* Suggestions des villes */}
+                    {citySuggestions.map((city, index) => (
+                      <button
+                        key={index}
+                        onClick={() => selectCity(city)}
+                        className="w-full px-6 py-3 text-left hover:bg-nude-50 flex items-center first:rounded-t-2xl"
+                      >
+                        <MapPin className="w-4 h-4 text-gray-400 mr-3" />
+                        <span className="text-gray-700">{city}</span>
+                      </button>
+                    ))}
+                    
+                    {/* Option pour utiliser la ville tapée manuellement */}
+                    {cityQuery.length > 2 && !citySuggestions.includes(cityQuery) && (
+                      <button
+                        onClick={() => selectCity(cityQuery)}
+                        className="w-full px-6 py-3 text-left hover:bg-nude-50 flex items-center border-t border-gray-100 last:rounded-b-2xl"
+                      >
+                        <MapPin className="w-4 h-4 text-nude-400 mr-3" />
+                        <span className="text-nude-600 font-medium">Utiliser "{cityQuery}"</span>
+                      </button>
+                    )}
+                  </div>
+                )}
               </div>
               
-              <button className="px-10 py-4 bg-gradient-to-r from-purple-600 to-pink-600 text-white rounded-2xl font-bold text-lg hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300">
+              <button 
+                onClick={handleSearch}
+                className="px-10 py-4 bg-gradient-to-r from-nude-600 to-warm-600 text-white rounded-2xl font-bold text-lg hover:shadow-lg hover:scale-[1.02] active:scale-[0.98] transition-all duration-300"
+              >
                 Rechercher
               </button>
             </div>

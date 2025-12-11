@@ -4,9 +4,9 @@ import { motion } from "framer-motion"
 import { Scissors, Sparkles, Droplets, Palette, Flower2, Heart } from "lucide-react"
 
 const categories = [
-    { name: 'Coiffeur', icon: Scissors, color: 'text-purple-600', bg: 'bg-purple-100' },
+    { name: 'Coiffeur', icon: Scissors, color: 'text-nude-600', bg: 'bg-nude-100' },
     { name: 'Barbier', icon: Sparkles, color: 'text-blue-600', bg: 'bg-blue-100' },
-    { name: 'Esthétique', icon: Flower2, color: 'text-pink-600', bg: 'bg-pink-100' },
+    { name: 'Esthétique', icon: Flower2, color: 'text-warm-600', bg: 'bg-warm-100' },
     { name: 'Spa', icon: Droplets, color: 'text-cyan-600', bg: 'bg-cyan-100' },
     { name: 'Onglerie', icon: Palette, color: 'text-orange-600', bg: 'bg-orange-100' },
     { name: 'Massage', icon: Heart, color: 'text-red-600', bg: 'bg-red-100' },

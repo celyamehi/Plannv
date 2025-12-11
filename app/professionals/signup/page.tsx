@@ -1,20 +1,67 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { supabase } from '../../../lib/supabase/client'
 import { Button } from '../../../components/ui/button'
 import { Input } from '../../../components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card'
-import { ArrowLeft, Building, MapPin, Phone, Mail, Check } from 'lucide-react'
+import { ArrowLeft, Building, MapPin, Phone, Mail, Check, Loader2 } from 'lucide-react'
 import LocationPicker from '../../../components/ui/LocationPicker'
 
 export default function ProfessionalSignupPage() {
   const router = useRouter()
   const [step, setStep] = useState(1)
   const [loading, setLoading] = useState(false)
+  const [checkingAuth, setCheckingAuth] = useState(true)
+  const [existingUser, setExistingUser] = useState<{ id: string; email: string; fullName: string } | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  // Vérifier si l'utilisateur est déjà connecté
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession()
+        
+        if (session) {
+          // Vérifier si l'utilisateur a déjà un établissement
+          const { data: establishment } = await supabase
+            .from('establishments')
+            .select('id')
+            .eq('owner_id', session.user.id)
+            .maybeSingle()
+
+          if (establishment) {
+            // A déjà un établissement, rediriger vers le dashboard
+            router.push('/professional/pro-dashboard')
+            return
+          }
+
+          // Récupérer le profil
+          const { data: profile } = await supabase
+            .from('profiles')
+            .select('full_name')
+            .eq('id', session.user.id)
+            .single()
+
+          // Utilisateur connecté sans établissement, passer directement à l'étape 2
+          setExistingUser({
+            id: session.user.id,
+            email: session.user.email || '',
+            fullName: profile?.full_name || ''
+          })
+          setStep(2)
+        }
+      } catch (error) {
+        console.error('Erreur vérification auth:', error)
+      } finally {
+        setCheckingAuth(false)
+      }
+    }
+
+    checkAuth()
+  }, [router])
 
   // Étape 1: Informations personnelles
   const [personalInfo, setPersonalInfo] = useState({
@@ -71,23 +118,35 @@ export default function ProfessionalSignupPage() {
     setError(null)
 
     try {
-      // 1. Créer le compte utilisateur
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: personalInfo.email,
-        password: personalInfo.password,
-        options: {
-          data: {
-            full_name: personalInfo.fullName,
-            phone: personalInfo.phone,
-            user_type: 'professional'
+      let userId: string
+
+      // Si l'utilisateur est déjà connecté, utiliser son ID
+      if (existingUser) {
+        userId = existingUser.id
+      } else {
+        // Sinon, créer le compte utilisateur
+        const { data: authData, error: authError } = await supabase.auth.signUp({
+          email: personalInfo.email,
+          password: personalInfo.password,
+          options: {
+            data: {
+              full_name: personalInfo.fullName,
+              phone: personalInfo.phone,
+              user_type: 'professional'
+            }
           }
-        }
-      })
+        })
 
-      if (authError) throw authError
+        if (authError) throw authError
+        if (!authData.user) throw new Error('Erreur lors de la création du compte')
 
-      if (authData.user) {
-        // 2. Créer le profil
+        userId = authData.user.id
+
+        // Calculer la date de fin d'essai (7 jours)
+        const trialEndsAt = new Date()
+        trialEndsAt.setDate(trialEndsAt.getDate() + 7)
+
+        // Créer le profil avec l'essai activé automatiquement
         const { error: profileError } = await supabase
           .from('profiles')
           .insert({
@@ -96,6 +155,9 @@ export default function ProfessionalSignupPage() {
             user_type: 'professional',
             full_name: personalInfo.fullName,
             phone: personalInfo.phone,
+            subscription_status: 'trial',
+            trial_ends_at: trialEndsAt.toISOString(),
+            subscription_ends_at: trialEndsAt.toISOString(),
           })
 
         if (profileError) {
@@ -107,6 +169,9 @@ export default function ProfessionalSignupPage() {
                 user_type: 'professional',
                 full_name: personalInfo.fullName,
                 phone: personalInfo.phone,
+                subscription_status: 'trial',
+                trial_ends_at: trialEndsAt.toISOString(),
+                subscription_ends_at: trialEndsAt.toISOString(),
               })
               .eq('id', authData.user.id)
             if (updateError) throw updateError
@@ -114,43 +179,54 @@ export default function ProfessionalSignupPage() {
             throw profileError
           }
         }
-
-        // 3. Créer l'établissement
-        const slug = establishmentInfo.establishmentName
-          .toLowerCase()
-          .replace(/[^a-z0-9\s-]/g, '')
-          .replace(/\s+/g, '-')
-          .replace(/-+/g, '-')
-          .trim()
-
-        const { error: establishmentError } = await supabase
-          .from('establishments')
-          .insert({
-            owner_id: authData.user.id, // Pour la contrainte NOT NULL actuelle
-            professional_id: authData.user.id, // Pour la nouvelle structure
-            name: establishmentInfo.establishmentName,
-            slug: slug,
-            category: establishmentInfo.category,
-            address: establishmentInfo.address,
-            city: establishmentInfo.city,
-            postal_code: establishmentInfo.postalCode,
-            latitude: establishmentInfo.latitude,
-            longitude: establishmentInfo.longitude,
-            phone: establishmentInfo.phone,
-            description: establishmentInfo.description,
-            is_active: true,
-          })
-
-        if (establishmentError) throw establishmentError
-
-        // 4. Rediriger vers le dashboard professionnel
-        router.push('/professional/pro-dashboard')
       }
+
+      // Créer l'établissement
+      const slug = establishmentInfo.establishmentName
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+        .trim()
+
+      const { error: establishmentError } = await supabase
+        .from('establishments')
+        .insert({
+          owner_id: userId,
+          name: establishmentInfo.establishmentName,
+          slug: slug,
+          category: establishmentInfo.category,
+          address: establishmentInfo.address,
+          city: establishmentInfo.city,
+          postal_code: establishmentInfo.postalCode,
+          latitude: establishmentInfo.latitude,
+          longitude: establishmentInfo.longitude,
+          phone: establishmentInfo.phone,
+          description: establishmentInfo.description,
+          is_active: true,
+        })
+
+      if (establishmentError) throw establishmentError
+
+      // Rediriger vers le dashboard professionnel
+      router.push('/professional/pro-dashboard')
     } catch (error: any) {
       setError(error.message)
     } finally {
       setLoading(false)
     }
+  }
+
+  // Afficher un loader pendant la vérification
+  if (checkingAuth) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <Loader2 className="w-8 h-8 animate-spin text-nude-600 mx-auto mb-4" />
+          <p className="text-gray-600">Chargement...</p>
+        </div>
+      </div>
+    )
   }
 
   if (step === 1) {
@@ -160,7 +236,7 @@ export default function ProfessionalSignupPage() {
           {/* Logo */}
           <div className="flex justify-center mb-8">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
+              <div className="w-10 h-10 bg-gradient-to-br from-nude-600 to-warm-600 rounded-xl flex items-center justify-center shadow-lg shadow-nude-200">
                 <span className="text-white font-bold text-xl">K</span>
               </div>
               <span className="text-3xl font-semibold">Kalendo</span>
@@ -260,30 +336,33 @@ export default function ProfessionalSignupPage() {
 
                 <div className="text-xs text-gray-600">
                   En créant un compte, vous acceptez nos{' '}
-                  <Link href="/terms" className="text-purple-600 hover:text-purple-700">
+                  <Link href="/terms" className="text-nude-600 hover:text-nude-700">
                     Conditions d'utilisation
                   </Link>{' '}
                   et notre{' '}
-                  <Link href="/privacy" className="text-purple-600 hover:text-purple-700">
+                  <Link href="/privacy" className="text-nude-600 hover:text-nude-700">
                     Politique de confidentialité
                   </Link>
                 </div>
 
-                <Button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-pink-600" disabled={loading}>
-                  {loading ? 'Continuer' : 'Continuer →'}
+                <Button 
+                  type="submit" 
+                  className="w-full bg-gradient-to-r from-nude-600 to-warm-600"
+                >
+                  Continuer →
                 </Button>
               </form>
 
               <div className="mt-6 space-y-3">
                 <div className="text-center text-sm">
                   <span className="text-gray-600">Vous avez déjà un compte ? </span>
-                  <Link href="/professionals/login" className="text-purple-600 hover:text-purple-700 font-medium">
+                  <Link href="/login?type=professional" className="text-nude-600 hover:text-nude-700 font-medium">
                     Se connecter
                   </Link>
                 </div>
 
                 <div className="text-center text-sm">
-                  <Link href="/signup" className="text-purple-600 hover:text-purple-700">
+                  <Link href="/signup" className="text-nude-600 hover:text-nude-700">
                     Vous êtes un client ? Inscription client →
                   </Link>
                 </div>
@@ -302,7 +381,7 @@ export default function ProfessionalSignupPage() {
           {/* Logo */}
           <div className="flex justify-center mb-8">
             <Link href="/" className="flex items-center space-x-2">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
+              <div className="w-10 h-10 bg-gradient-to-br from-nude-600 to-warm-600 rounded-xl flex items-center justify-center shadow-lg shadow-nude-200">
                 <span className="text-white font-bold text-xl">K</span>
               </div>
               <span className="text-3xl font-semibold">Kalendo</span>
@@ -312,11 +391,17 @@ export default function ProfessionalSignupPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <ArrowLeft className="w-5 h-5 mr-2 cursor-pointer" onClick={() => setStep(1)} />
-                Informations de l'établissement
+                {!existingUser && (
+                  <ArrowLeft className="w-5 h-5 mr-2 cursor-pointer" onClick={() => setStep(1)} />
+                )}
+                <Building className="w-5 h-5 mr-2" />
+                {existingUser ? 'Créer votre établissement' : 'Informations de l\'établissement'}
               </CardTitle>
               <CardDescription>
-                Étape 2 sur 2 : Détails de votre établissement
+                {existingUser 
+                  ? `Bienvenue ${existingUser.fullName} ! Configurez votre établissement pour commencer.`
+                  : 'Étape 2 sur 2 : Détails de votre établissement'
+                }
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -349,7 +434,7 @@ export default function ProfessionalSignupPage() {
                     id="category"
                     value={establishmentInfo.category}
                     onChange={(e) => setEstablishmentInfo({ ...establishmentInfo, category: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-nude-600"
                     required
                   >
                     {categories.map((cat) => (
@@ -409,12 +494,12 @@ export default function ProfessionalSignupPage() {
                     placeholder="Décrivez votre établissement, vos services, votre ambiance..."
                     value={establishmentInfo.description}
                     onChange={(e) => setEstablishmentInfo({ ...establishmentInfo, description: e.target.value })}
-                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600 min-h-[100px] resize-none"
+                    className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-nude-600 min-h-[100px] resize-none"
                     rows={4}
                   />
                 </div>
 
-                <Button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-pink-600" disabled={loading}>
+                <Button type="submit" className="w-full bg-gradient-to-r from-nude-600 to-warm-600" disabled={loading}>
                   {loading ? 'Création du compte...' : 'Créer mon compte professionnel'}
                 </Button>
               </form>
@@ -422,13 +507,13 @@ export default function ProfessionalSignupPage() {
               <div className="mt-6 space-y-3">
                 <div className="text-center text-sm">
                   <span className="text-gray-600">Vous avez déjà un compte ? </span>
-                  <Link href="/professionals/login" className="text-purple-600 hover:text-purple-700 font-medium">
+                  <Link href="/login?type=professional" className="text-nude-600 hover:text-nude-700 font-medium">
                     Se connecter
                   </Link>
                 </div>
 
                 <div className="text-center text-sm">
-                  <Link href="/signup" className="text-purple-600 hover:text-purple-700">
+                  <Link href="/signup" className="text-nude-600 hover:text-nude-700">
                     Vous êtes un client ? Inscription client →
                   </Link>
                 </div>

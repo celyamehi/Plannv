@@ -475,7 +475,7 @@ export default function CashRegisterPage() {
       <ProSidebar>
         <div className="flex items-center justify-center h-full">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-nude-600 mx-auto mb-4"></div>
             <p>Chargement...</p>
           </div>
         </div>
@@ -549,7 +549,7 @@ export default function CashRegisterPage() {
                           console.log('📻 Radio change:', e.target.value)
                           handleStaffChange(e.target.value)
                         }}
-                        className="text-purple-600"
+                        className="text-nude-600"
                       />
                       <span className="text-sm">Tous les collaborateurs</span>
                     </label>
@@ -564,7 +564,7 @@ export default function CashRegisterPage() {
                             console.log('📻 Radio change:', e.target.value)
                             handleStaffChange(e.target.value)
                           }}
-                          className="text-purple-600"
+                          className="text-nude-600"
                         />
                         <span className="text-sm">{member.first_name} {member.last_name}</span>
                       </label>
@@ -613,7 +613,7 @@ export default function CashRegisterPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-green-600">
-                {calculateTotal().toFixed(2)}€
+                {calculateTotal().toFixed(2)}DA
               </div>
               <p className="text-xs text-muted-foreground">
                 {filteredTransactions.length} transactions
@@ -628,7 +628,7 @@ export default function CashRegisterPage() {
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-blue-600">
-                {calculateByMethod('cash').toFixed(2)}€
+                {calculateByMethod('cash').toFixed(2)}DA
               </div>
               <p className="text-xs text-muted-foreground">
                 {filteredTransactions.filter(t => t.payment_method === 'cash').length} paiements
@@ -677,15 +677,15 @@ export default function CashRegisterPage() {
                       <div className="space-y-1 text-sm">
                         <div className="flex justify-between">
                           <span className="text-gray-600">Montant total:</span>
-                          <span className="font-semibold">{(appointment?.total_price || appointment?.services?.price || 0).toFixed(2)}€</span>
+                          <span className="font-semibold">{(appointment?.total_price || appointment?.services?.price || 0).toFixed(2)}DA</span>
                         </div>
                         <div className="flex justify-between">
                           <span className="text-gray-600">Déjà payé:</span>
-                          <span className="font-semibold text-green-600">{paidAmount.toFixed(2)}€</span>
+                          <span className="font-semibold text-green-600">{paidAmount.toFixed(2)}DA</span>
                         </div>
                         <div className="flex justify-between pt-2 border-t border-blue-200">
                           <span className="font-medium">Reste à payer:</span>
-                          <span className="font-bold text-blue-600">{amountPaid}€</span>
+                          <span className="font-bold text-blue-600">{amountPaid}DA</span>
                         </div>
                       </div>
                     </div>
@@ -697,12 +697,12 @@ export default function CashRegisterPage() {
                       {paidAmount > 0 ? 'Montant restant à payer' : 'Montant à payer'}
                     </label>
                     <div className="relative">
-                      <span className="absolute left-3 top-3 text-gray-500">€</span>
+                      <span className="absolute left-3 top-3 text-gray-500">DA</span>
                       <input
                         type="number"
                         value={amountPaid}
                         onChange={(e) => setAmountPaid(e.target.value)}
-                        className="w-full pl-8 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        className="w-full pl-8 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-nude-500"
                         placeholder="0.00"
                         step="0.01"
                         min="0"
@@ -710,7 +710,7 @@ export default function CashRegisterPage() {
                     </div>
                     {paidAmount > 0 && (
                       <p className="text-xs text-gray-500 mt-1">
-                        {paidAmount.toFixed(2)}€ déjà payé(s)
+                        {paidAmount.toFixed(2)}DA déjà payé(s)
                       </p>
                     )}
                   </div>
@@ -821,7 +821,7 @@ export default function CashRegisterPage() {
                       </div>
                       <div className="text-right">
                         <div className="font-semibold text-green-600">
-                          {transaction.amount.toFixed(2)}€
+                          {transaction.amount.toFixed(2)}DA
                         </div>
                         <div className="text-xs text-gray-500">
                           {getPaymentMethodLabel(transaction.payment_method)}

@@ -206,7 +206,7 @@ export default function ProCallsPage() {
       <ProSidebar>
         <div className="flex items-center justify-center h-full">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-nude-600 mx-auto mb-4"></div>
             <p>Chargement...</p>
           </div>
         </div>
@@ -294,7 +294,7 @@ export default function ProCallsPage() {
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
-                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-nude-500"
               >
                 <option value="all">Tous les appels</option>
                 <option value="pending">En attente d'appel</option>
@@ -321,8 +321,8 @@ export default function ProCallsPage() {
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <div className="flex items-center space-x-3 mb-3">
-                          <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                            <User className="w-5 h-5 text-purple-600" />
+                          <div className="w-10 h-10 bg-nude-100 rounded-full flex items-center justify-center">
+                            <User className="w-5 h-5 text-nude-600" />
                           </div>
                           <div>
                             <h3 className="font-semibold text-gray-900">{call.client_name}</h3>
@@ -426,7 +426,7 @@ export default function ProCallsPage() {
                   value={callNotes}
                   onChange={(e) => setCallNotes(e.target.value)}
                   placeholder="Ajoutez des notes sur cet appel..."
-                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-nude-500"
                   rows={3}
                 />
               </div>

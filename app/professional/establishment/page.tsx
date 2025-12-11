@@ -311,7 +311,7 @@ export default function EstablishmentPage() {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalRevenue.toFixed(2)}€</div>
+              <div className="text-2xl font-bold">{stats.totalRevenue.toFixed(2)}DA</div>
               <p className="text-xs text-muted-foreground">Total encaissé</p>
             </CardContent>
           </Card>
@@ -383,11 +383,11 @@ export default function EstablishmentPage() {
           <CardContent>
             <div className="grid grid-cols-2 gap-4 text-center">
               <div>
-                <div className="text-2xl font-bold text-purple-600">{stats.totalAppointments || 0}</div>
+                <div className="text-2xl font-bold text-nude-600">{stats.totalAppointments || 0}</div>
                 <p className="text-sm text-gray-600">RDV totaux</p>
               </div>
               <div>
-                <div className="text-2xl font-bold text-green-600">{(stats.totalRevenue || 0).toFixed(0)}€</div>
+                <div className="text-2xl font-bold text-green-600">{(stats.totalRevenue || 0).toFixed(0)}DA</div>
                 <p className="text-sm text-gray-600">CA total</p>
               </div>
             </div>

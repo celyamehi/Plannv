@@ -146,8 +146,8 @@ export default function Navbar({ currentPage = 'default' }: NavbarProps) {
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2">
             <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${user?.role === 'professional' || user?.role === 'admin'
-              ? 'bg-gradient-to-br from-pink-600 to-purple-600'
-              : 'bg-gradient-to-br from-purple-600 to-pink-600'
+              ? 'bg-gradient-to-br from-warm-600 to-nude-600'
+              : 'bg-gradient-to-br from-nude-600 to-warm-600'
               }`}>
               <span className="text-white font-bold text-xl">P</span>
             </div>
@@ -165,7 +165,7 @@ export default function Navbar({ currentPage = 'default' }: NavbarProps) {
                 className={`text-sm font-medium transition-colors ${currentPage === link.href.replace('/', '') ||
                   (currentPage === 'dashboard' && link.href === '/dashboard') ||
                   (currentPage === 'pro-dashboard' && link.href === '/professional/pro-dashboard')
-                  ? 'text-purple-600'
+                  ? 'text-nude-600'
                   : 'text-gray-600 hover:text-gray-900'
                   }`}
               >
@@ -238,7 +238,7 @@ export default function Navbar({ currentPage = 'default' }: NavbarProps) {
                   className={`text-sm font-medium transition-colors ${currentPage === link.href.replace('/', '') ||
                     (currentPage === 'dashboard' && link.href === '/dashboard') ||
                     (currentPage === 'pro-dashboard' && link.href === '/professional/pro-dashboard')
-                    ? 'text-purple-600'
+                    ? 'text-nude-600'
                     : 'text-gray-600 hover:text-gray-900'
                     }`}
                 >

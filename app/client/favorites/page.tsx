@@ -86,7 +86,7 @@ export default function FavoritesPage() {
         return (
             <div className="flex items-center justify-center min-h-screen">
                 <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+                    <div className="w-16 h-16 border-4 border-nude-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
                     <p>Chargement...</p>
                 </div>
             </div>
@@ -131,7 +131,7 @@ export default function FavoritesPage() {
                                 </Button>
                             )}
                             <Link href="/client/search">
-                                <Button className="bg-gradient-to-r from-purple-600 to-pink-600">
+                                <Button className="bg-gradient-to-r from-nude-600 to-warm-600">
                                     <Search className="w-4 h-4 mr-2" />
                                     Explorer les salons
                                 </Button>
@@ -146,7 +146,7 @@ export default function FavoritesPage() {
                             <CardHeader className="pb-3">
                                 <div className="flex items-start justify-between">
                                     <div className="flex items-center space-x-3">
-                                        <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center text-white text-xl">
+                                        <div className="w-12 h-12 bg-gradient-to-br from-nude-600 to-warm-600 rounded-xl flex items-center justify-center text-white text-xl">
                                             {getCategoryIcon(establishment.category)}
                                         </div>
                                         <div>
@@ -182,7 +182,7 @@ export default function FavoritesPage() {
                                             {establishment.services.slice(0, 3).map((service: any, index: number) => (
                                                 <span
                                                     key={index}
-                                                    className="px-2 py-1 bg-purple-50 text-purple-700 text-xs rounded-full"
+                                                    className="px-2 py-1 bg-nude-50 text-nude-700 text-xs rounded-full"
                                                 >
                                                     {service.name}
                                                 </span>

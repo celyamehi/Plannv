@@ -282,7 +282,7 @@ export default function DebugMaxLoginPage() {
             <a href="/test-connection" className="px-3 py-1 bg-green-100 text-green-700 rounded text-sm">
               🔌 Tester connexion
             </a>
-            <a href="/dashboard" className="px-3 py-1 bg-purple-100 text-purple-700 rounded text-sm">
+            <a href="/dashboard" className="px-3 py-1 bg-nude-100 text-nude-700 rounded text-sm">
               🏠 Dashboard client
             </a>
             <a href="/professional/pro-dashboard" className="px-3 py-1 bg-orange-100 text-orange-700 rounded text-sm">

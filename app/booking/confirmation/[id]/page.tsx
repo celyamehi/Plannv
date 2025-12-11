@@ -63,7 +63,7 @@ export default function ConfirmationPage({ params }: PageProps) {
     return (
       <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-4">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-nude-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p>Chargement de votre réservation...</p>
         </div>
       </div>
@@ -91,7 +91,7 @@ export default function ConfirmationPage({ params }: PageProps) {
       <div className="max-w-2xl w-full">
         {/* Success Icon */}
         <div className="text-center mb-8">
-          <div className="w-20 h-20 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="w-20 h-20 bg-gradient-to-r from-nude-600 to-warm-600 rounded-full flex items-center justify-center mx-auto mb-4">
             <Check className="w-12 h-12 text-white" />
           </div>
           <h1 className="text-3xl font-bold mb-2">Réservation confirmée !</h1>
@@ -167,8 +167,8 @@ export default function ConfirmationPage({ params }: PageProps) {
               <div className="pt-4 border-t border-gray-200">
                 <div className="flex justify-between items-center">
                   <span className="font-medium">Total</span>
-                  <span className="text-2xl font-bold text-purple-600">
-                    {appointment.service.price}€
+                  <span className="text-2xl font-bold text-nude-600">
+                    {appointment.service.price}DA
                   </span>
                 </div>
               </div>
@@ -195,7 +195,7 @@ export default function ConfirmationPage({ params }: PageProps) {
             </Button>
           </Link>
           <Link href="/search" className="flex-1">
-            <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600">
+            <Button className="w-full bg-gradient-to-r from-nude-600 to-warm-600">
               Réserver un autre rendez-vous
             </Button>
           </Link>
@@ -207,7 +207,7 @@ export default function ConfirmationPage({ params }: PageProps) {
             Besoin d'aide ? Contactez l'établissement au{' '}
             <a
               href={`tel:${appointment.establishment.phone}`}
-              className="text-purple-600 hover:text-purple-700 font-medium"
+              className="text-nude-600 hover:text-nude-700 font-medium"
             >
               {appointment.establishment.phone}
             </a>

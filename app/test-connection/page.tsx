@@ -137,7 +137,7 @@ export default function TestConnectionPage() {
         <div className="flex gap-4">
           <button
             onClick={testConnection}
-            className="px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-semibold"
+            className="px-6 py-3 bg-nude-600 text-white rounded-lg hover:bg-nude-700 font-semibold"
           >
             🔄 Relancer les tests
           </button>
@@ -158,7 +158,7 @@ export default function TestConnectionPage() {
             <div>
               <h3 className="font-semibold mb-2">1. Vérifier la configuration Supabase</h3>
               <ul className="list-disc list-inside text-sm text-gray-600 space-y-1">
-                <li>Allez sur <a href="https://app.supabase.com" target="_blank" className="text-purple-600 hover:underline">app.supabase.com</a></li>
+                <li>Allez sur <a href="https://app.supabase.com" target="_blank" className="text-nude-600 hover:underline">app.supabase.com</a></li>
                 <li>Sélectionnez votre projet</li>
                 <li>Settings → API → Vérifiez l'URL et la clé</li>
                 <li>Authentication → URL Configuration → Ajoutez <code className="bg-gray-100 px-1">http://localhost:3000</code></li>

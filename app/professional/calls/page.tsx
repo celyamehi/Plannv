@@ -39,7 +39,7 @@ export default function ProCallsPage() {
   const [establishmentId, setEstablishmentId] = useState<string | null>(null)
   const [filterStaff, setFilterStaff] = useState<string>('all')
 
-  const colors = ['bg-purple-500', 'bg-blue-500', 'bg-green-500', 'bg-pink-500', 'bg-yellow-500', 'bg-red-500']
+  const colors = ['bg-nude-500', 'bg-blue-500', 'bg-green-500', 'bg-warm-500', 'bg-yellow-500', 'bg-red-500']
 
   useEffect(() => {
     checkAuthAndLoadData()
@@ -204,7 +204,7 @@ export default function ProCallsPage() {
 
         {loading ? (
           <div className="text-center py-12">
-            <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-16 h-16 border-4 border-nude-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-600">Chargement...</p>
           </div>
         ) : (
@@ -219,12 +219,12 @@ export default function ProCallsPage() {
               <div className="space-y-8">
                 {Object.entries(groupedAppointments).map(([date, appointments]) => (
                   <div key={date}>
-                    <h2 className="text-xl font-semibold mb-4 text-purple-700">
+                    <h2 className="text-xl font-semibold mb-4 text-nude-700">
                       {formatDate(date)}
                     </h2>
                     <div className="space-y-4">
                       {appointments.map((appointment) => (
-                        <Card key={appointment.id} className="hover:border-purple-300 transition-colors">
+                        <Card key={appointment.id} className="hover:border-nude-300 transition-colors">
                           <CardContent className="p-4">
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
@@ -251,7 +251,7 @@ export default function ProCallsPage() {
                                     <p className="text-xs text-gray-500">Service</p>
                                     <p className="font-semibold">{appointment.services?.name}</p>
                                     <p className="text-sm text-gray-600">
-                                      {appointment.services?.duration} min • {appointment.services?.price}€
+                                      {appointment.services?.duration} min • {appointment.services?.price}DA
                                     </p>
                                   </div>
                                   

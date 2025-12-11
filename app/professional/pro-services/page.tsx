@@ -250,7 +250,7 @@ export default function ServicesPage() {
                   setShowForm(false)
                 }}
                 variant="outline"
-                className="border-purple-600 text-purple-600"
+                className="border-nude-600 text-nude-600"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Services suggérés
@@ -271,7 +271,7 @@ export default function ServicesPage() {
                   category: 'Autres',
                 })
               }}
-              className="bg-gradient-to-r from-purple-600 to-pink-600"
+              className="bg-gradient-to-r from-nude-600 to-warm-600"
             >
               <Plus className="w-4 h-4 mr-2" />
               Service personnalisé
@@ -292,7 +292,7 @@ export default function ServicesPage() {
               <div className="space-y-6">
                 {Object.entries(groupedPredefined).map(([category, categoryServices]) => (
                   <div key={category}>
-                    <h3 className="font-semibold text-lg mb-3 text-purple-700">{category}</h3>
+                    <h3 className="font-semibold text-lg mb-3 text-nude-700">{category}</h3>
                     <div className="grid md:grid-cols-2 gap-3">
                       {categoryServices.map((service) => (
                         <div
@@ -300,8 +300,8 @@ export default function ServicesPage() {
                           onClick={() => toggleServiceSelection(service.name)}
                           className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
                             selectedServices.has(service.name)
-                              ? 'border-purple-600 bg-purple-50'
-                              : 'border-gray-200 hover:border-purple-300'
+                              ? 'border-nude-600 bg-nude-50'
+                              : 'border-gray-200 hover:border-nude-300'
                           }`}
                         >
                           <div className="flex items-start justify-between">
@@ -309,7 +309,7 @@ export default function ServicesPage() {
                               <div className="flex items-center space-x-2">
                                 <div className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
                                   selectedServices.has(service.name)
-                                    ? 'bg-purple-600 border-purple-600'
+                                    ? 'bg-nude-600 border-nude-600'
                                     : 'border-gray-300'
                                 }`}>
                                   {selectedServices.has(service.name) && (
@@ -326,7 +326,7 @@ export default function ServicesPage() {
                                 </span>
                                 <span className="flex items-center">
                                   <Euro className="w-3 h-3 mr-1" />
-                                  {service.suggestedPrice}€
+                                  {service.suggestedPrice}DA
                                 </span>
                               </div>
                             </div>
@@ -342,7 +342,7 @@ export default function ServicesPage() {
                 <Button
                   onClick={handleAddPredefinedServices}
                   disabled={selectedServices.size === 0}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600"
+                  className="bg-gradient-to-r from-nude-600 to-warm-600"
                 >
                   Ajouter {selectedServices.size > 0 && `(${selectedServices.size})`} service{selectedServices.size > 1 ? 's' : ''}
                 </Button>
@@ -391,7 +391,7 @@ export default function ServicesPage() {
                     <select
                       value={formData.category}
                       onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+                      className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-nude-600"
                       required
                     >
                       {availableCategories.map((cat) => (
@@ -437,7 +437,7 @@ export default function ServicesPage() {
 
                   <div>
                     <label className="block text-sm font-medium mb-2">
-                      Prix (€) *
+                      Prix (DA) *
                     </label>
                     <Input
                       type="number"
@@ -469,7 +469,7 @@ export default function ServicesPage() {
                     id="is_active"
                     checked={formData.is_active}
                     onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                    className="w-4 h-4 text-purple-600 rounded"
+                    className="w-4 h-4 text-nude-600 rounded"
                   />
                   <label htmlFor="is_active" className="text-sm font-medium">
                     Service actif (visible pour les clients)
@@ -477,7 +477,7 @@ export default function ServicesPage() {
                 </div>
 
                 <div className="flex space-x-4">
-                  <Button type="submit" className="bg-gradient-to-r from-purple-600 to-pink-600">
+                  <Button type="submit" className="bg-gradient-to-r from-nude-600 to-warm-600">
                     {editingService ? 'Mettre à jour' : 'Créer le service'}
                   </Button>
                   <Button
@@ -499,7 +499,7 @@ export default function ServicesPage() {
         {/* Liste des services */}
         {loading ? (
           <div className="text-center py-12">
-            <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-16 h-16 border-4 border-nude-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-600">Chargement...</p>
           </div>
         ) : services.length === 0 ? (
@@ -517,7 +517,7 @@ export default function ServicesPage() {
                   <Button
                     onClick={() => setShowPredefined(true)}
                     variant="outline"
-                    className="border-purple-600 text-purple-600"
+                    className="border-nude-600 text-nude-600"
                   >
                     <Plus className="w-4 h-4 mr-2" />
                     Services suggérés
@@ -525,7 +525,7 @@ export default function ServicesPage() {
                 )}
                 <Button
                   onClick={() => setShowForm(true)}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600"
+                  className="bg-gradient-to-r from-nude-600 to-warm-600"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Service personnalisé
@@ -537,7 +537,7 @@ export default function ServicesPage() {
           <div className="space-y-8">
             {Object.entries(groupedServices).map(([category, categoryServices]) => (
               <div key={category}>
-                <h2 className="text-2xl font-bold mb-4 text-purple-700">{category}</h2>
+                <h2 className="text-2xl font-bold mb-4 text-nude-700">{category}</h2>
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {categoryServices.map((service) => (
                     <Card key={service.id} className={!service.is_active ? 'opacity-60' : ''}>
@@ -565,7 +565,7 @@ export default function ServicesPage() {
                           </span>
                           <span className="flex items-center">
                             <Euro className="w-4 h-4 mr-1" />
-                            {service.price}€
+                            {service.price}DA
                           </span>
                         </div>
 

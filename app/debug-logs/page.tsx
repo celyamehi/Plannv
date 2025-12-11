@@ -96,7 +96,7 @@ export default function DebugLogsPage() {
     if (log.includes('WARN:')) return <AlertCircle className="w-4 h-4 text-yellow-500" />
     if (log.includes('MIDDLEWARE')) return <Info className="w-4 h-4 text-blue-500" />
     if (log.includes('LOGIN')) return <CheckCircle className="w-4 h-4 text-green-500" />
-    if (log.includes('DASHBOARD')) return <CheckCircle className="w-4 h-4 text-purple-500" />
+    if (log.includes('DASHBOARD')) return <CheckCircle className="w-4 h-4 text-nude-500" />
     return <Info className="w-4 h-4 text-gray-500" />
   }
 
@@ -105,7 +105,7 @@ export default function DebugLogsPage() {
     if (log.includes('WARN:')) return 'text-yellow-600 border-yellow-200'
     if (log.includes('MIDDLEWARE')) return 'text-blue-600 border-blue-200'
     if (log.includes('LOGIN')) return 'text-green-600 border-green-200'
-    if (log.includes('DASHBOARD')) return 'text-purple-600 border-purple-200'
+    if (log.includes('DASHBOARD')) return 'text-nude-600 border-nude-200'
     if (log.includes('AUTH CALLBACK')) return 'text-orange-600 border-orange-200'
     return 'text-gray-600 border-gray-200'
   }

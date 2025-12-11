@@ -74,8 +74,8 @@ export default function ReviewsList({ establishmentId }: ReviewsListProps) {
                 <div key={review.id} className="border-b border-gray-200 pb-6 last:border-0">
                     <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                                <span className="font-semibold text-purple-600">
+                            <div className="w-10 h-10 bg-nude-100 rounded-full flex items-center justify-center">
+                                <span className="font-semibold text-nude-600">
                                     {review.client?.full_name?.charAt(0) || 'A'}
                                 </span>
                             </div>

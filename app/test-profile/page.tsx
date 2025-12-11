@@ -118,7 +118,7 @@ export default function TestProfilePage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-nude-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p>Vérification...</p>
         </div>
       </div>
@@ -186,7 +186,7 @@ export default function TestProfilePage() {
           <div className="bg-white rounded-lg shadow p-6">
             <button
               onClick={createProfile}
-              className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white py-3 px-6 rounded-lg font-medium hover:opacity-90 transition"
+              className="w-full bg-gradient-to-r from-nude-600 to-warm-600 text-white py-3 px-6 rounded-lg font-medium hover:opacity-90 transition"
             >
               Créer le profil (type: professional)
             </button>
@@ -205,16 +205,16 @@ export default function TestProfilePage() {
         )}
 
         <div className="mt-8 space-y-4">
-          <a href="/login" className="block text-center text-purple-600 hover:text-purple-700">
+          <a href="/login" className="block text-center text-nude-600 hover:text-nude-700">
             → Page de login
           </a>
-          <a href="/signup" className="block text-center text-purple-600 hover:text-purple-700">
+          <a href="/signup" className="block text-center text-nude-600 hover:text-nude-700">
             → Page d&apos;inscription
           </a>
-          <a href="/professionals/signup" className="block text-center text-purple-600 hover:text-purple-700">
+          <a href="/professionals/signup" className="block text-center text-nude-600 hover:text-nude-700">
             → Inscription professionnelle
           </a>
-          <a href="/professional/pro-dashboard" className="block text-center text-purple-600 hover:text-purple-700">
+          <a href="/professional/pro-dashboard" className="block text-center text-nude-600 hover:text-nude-700">
             → Dashboard professionnel
           </a>
         </div>

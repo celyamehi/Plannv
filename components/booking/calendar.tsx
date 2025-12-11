@@ -235,7 +235,7 @@ export function BookingCalendar({ staffMemberId, serviceDuration, onSlotSelect }
                   disabled={!slot.available}
                   onClick={() => handleTimeSelect(slot.time)}
                   className={`${selectedTime === slot.time
-                      ? 'bg-gradient-to-r from-purple-600 to-pink-600'
+                      ? 'bg-gradient-to-r from-nude-600 to-warm-600'
                       : ''
                     } ${!slot.available ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >

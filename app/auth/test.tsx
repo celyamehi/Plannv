@@ -52,7 +52,7 @@ export default function AuthTestPage() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-nude-600 mx-auto mb-4"></div>
           <p>Vérification de l'authentification...</p>
         </div>
       </div>
@@ -65,7 +65,7 @@ export default function AuthTestPage() {
         {/* Header */}
         <div className="flex justify-between items-center mb-8">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-nude-600 to-warm-600 rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-xl">P</span>
             </div>
             <span className="text-2xl font-semibold">PlannV</span>

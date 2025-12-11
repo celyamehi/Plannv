@@ -188,7 +188,7 @@ export default function AppointmentsPage() {
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-nude-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p>Chargement...</p>
         </div>
       </div>
@@ -201,7 +201,7 @@ export default function AppointmentsPage() {
 
       <div className="flex justify-end items-center mb-6">
         <Link href="/search">
-          <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+          <Button className="bg-gradient-to-r from-nude-600 to-warm-600 hover:from-nude-700 hover:to-warm-700">
             <Calendar className="w-4 h-4 mr-2" />
             Nouveau rendez-vous
           </Button>
@@ -225,7 +225,7 @@ export default function AppointmentsPage() {
                 variant={filter === key ? 'default' : 'outline'}
                 size="sm"
                 onClick={() => setFilter(key as any)}
-                className={filter === key ? 'bg-purple-600' : ''}
+                className={filter === key ? 'bg-nude-600' : ''}
               >
                 {label}
               </Button>
@@ -252,7 +252,7 @@ export default function AppointmentsPage() {
             </p>
             {filter === 'upcoming' && (
               <Link href="/search">
-                <Button className="bg-gradient-to-r from-purple-600 to-pink-600">
+                <Button className="bg-gradient-to-r from-nude-600 to-warm-600">
                   <Calendar className="w-4 h-4 mr-2" />
                   Réserver un rendez-vous
                 </Button>
@@ -269,7 +269,7 @@ export default function AppointmentsPage() {
                   <div className="flex items-center space-x-6">
                     {/* Date et heure */}
                     <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-600">
+                      <div className="text-2xl font-bold text-nude-600">
                         {new Date(appointment.appointment_date).getDate()}
                       </div>
                       <div className="text-sm text-gray-600">
@@ -306,7 +306,7 @@ export default function AppointmentsPage() {
                             <User className="w-4 h-4" />
                             <Link
                               href={`/booking/${appointment.establishment.slug}?service=${appointment.service_id}&appointmentId=${appointment.id}`}
-                              className="text-sm font-medium text-purple-600 hover:underline"
+                              className="text-sm font-medium text-nude-600 hover:underline"
                             >
                               Modifier
                             </Link>
@@ -316,7 +316,7 @@ export default function AppointmentsPage() {
                         <div className="flex items-center space-x-2">
                           <Clock className="w-4 h-4" />
                           <span>{appointment.service?.duration} min</span>
-                          <span>• {appointment.service?.price}€</span>
+                          <span>• {appointment.service?.price}DA</span>
                         </div>
                       </div>
                     </div>
@@ -360,7 +360,7 @@ export default function AppointmentsPage() {
                       <Button
                         variant="outline"
                         size="sm"
-                        className="text-purple-600 hover:bg-purple-50"
+                        className="text-nude-600 hover:bg-nude-50"
                         onClick={() => {
                           setSelectedAppointmentForReview(appointment)
                           setShowReviewModal(true)

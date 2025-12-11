@@ -1,107 +1,134 @@
 import Link from 'next/link'
-import HeroSection from '@/components/home/HeroSection'
-import CategoriesSection from '@/components/home/CategoriesSection'
-import FeaturesSection from '@/components/home/FeaturesSection'
-import CTASection from '@/components/home/CTASection'
+import MainHeader from '@/components/layout/MainHeader'
+import HeroSectionAlgeria from '@/components/home/HeroSectionAlgeria'
+import CategoriesSectionAlgeria from '@/components/home/CategoriesSectionAlgeria'
+import VillesSection from '@/components/home/VillesSection'
+import HowItWorksSection from '@/components/home/HowItWorksSection'
+import ProfessionalsSection from '@/components/home/ProfessionalsSection'
+import StatsSection from '@/components/home/StatsSection'
 
 export default function Home() {
   return (
     <main className="min-h-screen bg-white">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-b border-gray-100 z-50">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
-              <span className="text-white font-bold text-xl">P</span>
-            </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
-              Kalendo
-            </span>
-          </div>
-
-          <nav className="hidden md:flex items-center space-x-8">
-            <Link href="/search" className="text-gray-600 hover:text-purple-600 font-medium transition-colors">
-              Rechercher
-            </Link>
-            <Link href="/professionals" className="text-gray-600 hover:text-purple-600 font-medium transition-colors">
-              Professionnels
-            </Link>
-            <Link href="/about" className="text-gray-600 hover:text-purple-600 font-medium transition-colors">
-              À propos
-            </Link>
-          </nav>
-
-          <div className="flex items-center space-x-4">
-            <Link
-              href="/auth/selection"
-              className="text-gray-600 hover:text-purple-600 font-medium transition-colors"
-            >
-              Connexion
-            </Link>
-            <Link
-              href="/signup"
-              className="px-6 py-2.5 bg-black text-white rounded-full font-medium hover:bg-gray-800 hover:shadow-lg transition-all duration-300"
-            >
-              S'inscrire
-            </Link>
-          </div>
-        </div>
-      </header>
+      <MainHeader />
 
       {/* Main Content */}
       <div className="pt-20">
-        <HeroSection />
-        <CategoriesSection />
-        <FeaturesSection />
-        <CTASection />
+        <HeroSectionAlgeria />
+        <CategoriesSectionAlgeria />
+        <VillesSection />
+        <div id="how-it-works">
+          <HowItWorksSection />
+        </div>
+        <div id="professionals">
+          <ProfessionalsSection />
+        </div>
+        <StatsSection />
       </div>
 
       {/* Footer */}
-      <footer className="border-t border-gray-100 bg-gray-50">
-        <div className="container mx-auto px-4 py-12">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
+      <footer className="border-t border-nude-100 bg-nude-50/30">
+        <div className="container mx-auto px-4 py-16">
+          <div className="grid md:grid-cols-2 lg:grid-cols-5 gap-8">
+            {/* Brand */}
+            <div className="lg:col-span-2">
               <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold">K</span>
+                <div className="w-10 h-10 bg-gradient-to-br from-nude-600 to-nude-500 rounded-xl flex items-center justify-center">
+                  <span className="text-white font-bold text-lg">K</span>
                 </div>
                 <span className="text-xl font-bold text-gray-900">Kalendo</span>
               </div>
-              <p className="text-gray-600 text-sm leading-relaxed">
-                La plateforme de réservation beauté et bien-être qui simplifie votre quotidien.
+              <p className="text-gray-600 text-sm leading-relaxed mb-4 max-w-sm">
+                La 1ère plateforme de réservation beauté en Algérie. Trouvez et réservez vos rendez-vous en quelques clics, 24h/24.
               </p>
+              <div className="flex items-center gap-2 text-sm text-gray-500">
+                <span>📧</span>
+                <a href="mailto:contact@kalendo.dz" className="hover:text-nude-600 transition-colors">
+                  contact@kalendo.dz
+                </a>
+              </div>
             </div>
 
+            {/* Pour les clients */}
             <div>
-              <h4 className="font-bold mb-4 text-gray-900">Clients</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/search" className="hover:text-purple-600 transition-colors">Rechercher</Link></li>
-                <li><Link href="/how-it-works" className="hover:text-purple-600 transition-colors">Comment ça marche</Link></li>
-                <li><Link href="/faq" className="hover:text-purple-600 transition-colors">FAQ</Link></li>
+              <h4 className="font-bold mb-4 text-gray-900">Pour les clients</h4>
+              <ul className="space-y-3 text-sm text-gray-600">
+                <li>
+                  <Link href="/search" className="hover:text-nude-600 transition-colors">
+                    Trouver un salon
+                  </Link>
+                </li>
+                <li>
+                  <Link href="#how-it-works" className="hover:text-nude-600 transition-colors">
+                    Comment ça marche
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/faq" className="hover:text-nude-600 transition-colors">
+                    FAQ
+                  </Link>
+                </li>
               </ul>
             </div>
 
+            {/* Pour les professionnels */}
             <div>
-              <h4 className="font-bold mb-4 text-gray-900">Professionnels</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/professionals" className="hover:text-purple-600 transition-colors">Espace Pro</Link></li>
-                <li><Link href="/professionals/pricing" className="hover:text-purple-600 transition-colors">Tarifs</Link></li>
-                <li><Link href="/professionals/features" className="hover:text-purple-600 transition-colors">Fonctionnalités</Link></li>
+              <h4 className="font-bold mb-4 text-gray-900">Pour les professionnels</h4>
+              <ul className="space-y-3 text-sm text-gray-600">
+                <li>
+                  <Link href="/professionals/signup" className="hover:text-nude-600 transition-colors">
+                    Ajouter mon salon
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/login?type=professional" className="hover:text-nude-600 transition-colors">
+                    Espace Pro
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/professionals/pricing" className="hover:text-nude-600 transition-colors">
+                    Tarifs
+                  </Link>
+                </li>
               </ul>
             </div>
 
+            {/* Légal */}
             <div>
               <h4 className="font-bold mb-4 text-gray-900">Légal</h4>
-              <ul className="space-y-2 text-sm text-gray-600">
-                <li><Link href="/terms" className="hover:text-purple-600 transition-colors">CGU</Link></li>
-                <li><Link href="/privacy" className="hover:text-purple-600 transition-colors">Confidentialité</Link></li>
-                <li><Link href="/contact" className="hover:text-purple-600 transition-colors">Contact</Link></li>
+              <ul className="space-y-3 text-sm text-gray-600">
+                <li>
+                  <Link href="/mentions-legales" className="hover:text-nude-600 transition-colors">
+                    Mentions légales
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/cgu" className="hover:text-nude-600 transition-colors">
+                    CGU
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/confidentialite" className="hover:text-nude-600 transition-colors">
+                    Politique de confidentialité
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/contact" className="hover:text-nude-600 transition-colors">
+                    Contact
+                  </Link>
+                </li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-gray-200 mt-12 pt-8 text-center text-sm text-gray-500">
-            <p>&copy; {new Date().getFullYear()} Kalendo. Tous droits réservés.</p>
+          {/* Bottom bar */}
+          <div className="border-t border-nude-100 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-gray-500">
+              © {new Date().getFullYear()} <Link href="/admin/login" className="hover:text-nude-600 transition-colors">Kalendo</Link>. Tous droits réservés. 🇩🇿
+            </p>
+            <div className="flex items-center gap-6 text-sm text-gray-500">
+              <span>Fait avec ❤️ en Algérie</span>
+            </div>
           </div>
         </div>
       </footer>

@@ -86,7 +86,7 @@ export default function SimpleSignupPage() {
         {/* Logo */}
         <div className="flex justify-center mb-8">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-nude-600 to-warm-600 rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-2xl">P</span>
             </div>
             <span className="text-3xl font-semibold">PlannV</span>
@@ -146,7 +146,7 @@ export default function SimpleSignupPage() {
 
             <div className="mt-6 text-center text-sm">
               <span className="text-gray-600">Vous avez déjà un compte ? </span>
-              <Link href="/login" className="text-purple-600 hover:text-purple-700 font-medium">
+              <Link href="/login" className="text-nude-600 hover:text-nude-700 font-medium">
                 Se connecter
               </Link>
             </div>

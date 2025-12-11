@@ -4,8 +4,6 @@ const nextConfig = {
     domains: ['tnfnsgztpsuhymjxqifp.supabase.co'],
   },
   experimental: {
-    // Activer le nouveau système de routage et de rendu
-    serverActions: true,
     // Améliorer la stabilité des rendus côté serveur
     optimizePackageImports: ['@supabase/auth-helpers-nextjs'],
   },

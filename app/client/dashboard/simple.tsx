@@ -31,7 +31,7 @@ export default function SimpleDashboard() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-purple-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-nude-600 mx-auto mb-4"></div>
           <p>Chargement de votre dashboard...</p>
         </div>
       </div>
@@ -64,7 +64,7 @@ export default function SimpleDashboard() {
       <header className="bg-white border-b border-gray-200">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-nude-600 to-warm-600 rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-xl">P</span>
             </div>
             <span className="text-2xl font-semibold">PlannV</span>
@@ -74,7 +74,7 @@ export default function SimpleDashboard() {
             <Link href="/search" className="text-gray-600 hover:text-gray-900">
               Rechercher
             </Link>
-            <Link href="/dashboard/simple" className="text-purple-600 font-medium">
+            <Link href="/dashboard/simple" className="text-nude-600 font-medium">
               Dashboard
             </Link>
             <Button 
@@ -122,8 +122,8 @@ export default function SimpleDashboard() {
           <Card className="hover:shadow-lg transition-shadow cursor-pointer">
             <CardContent className="p-6">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
-                  <MapPin className="w-6 h-6 text-purple-600" />
+                <div className="w-12 h-12 bg-nude-100 rounded-xl flex items-center justify-center">
+                  <MapPin className="w-6 h-6 text-nude-600" />
                 </div>
                 <div>
                   <h3 className="font-semibold">Trouver un salon</h3>
@@ -136,8 +136,8 @@ export default function SimpleDashboard() {
           <Card className="hover:shadow-lg transition-shadow cursor-pointer">
             <CardContent className="p-6">
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 bg-pink-100 rounded-xl flex items-center justify-center">
-                  <Calendar className="w-6 h-6 text-pink-600" />
+                <div className="w-12 h-12 bg-warm-100 rounded-xl flex items-center justify-center">
+                  <Calendar className="w-6 h-6 text-warm-600" />
                 </div>
                 <div>
                   <h3 className="font-semibold">Mes rendez-vous</h3>

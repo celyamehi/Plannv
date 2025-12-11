@@ -8,6 +8,7 @@ import { Calendar, Users, DollarSign, Settings, Plus, Clock, MapPin, Star } from
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card'
 import { Button } from '../../../components/ui/button'
 import ProSidebar from '../../../components/layout/ProSidebar'
+import SubscriptionBanner from '../../../components/SubscriptionBanner'
 
 export default function ProDashboardPage() {
   const router = useRouter()
@@ -39,7 +40,7 @@ export default function ProDashboardPage() {
 
       const { data: profileData, error: profileError } = await supabase
         .from('profiles')
-        .select('user_type, full_name, email')
+        .select('user_type, full_name, email, subscription_status, subscription_ends_at')
         .eq('id', session.user.id)
         .single()
 
@@ -58,12 +59,49 @@ export default function ProDashboardPage() {
         return
       }
 
-      const { data: establishmentData, error: establishmentError } = await supabase
+      // Vérifier le statut d'abonnement (sauf pour les admins)
+      if (profileData.user_type === 'professional') {
+        const status = profileData.subscription_status
+        const endsAt = profileData.subscription_ends_at ? new Date(profileData.subscription_ends_at) : null
+        const now = new Date()
+
+        // Vérifier si l'essai/abonnement a expiré
+        if (status === 'trial' || status === 'active') {
+          if (endsAt && endsAt < now) {
+            // Mettre à jour le statut en "expired"
+            await supabase
+              .from('profiles')
+              .update({ subscription_status: 'expired' })
+              .eq('id', session.user.id)
+            
+            console.log('⚠️ PRO-DASHBOARD - Abonnement expiré, redirection')
+            router.push('/account-suspended')
+            return
+          }
+        }
+
+        // Bloquer l'accès si suspendu ou expiré
+        if (status === 'suspended' || status === 'expired') {
+          console.log('🚫 PRO-DASHBOARD - Compte suspendu/expiré, redirection')
+          router.push('/account-suspended')
+          return
+        }
+
+        // Bloquer si en attente (pending) - jamais activé
+        if (status === 'pending' || !status) {
+          console.log('⏳ PRO-DASHBOARD - Compte en attente d\'activation')
+          // On laisse passer mais avec la bannière d'avertissement
+        }
+      }
+
+      const { data: establishments, error: establishmentError } = await supabase
         .from('establishments')
         .select('*')
         .eq('owner_id', session.user.id)
-        .maybeSingle()
+        .order('created_at', { ascending: false })
+        .limit(1)
 
+      const establishmentData = establishments?.[0] || null
       console.log('🔍 PRO-DASHBOARD - Établissement:', establishmentData)
 
       if (establishmentError) {
@@ -72,7 +110,7 @@ export default function ProDashboardPage() {
 
       if (!establishmentData) {
         console.log('🔍 PRO-DASHBOARD - Pas d\'établissement, redirection vers setup')
-        router.push('/professional/setup')
+        router.push('/professionals/signup')
         return
       }
 
@@ -99,10 +137,13 @@ export default function ProDashboardPage() {
       console.log('🔍 TOUS les RDV d\'aujourd\'hui (DEBUG):', allTodayAppointments)
 
       // Statistiques du mois en cours uniquement
-      const currentMonth = new Date().toISOString().slice(0, 7) // Format: YYYY-MM
-      const currentYear = new Date().getFullYear()
-      const currentMonthNum = new Date().getMonth() + 1
-      const daysInMonth = new Date(currentYear, currentMonthNum, 0).getDate()
+      const now = new Date()
+      const currentMonth = now.toISOString().slice(0, 7) // Format: YYYY-MM
+      const startOfMonth = `${currentMonth}-01`
+      
+      // Calculer le premier jour du mois suivant
+      const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1)
+      const endOfMonth = nextMonth.toISOString().slice(0, 10) // Format: YYYY-MM-DD
       
       // D'abord, chercher les RDV du mois par date de rendez-vous
       const { data: monthAppointmentsByDate } = await supabase
@@ -112,8 +153,8 @@ export default function ProDashboardPage() {
           services (price)
         `)
         .eq('establishment_id', establishmentData.id)
-        .gte('appointment_date', `${currentMonth}-01`)
-        .lt('appointment_date', `${currentMonth}-${String(daysInMonth + 1).padStart(2, '0')}`)
+        .gte('appointment_date', startOfMonth)
+        .lt('appointment_date', endOfMonth)
         .in('status', ['completed', 'paid']) // RDV terminés OU payés
 
       // Ensuite, chercher les RDV payés ce mois-ci via les transactions (peu importe la date du RDV)
@@ -133,8 +174,8 @@ export default function ProDashboardPage() {
         `)
         .eq('establishment_id', establishmentData.id)
         .eq('payment_status', 'paid')
-        .gte('created_at', `${currentMonth}-01T00:00:00Z`)
-        .lt('created_at', `${currentMonth}-${String(daysInMonth).padStart(2, '0')}T23:59:59Z`)
+        .gte('created_at', `${startOfMonth}T00:00:00Z`)
+        .lt('created_at', `${endOfMonth}T00:00:00Z`)
 
       // Calculer le chiffre d'affaires du mois via les transactions
       const { data: monthTransactions } = await supabase
@@ -142,8 +183,8 @@ export default function ProDashboardPage() {
         .select('amount, created_at')
         .eq('establishment_id', establishmentData.id)
         .eq('payment_status', 'paid')
-        .gte('created_at', `${currentMonth}-01T00:00:00Z`)
-        .lt('created_at', `${currentMonth}-${String(daysInMonth).padStart(2, '0')}T23:59:59Z`)
+        .gte('created_at', `${startOfMonth}T00:00:00Z`)
+        .lt('created_at', `${endOfMonth}T00:00:00Z`)
 
       // Filtrer les transactions du mois en cours
       const monthRevenue = monthTransactions?.reduce((sum, t) => {
@@ -158,9 +199,8 @@ export default function ProDashboardPage() {
       console.log('💰 RDV payés ce mois-ci (via transactions):', paidAppointmentsThisMonth)
       console.log('💳 Transactions du mois (détail):', monthTransactions)
       console.log('📅 Période recherchée:', {
-        début: `${currentMonth}-01`,
-        fin: `${currentMonth}-${String(daysInMonth).padStart(2, '0')}`,
-        joursDansMois: daysInMonth,
+        début: startOfMonth,
+        fin: endOfMonth,
         moisActuel: currentMonth
       })
 
@@ -182,8 +222,8 @@ export default function ProDashboardPage() {
         .from('appointments')
         .select('id, status, appointment_date, guest_name, created_at')
         .eq('establishment_id', establishmentData.id)
-        .gte('appointment_date', `${currentMonth}-01`)
-        .lt('appointment_date', `${currentMonth}-${String(daysInMonth).padStart(2, '0')}`)
+        .gte('appointment_date', startOfMonth)
+        .lt('appointment_date', endOfMonth)
 
       console.log('🔍 TOUS les RDV du mois (DEBUG):', allAppointmentsDebug)
 
@@ -192,15 +232,15 @@ export default function ProDashboardPage() {
         .from('appointments')
         .select('id, status, appointment_date, guest_name')
         .eq('establishment_id', establishmentData.id)
-        .gte('appointment_date', `${currentMonth}-01`)
-        .lt('appointment_date', `${currentMonth}-${String(daysInMonth).padStart(2, '0')}`)
+        .gte('appointment_date', startOfMonth)
+        .lt('appointment_date', endOfMonth)
         .eq('status', 'cancelled')
 
       console.log('❌ RDV annulés trouvés:', cancelledAppointments)
       console.log('🚨 Requête annulés:', {
         établissement: establishmentData.id,
-        début: `${currentMonth}-01`,
-        fin: `${currentMonth}-${String(daysInMonth).padStart(2, '0')}`,
+        début: startOfMonth,
+        fin: endOfMonth,
         statut: 'cancelled'
       })
 
@@ -234,7 +274,7 @@ export default function ProDashboardPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-nude-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p>Chargement...</p>
         </div>
       </div>
@@ -244,15 +284,15 @@ export default function ProDashboardPage() {
   return (
     <ProSidebar>
       <div className="p-8">
+        {/* Bannière d'abonnement */}
+        <SubscriptionBanner />
+
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Tableau de bord mensuel</h1>
           <p className="text-gray-600 mt-2">
             Bienvenue, {profile?.full_name || 'Professionnel'}! Voici un aperçu de votre activité ce mois-ci.
           </p>
         </div>
-        <p className="text-gray-600">
-          Bienvenue dans votre tableau de bord professionnel
-        </p>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -299,7 +339,7 @@ export default function ProDashboardPage() {
               <DollarSign className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{stats.totalRevenue.toFixed(2)}€</div>
+              <div className="text-2xl font-bold">{stats.totalRevenue.toFixed(2)}DA</div>
               <p className="text-xs text-muted-foreground">
                 Chiffre d'affaires mensuel
               </p>
@@ -311,7 +351,7 @@ export default function ProDashboardPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Plus className="w-5 h-5 mr-2 text-purple-600" />
+                <Plus className="w-5 h-5 mr-2 text-nude-600" />
                 Nouveau rendez-vous
               </CardTitle>
               <CardDescription>
@@ -330,7 +370,7 @@ export default function ProDashboardPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Calendar className="w-5 h-5 mr-2 text-purple-600" />
+                <Calendar className="w-5 h-5 mr-2 text-nude-600" />
                 Voir le calendrier
               </CardTitle>
               <CardDescription>
@@ -349,7 +389,7 @@ export default function ProDashboardPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <Settings className="w-5 h-5 mr-2 text-purple-600" />
+                <Settings className="w-5 h-5 mr-2 text-nude-600" />
                 Paramètres
               </CardTitle>
               <CardDescription>
@@ -370,7 +410,7 @@ export default function ProDashboardPage() {
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center">
-                <MapPin className="w-5 h-5 mr-2 text-purple-600" />
+                <MapPin className="w-5 h-5 mr-2 text-nude-600" />
                 {establishment.name}
               </CardTitle>
               <CardDescription>

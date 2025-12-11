@@ -235,7 +235,7 @@ export default function StaffPage() {
                 is_active: true,
               })
             }}
-            className="bg-gradient-to-r from-purple-600 to-pink-600"
+            className="bg-gradient-to-r from-nude-600 to-warm-600"
           >
             <Plus className="w-4 h-4 mr-2" />
             Ajouter un collaborateur
@@ -327,7 +327,7 @@ export default function StaffPage() {
                     <div className="space-y-4 max-h-96 overflow-y-auto border border-gray-200 rounded-lg p-4">
                       {Object.entries(servicesByCategory).map(([category, categoryServices]) => (
                         <div key={category}>
-                          <h3 className="font-semibold text-md mb-2 text-purple-700">{category}</h3>
+                          <h3 className="font-semibold text-md mb-2 text-nude-700">{category}</h3>
                           <div className="grid md:grid-cols-2 gap-2">
                             {categoryServices.map((service) => (
                               <div
@@ -335,14 +335,14 @@ export default function StaffPage() {
                                 onClick={() => toggleServiceSelection(service.id)}
                                 className={`p-3 border-2 rounded-lg cursor-pointer transition-all ${
                                   selectedServices.has(service.id)
-                                    ? 'border-purple-600 bg-purple-50'
-                                    : 'border-gray-200 hover:border-purple-300'
+                                    ? 'border-nude-600 bg-nude-50'
+                                    : 'border-gray-200 hover:border-nude-300'
                                 }`}
                               >
                                 <div className="flex items-center space-x-2">
                                   <div className={`w-5 h-5 rounded border-2 flex items-center justify-center flex-shrink-0 ${
                                     selectedServices.has(service.id)
-                                      ? 'bg-purple-600 border-purple-600'
+                                      ? 'bg-nude-600 border-nude-600'
                                       : 'border-gray-300'
                                   }`}>
                                     {selectedServices.has(service.id) && (
@@ -372,7 +372,7 @@ export default function StaffPage() {
                     id="is_active"
                     checked={formData.is_active}
                     onChange={(e) => setFormData({ ...formData, is_active: e.target.checked })}
-                    className="w-4 h-4 text-purple-600 rounded"
+                    className="w-4 h-4 text-nude-600 rounded"
                   />
                   <label htmlFor="is_active" className="text-sm font-medium">
                     Collaborateur actif
@@ -382,7 +382,7 @@ export default function StaffPage() {
                 <div className="flex space-x-4">
                   <Button 
                     type="submit" 
-                    className="bg-gradient-to-r from-purple-600 to-pink-600"
+                    className="bg-gradient-to-r from-nude-600 to-warm-600"
                     disabled={selectedServices.size === 0}
                   >
                     {editingMember ? 'Mettre à jour' : 'Ajouter le collaborateur'}
@@ -407,7 +407,7 @@ export default function StaffPage() {
         {/* Staff List */}
         {loading ? (
           <div className="text-center py-12">
-            <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-16 h-16 border-4 border-nude-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
             <p className="text-gray-600">Chargement...</p>
           </div>
         ) : staff.length === 0 ? (
@@ -422,7 +422,7 @@ export default function StaffPage() {
               </p>
               <Button
                 onClick={() => setShowForm(true)}
-                className="bg-gradient-to-r from-purple-600 to-pink-600"
+                className="bg-gradient-to-r from-nude-600 to-warm-600"
               >
                 <Plus className="w-4 h-4 mr-2" />
                 Ajouter un collaborateur

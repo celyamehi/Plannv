@@ -8,15 +8,15 @@ const features = [
         icon: Calendar,
         title: "Réservation instantanée",
         description: "Réservez en quelques clics, 24h/24 et 7j/7. Confirmation immédiate de votre rendez-vous.",
-        color: "text-purple-600",
-        bg: "bg-purple-100"
+        color: "text-nude-600",
+        bg: "bg-nude-100"
     },
     {
         icon: Star,
         title: "Avis vérifiés",
         description: "Consultez les avis authentiques de clients pour choisir le meilleur établissement.",
-        color: "text-pink-600",
-        bg: "bg-pink-100"
+        color: "text-warm-600",
+        bg: "bg-warm-100"
     },
     {
         icon: MapPin,
@@ -34,8 +34,8 @@ const features = [
     },
     {
         icon: Clock,
-        title: "Rappels automatiques",
-        description: "Recevez des rappels par SMS et email pour ne jamais oublier vos rendez-vous.",
+        title: "Confirmation personnalisée",
+        description: "Les professionnels vous contactent pour confirmer vos rendez-vous du lendemain.",
         color: "text-orange-600",
         bg: "bg-orange-100"
     },

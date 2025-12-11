@@ -86,7 +86,7 @@ export default function DebugLoginPage() {
             <p className="text-sm text-gray-600">
               Redirection vers votre dashboard...
             </p>
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-nude-600 mx-auto"></div>
             <Button 
               onClick={() => router.push('/dashboard')}
               variant="outline"
@@ -106,7 +106,7 @@ export default function DebugLoginPage() {
         {/* Logo */}
         <div className="flex justify-center mb-8">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-nude-600 to-warm-600 rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-2xl">P</span>
             </div>
             <span className="text-3xl font-semibold">PlannV</span>
@@ -174,7 +174,7 @@ export default function DebugLoginPage() {
 
             <div className="mt-6 text-center text-sm">
               <span className="text-gray-600">Pas encore de compte ? </span>
-              <Link href="/signup/simple" className="text-purple-600 hover:text-purple-700 font-medium">
+              <Link href="/signup/simple" className="text-nude-600 hover:text-nude-700 font-medium">
                 S'inscrire (version simple)
               </Link>
             </div>

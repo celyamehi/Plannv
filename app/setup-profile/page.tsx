@@ -85,7 +85,7 @@ export default function SetupProfilePage() {
       // Rediriger après 2 secondes
       setTimeout(() => {
         if (formData.userType === 'professional' || formData.userType === 'admin') {
-          router.push('/professional/setup')
+          router.push('/professionals/signup')
         } else {
           router.push('/dashboard')
         }
@@ -102,7 +102,7 @@ export default function SetupProfilePage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-nude-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Vérification...</p>
         </div>
       </div>
@@ -135,7 +135,7 @@ export default function SetupProfilePage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex items-center justify-center mb-8">
-          <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center shadow-lg shadow-purple-200">
+          <div className="w-10 h-10 bg-gradient-to-br from-nude-600 to-warm-600 rounded-xl flex items-center justify-center shadow-lg shadow-nude-200">
             <span className="text-white font-bold text-xl">K</span>
           </div>
           <span className="text-3xl font-semibold ml-2">Kalendo</span>
@@ -194,7 +194,7 @@ export default function SetupProfilePage() {
                   id="userType"
                   value={formData.userType}
                   onChange={(e) => setFormData({ ...formData, userType: e.target.value })}
-                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-600"
+                  className="w-full px-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-nude-600"
                   required
                 >
                   <option value="client">Client</option>
@@ -202,7 +202,7 @@ export default function SetupProfilePage() {
                 </select>
               </div>
 
-              <Button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-pink-600" disabled={loading}>
+              <Button type="submit" className="w-full bg-gradient-to-r from-nude-600 to-warm-600" disabled={loading}>
                 {loading ? 'Configuration...' : 'Créer mon profil'}
               </Button>
             </form>

@@ -66,7 +66,7 @@ export default function DirectLoginPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="text-center space-y-4">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-nude-600 mx-auto"></div>
             <p className="text-sm text-gray-600">
               Si vous n'êtes pas redirigé automatiquement, cliquez ci-dessous
             </p>
@@ -87,7 +87,7 @@ export default function DirectLoginPage() {
         {/* Logo */}
         <div className="flex justify-center mb-8">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
+            <div className="w-12 h-12 bg-gradient-to-br from-nude-600 to-warm-600 rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-2xl">P</span>
             </div>
             <span className="text-3xl font-semibold">PlannV</span>
@@ -145,7 +145,7 @@ export default function DirectLoginPage() {
             <div className="mt-6 space-y-2">
               <div className="text-center text-sm">
                 <span className="text-gray-600">Pas encore de compte ? </span>
-                <Link href="/signup/no-confirm" className="text-purple-600 hover:text-purple-700 font-medium">
+                <Link href="/signup/no-confirm" className="text-nude-600 hover:text-nude-700 font-medium">
                   S'inscrire (sans confirmation)
                 </Link>
               </div>

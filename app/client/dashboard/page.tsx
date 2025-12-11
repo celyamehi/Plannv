@@ -165,7 +165,7 @@ export default function DashboardPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-nude-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p>Chargement de votre espace personnel...</p>
         </div>
       </div>
@@ -201,7 +201,7 @@ export default function DashboardPage() {
                   <p className="text-sm text-gray-600 mb-1">Rendez-vous à venir</p>
                   <p className="text-3xl font-bold">{upcomingAppointments.length}</p>
                 </div>
-                <Calendar className="w-8 h-8 text-purple-600" />
+                <Calendar className="w-8 h-8 text-nude-600" />
               </div>
             </CardContent>
           </Card>
@@ -215,7 +215,7 @@ export default function DashboardPage() {
                     {thisMonthCount}
                   </p>
                 </div>
-                <Clock className="w-8 h-8 text-purple-600" />
+                <Clock className="w-8 h-8 text-nude-600" />
               </div>
             </CardContent>
           </Card>
@@ -227,7 +227,7 @@ export default function DashboardPage() {
                   <p className="text-sm text-gray-600 mb-1">Favoris</p>
                   <p className="text-3xl font-bold">{favoritesCount}</p>
                 </div>
-                <Star className="w-8 h-8 text-purple-600" />
+                <Star className="w-8 h-8 text-nude-600" />
               </div>
             </CardContent>
           </Card>
@@ -239,7 +239,7 @@ export default function DashboardPage() {
                   <p className="text-sm text-gray-600 mb-1">Salons visités</p>
                   <p className="text-3xl font-bold">{visitedSalonsCount}</p>
                 </div>
-                <MapPin className="w-8 h-8 text-purple-600" />
+                <MapPin className="w-8 h-8 text-nude-600" />
               </div>
             </CardContent>
           </Card>
@@ -262,7 +262,7 @@ export default function DashboardPage() {
                   Réservez votre premier rendez-vous dès maintenant !
                 </p>
                 <Link href="/search" className="inline-block mt-4">
-                  <Button className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700">
+                  <Button className="bg-gradient-to-r from-nude-600 to-warm-600 hover:from-nude-700 hover:to-warm-700">
                     <Calendar className="w-4 h-4 mr-2" />
                     Réserver un rendez-vous
                   </Button>
@@ -285,7 +285,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-medium">{appointment.service?.price}€</p>
+                      <p className="font-medium">{appointment.service?.price}DA</p>
                       <span className={`inline-block px-2 py-1 text-xs rounded-full ${appointment.status === 'confirmed'
                         ? 'bg-green-100 text-green-800'
                         : 'bg-yellow-100 text-yellow-800'
@@ -308,13 +308,13 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <Link href="/search">
-                <Button className="w-full bg-gradient-to-r from-purple-600 to-pink-600">
+                <Button className="w-full bg-gradient-to-r from-nude-600 to-warm-600">
                   <Calendar className="w-4 h-4 mr-2" />
                   Nouveau rendez-vous
                 </Button>
               </Link>
               <div className="grid grid-cols-2 gap-4">
-                <Link href="/client/appointments" className="text-sm font-medium text-purple-600 hover:text-purple-800">
+                <Link href="/client/appointments" className="text-sm font-medium text-nude-600 hover:text-nude-700">
                   Voir tous les rendez-vous
                 </Link>
                 <Link href="/client/favorites">
@@ -332,9 +332,9 @@ export default function DashboardPage() {
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                <div className="p-3 bg-purple-50 rounded-lg">
-                  <p className="text-sm font-medium text-purple-900">Découvrez les salons près de chez vous</p>
-                  <p className="text-xs text-purple-700 mt-1">Trouvez les meilleurs professionnels de la beauté</p>
+                <div className="p-3 bg-nude-50 rounded-lg">
+                  <p className="text-sm font-medium text-nude-800">Découvrez les salons près de chez vous</p>
+                  <p className="text-xs text-nude-700 mt-1">Trouvez les meilleurs professionnels de la beauté</p>
                 </div>
                 <Link href="/search" className="block">
                   <Button variant="outline" className="w-full">

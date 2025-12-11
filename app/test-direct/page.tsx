@@ -41,7 +41,7 @@ export default function TestDirectPage() {
         ) : (
           <div>
             <p className="text-red-600 font-semibold">❌ Pas de session</p>
-            <a href="/login" className="block px-4 py-2 bg-purple-600 text-white rounded mt-4">
+            <a href="/login" className="block px-4 py-2 bg-nude-600 text-white rounded mt-4">
               Se connecter
             </a>
           </div>

@@ -159,7 +159,7 @@ export default function ProAppointmentsPage() {
   const [filteredServicesByCategory, setFilteredServicesByCategory] = useState<{ [category: string]: Service[] }>({})
   const [filteredStaff, setFilteredStaff] = useState<StaffMember[]>([])
 
-  const colors = ['bg-purple-500', 'bg-blue-500', 'bg-green-500', 'bg-pink-500', 'bg-yellow-500', 'bg-red-500']
+  const colors = ['bg-nude-500', 'bg-blue-500', 'bg-green-500', 'bg-warm-500', 'bg-yellow-500', 'bg-red-500']
 
   useEffect(() => {
     checkAuthAndLoadData()
@@ -627,12 +627,12 @@ export default function ProAppointmentsPage() {
       } else if (paymentOption === 'full') {
         alert('Rendez-vous créé et paiement enregistré avec succès !')
       } else if (paymentOption === 'half') {
-        alert(`Rendez-vous créé ! Acompte de ${(totalPrice / 2).toFixed(2)}€ enregistré. Reste à payer : ${(totalPrice / 2).toFixed(2)}€`)
+        alert(`Rendez-vous créé ! Acompte de ${(totalPrice / 2).toFixed(2)}DA enregistré. Reste à payer : ${(totalPrice / 2).toFixed(2)}DA`)
       } else if (paymentOption === 'custom') {
         const customPaid = parseFloat(customAmount) || 0
         const remaining = Math.max(0, totalPrice - customPaid)
         if (remaining > 0) {
-          alert(`Rendez-vous créé ! Acompte de ${customPaid.toFixed(2)}€ enregistré. Reste à payer : ${remaining.toFixed(2)}€`)
+          alert(`Rendez-vous créé ! Acompte de ${customPaid.toFixed(2)}DA enregistré. Reste à payer : ${remaining.toFixed(2)}DA`)
         } else {
           alert('Rendez-vous créé et paiement complet enregistré avec succès !')
         }
@@ -681,7 +681,7 @@ export default function ProAppointmentsPage() {
       case 'pending': return 'bg-yellow-100 text-yellow-700'
       case 'cancelled': return 'bg-red-100 text-red-700'
       case 'completed': return 'bg-blue-100 text-blue-700'
-      case 'calling': return 'bg-purple-100 text-purple-700'
+      case 'calling': return 'bg-nude-100 text-nude-700'
       case 'call_confirmed': return 'bg-green-100 text-green-700'
       case 'call_no_response': return 'bg-orange-100 text-orange-700'
       case 'call_cancelled': return 'bg-red-100 text-red-700'
@@ -735,7 +735,7 @@ export default function ProAppointmentsPage() {
             setNewAppointmentData({ client_name: '', client_phone: '', service_id: '', staff_member_id: '', appointment_date: selectedDate, start_time: '', client_notes: '' })
             setFilteredServices(allServices)
             setFilteredStaff(staffMembers)
-          }} className="bg-gradient-to-r from-purple-600 to-pink-600">
+          }} className="bg-gradient-to-r from-nude-600 to-warm-600">
             <Plus className="w-4 h-4 mr-2" />
             Nouveau rendez-vous
           </Button>
@@ -783,7 +783,7 @@ export default function ProAppointmentsPage() {
 
         {loading ? (
           <div className="text-center py-12">
-            <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+            <div className="w-16 h-16 border-4 border-nude-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           </div>
         ) : (
           <>
@@ -803,7 +803,7 @@ export default function ProAppointmentsPage() {
                   ) : (
                     <div className="space-y-4">
                       {filteredAppointments.map((apt) => (
-                        <div key={apt.id} className="p-4 border rounded-lg hover:border-purple-300 cursor-pointer" onClick={() => { setSelectedAppointment(apt); setShowAppointmentDetails(true) }}>
+                        <div key={apt.id} className="p-4 border rounded-lg hover:border-nude-300 cursor-pointer" onClick={() => { setSelectedAppointment(apt); setShowAppointmentDetails(true) }}>
                           <div className="flex items-center space-x-3 mb-2">
                             <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(apt.status)}`}>{getStatusLabel(apt.status)}</span>
                             <span className="text-sm text-gray-500"><Clock className="w-4 h-4 inline mr-1" />{apt.start_time}</span>
@@ -893,7 +893,7 @@ export default function ProAppointmentsPage() {
                           alert('Numéro de téléphone non disponible');
                         }
                       }}
-                      className="flex-1 bg-purple-600"
+                      className="flex-1 bg-nude-600"
                     >
                       <Phone className="w-4 h-4 mr-2" />
                       Appeler
@@ -959,17 +959,17 @@ export default function ProAppointmentsPage() {
                     <div className="space-y-4 max-h-96 overflow-y-auto border rounded-lg p-4">
                       {Object.entries(servicesByCategory).map(([category, services]) => (
                         <div key={category}>
-                          <h3 className="font-semibold mb-2 text-purple-700">{category}</h3>
+                          <h3 className="font-semibold mb-2 text-nude-700">{category}</h3>
                           <div className="grid md:grid-cols-2 gap-2">
                             {services.map((service) => (
                               <button
                                 key={service.id}
                                 type="button"
                                 onClick={() => handleServiceChangeInModal(service.id)}
-                                className={`p-3 border-2 rounded-lg text-left ${newAppointmentData.service_id === service.id ? 'border-purple-600 bg-purple-50' : 'border-gray-200'}`}
+                                className={`p-3 border-2 rounded-lg text-left ${newAppointmentData.service_id === service.id ? 'border-nude-600 bg-nude-50' : 'border-gray-200'}`}
                               >
                                 <div className="font-medium text-sm">{service.name}</div>
-                                <div className="text-xs text-gray-500">{service.duration} min • {service.price}€</div>
+                                <div className="text-xs text-gray-500">{service.duration} min • {service.price}DA</div>
                               </button>
                             ))}
                           </div>
@@ -1032,11 +1032,11 @@ export default function ProAppointmentsPage() {
                   </div>
                 </div>
                 {selectedService && (
-                  <div className="p-4 bg-purple-50 border border-purple-200 rounded-lg">
+                  <div className="p-4 bg-nude-50 border border-nude-200 rounded-lg">
                     <p className="text-sm font-medium mb-2">Détails</p>
                     <div className="grid grid-cols-2 gap-4 text-sm">
                       <div><span className="text-gray-600">Durée:</span> <span className="font-semibold">{selectedService.duration} min</span></div>
-                      <div><span className="text-gray-600">Prix:</span> <span className="font-semibold">{selectedService.price}€</span></div>
+                      <div><span className="text-gray-600">Prix:</span> <span className="font-semibold">{selectedService.price}DA</span></div>
                     </div>
                   </div>
                 )}
@@ -1051,7 +1051,7 @@ export default function ProAppointmentsPage() {
                     </div>
                     <div className="space-y-3">
                       <div className="p-3 bg-gray-50 rounded-lg">
-                        <p className="text-sm text-gray-600">Prix total: <span className="font-bold text-lg">{selectedService.price}€</span></p>
+                        <p className="text-sm text-gray-600">Prix total: <span className="font-bold text-lg">{selectedService.price}DA</span></p>
                       </div>
                       <div>
                         <label className="block text-sm font-medium mb-2">Option de paiement</label>
@@ -1059,7 +1059,7 @@ export default function ProAppointmentsPage() {
                           <button
                             type="button"
                             onClick={() => setPaymentOption('none')}
-                            className={`p-3 border-2 rounded-lg text-center ${paymentOption === 'none' ? 'border-purple-600 bg-purple-50' : 'border-gray-200'}`}
+                            className={`p-3 border-2 rounded-lg text-center ${paymentOption === 'none' ? 'border-nude-600 bg-nude-50' : 'border-gray-200'}`}
                           >
                             <div className="font-medium text-sm">Aucun</div>
                             <div className="text-xs text-gray-500">Payer plus tard</div>
@@ -1067,7 +1067,7 @@ export default function ProAppointmentsPage() {
                           <button
                             type="button"
                             onClick={() => setPaymentOption('custom')}
-                            className={`p-3 border-2 rounded-lg text-center ${paymentOption === 'custom' ? 'border-purple-600 bg-purple-50' : 'border-gray-200'}`}
+                            className={`p-3 border-2 rounded-lg text-center ${paymentOption === 'custom' ? 'border-nude-600 bg-nude-50' : 'border-gray-200'}`}
                           >
                             <div className="font-medium text-sm">Personnalisé</div>
                             <div className="text-xs text-gray-500">Saisir le montant</div>
@@ -1077,18 +1077,18 @@ export default function ProAppointmentsPage() {
                           <button
                             type="button"
                             onClick={() => setPaymentOption('half')}
-                            className={`p-3 border-2 rounded-lg text-center ${paymentOption === 'half' ? 'border-purple-600 bg-purple-50' : 'border-gray-200'}`}
+                            className={`p-3 border-2 rounded-lg text-center ${paymentOption === 'half' ? 'border-nude-600 bg-nude-50' : 'border-gray-200'}`}
                           >
                             <div className="font-medium text-sm">Acompte 50%</div>
-                            <div className="text-xs text-gray-500">{(selectedService.price / 2).toFixed(2)}€</div>
+                            <div className="text-xs text-gray-500">{(selectedService.price / 2).toFixed(2)}DA</div>
                           </button>
                           <button
                             type="button"
                             onClick={() => setPaymentOption('full')}
-                            className={`p-3 border-2 rounded-lg text-center ${paymentOption === 'full' ? 'border-purple-600 bg-purple-50' : 'border-gray-200'}`}
+                            className={`p-3 border-2 rounded-lg text-center ${paymentOption === 'full' ? 'border-nude-600 bg-nude-50' : 'border-gray-200'}`}
                           >
                             <div className="font-medium text-sm">Payer tout</div>
-                            <div className="text-xs text-gray-500">{selectedService.price}€</div>
+                            <div className="text-xs text-gray-500">{selectedService.price}DA</div>
                           </button>
                         </div>
                       </div>
@@ -1096,12 +1096,12 @@ export default function ProAppointmentsPage() {
                         <div>
                           <label className="block text-sm font-medium mb-2">Montant à payer maintenant</label>
                           <div className="relative">
-                            <span className="absolute left-3 top-3 text-gray-500">€</span>
+                            <span className="absolute left-3 top-3 text-gray-500">DA</span>
                             <input
                               type="number"
                               value={customAmount}
                               onChange={(e) => setCustomAmount(e.target.value)}
-                              className="w-full pl-8 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                              className="w-full pl-8 pr-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-nude-500"
                               placeholder="0.00"
                               step="0.01"
                               min="0"
@@ -1109,7 +1109,7 @@ export default function ProAppointmentsPage() {
                             />
                           </div>
                           <p className="text-xs text-gray-500 mt-1">
-                            Maximum : {selectedService.price}€
+                            Maximum : {selectedService.price}DA
                           </p>
                         </div>
                       )}
@@ -1117,16 +1117,16 @@ export default function ProAppointmentsPage() {
                         <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
                           <p className="text-sm text-green-800">
                             {paymentOption === 'half'
-                              ? `Acompte de ${(selectedService.price / 2).toFixed(2)}€ sera enregistré. Reste à payer : ${(selectedService.price / 2).toFixed(2)}€ à la fin du rendez-vous.`
+                              ? `Acompte de ${(selectedService.price / 2).toFixed(2)}DA sera enregistré. Reste à payer : ${(selectedService.price / 2).toFixed(2)}DA à la fin du rendez-vous.`
                               : paymentOption === 'full'
-                                ? `Paiement complet de ${selectedService.price}€ sera enregistré.`
+                                ? `Paiement complet de ${selectedService.price}DA sera enregistré.`
                                 : paymentOption === 'custom' && customAmount
                                   ? (() => {
                                     const paid = parseFloat(customAmount) || 0
                                     const remaining = Math.max(0, selectedService.price - paid)
                                     return paid >= selectedService.price
-                                      ? `Paiement complet de ${paid.toFixed(2)}€ sera enregistré.`
-                                      : `Acompte de ${paid.toFixed(2)}€ sera enregistré. Reste à payer : ${remaining.toFixed(2)}€ à la fin du rendez-vous.`
+                                      ? `Paiement complet de ${paid.toFixed(2)}DA sera enregistré.`
+                                      : `Acompte de ${paid.toFixed(2)}DA sera enregistré. Reste à payer : ${remaining.toFixed(2)}DA à la fin du rendez-vous.`
                                   })()
                                   : 'Veuillez saisir un montant'}
                           </p>
@@ -1139,7 +1139,7 @@ export default function ProAppointmentsPage() {
                 <div className="flex space-x-4">
                   <Button
                     onClick={handleCreateAppointment}
-                    className="bg-gradient-to-r from-purple-600 to-pink-600 flex-1"
+                    className="bg-gradient-to-r from-nude-600 to-warm-600 flex-1"
                     disabled={!newAppointmentData.service_id || !newAppointmentData.staff_member_id || isProcessingPayment}
                   >
                     {isProcessingPayment ? (

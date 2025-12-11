@@ -344,7 +344,7 @@ export default function ClientSettingsPage() {
                             </div>
 
                             <div className="flex space-x-2">
-                                <Button type="submit" disabled={loading} className="flex-1 bg-purple-600">
+                                <Button type="submit" disabled={loading} className="flex-1 bg-nude-600">
                                     {loading ? 'Modification...' : 'Modifier'}
                                 </Button>
                                 <Button type="button" variant="outline" onClick={() => setShowPasswordModal(false)}>
@@ -396,7 +396,7 @@ export default function ClientSettingsPage() {
                             </div>
 
                             <div className="flex space-x-2">
-                                <Button type="submit" disabled={loading} className="flex-1 bg-purple-600">
+                                <Button type="submit" disabled={loading} className="flex-1 bg-nude-600">
                                     {loading ? 'Modification...' : 'Modifier'}
                                 </Button>
                                 <Button type="button" variant="outline" onClick={() => setShowEmailModal(false)}>

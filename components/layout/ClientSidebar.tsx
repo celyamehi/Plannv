@@ -80,11 +80,11 @@ export default function ClientSidebar({ children }: { children: React.ReactNode 
                 {/* Header */}
                 <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100 flex-shrink-0">
                     <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                        <div className="w-8 h-8 bg-gradient-to-br from-nude-600 to-warm-600 rounded-lg flex items-center justify-center">
                             <span className="text-white font-bold text-sm">K</span>
                         </div>
                         {sidebarOpen && (
-                            <span className="text-lg font-bold bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+                            <span className="text-lg font-bold bg-gradient-to-r from-nude-600 to-warm-600 bg-clip-text text-transparent">
                                 Kalendo
                             </span>
                         )}
@@ -103,8 +103,8 @@ export default function ClientSidebar({ children }: { children: React.ReactNode 
                 {sidebarOpen && user && (
                     <div className="p-4 border-b border-gray-100 flex-shrink-0">
                         <div className="flex items-center space-x-3">
-                            <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                                <User className="w-5 h-5 text-purple-600" />
+                            <div className="w-10 h-10 bg-nude-100 rounded-full flex items-center justify-center">
+                                <User className="w-5 h-5 text-nude-600" />
                             </div>
                             <div className="flex-1 min-w-0">
                                 <p className="text-sm font-medium text-gray-900 truncate">
@@ -127,11 +127,11 @@ export default function ClientSidebar({ children }: { children: React.ReactNode 
                                 key={item.href}
                                 href={item.href}
                                 className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${isActive
-                                    ? 'bg-purple-50 text-purple-600'
+                                    ? 'bg-nude-50 text-nude-600'
                                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                     }`}
                             >
-                                <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-purple-600' : 'text-gray-400'}`} />
+                                <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-nude-600' : 'text-gray-400'}`} />
                                 {sidebarOpen && (
                                     <span className="text-sm font-medium">{item.label}</span>
                                 )}
@@ -161,7 +161,7 @@ export default function ClientSidebar({ children }: { children: React.ReactNode 
                         <div className="h-full flex flex-col">
                             <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100">
                                 <div className="flex items-center space-x-3">
-                                    <div className="w-8 h-8 bg-gradient-to-br from-purple-600 to-pink-600 rounded-lg flex items-center justify-center">
+                                    <div className="w-8 h-8 bg-gradient-to-br from-nude-600 to-warm-600 rounded-lg flex items-center justify-center">
                                         <span className="text-white font-bold text-sm">K</span>
                                     </div>
                                     <span className="text-lg font-bold text-gray-900">Kalendo</span>
@@ -186,11 +186,11 @@ export default function ClientSidebar({ children }: { children: React.ReactNode 
                                             href={item.href}
                                             onClick={() => setMobileMenuOpen(false)}
                                             className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${isActive
-                                                ? 'bg-purple-50 text-purple-600'
+                                                ? 'bg-nude-50 text-nude-600'
                                                 : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                                 }`}
                                         >
-                                            <Icon className={`w-5 h-5 ${isActive ? 'text-purple-600' : 'text-gray-400'}`} />
+                                            <Icon className={`w-5 h-5 ${isActive ? 'text-nude-600' : 'text-gray-400'}`} />
                                             <span className="text-sm font-medium">{item.label}</span>
                                         </Link>
                                     )

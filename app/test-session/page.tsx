@@ -43,7 +43,7 @@ export default function TestSessionPage() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-nude-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Chargement...</p>
         </div>
       </div>
@@ -107,7 +107,7 @@ export default function TestSessionPage() {
             <CardContent className="space-y-4">
               <button
                 onClick={checkSession}
-                className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700"
+                className="w-full px-4 py-2 bg-nude-600 text-white rounded-lg hover:bg-nude-700"
               >
                 Rafraîchir
               </button>
@@ -139,7 +139,7 @@ export default function TestSessionPage() {
               {!session && (
                 <a
                   href="/login"
-                  className="block w-full px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 text-center"
+                  className="block w-full px-4 py-2 bg-nude-600 text-white rounded-lg hover:bg-nude-700 text-center"
                 >
                   Se connecter
                 </a>

@@ -180,7 +180,7 @@ export default function LocationPicker({
     <div className={`relative ${className}`}>
       {/* Champ d'affichage */}
       <div 
-        className="flex items-center px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 cursor-pointer hover:border-purple-300 transition-colors"
+        className="flex items-center px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 cursor-pointer hover:border-nude-300 transition-colors"
         onClick={() => setIsOpen(true)}
       >
         <MapPin className="w-5 h-5 text-gray-400 mr-3 flex-shrink-0" />
@@ -229,7 +229,7 @@ export default function LocationPicker({
                 type="button"
                 onClick={getCurrentLocation}
                 disabled={gettingLocation}
-                className="w-full bg-gradient-to-r from-purple-600 to-pink-600 text-white"
+                className="w-full bg-gradient-to-r from-nude-600 to-warm-600 text-white"
               >
                 {gettingLocation ? (
                   <>
@@ -262,7 +262,7 @@ export default function LocationPicker({
                   autoFocus
                 />
                 {searching && (
-                  <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-purple-600 animate-spin" />
+                  <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-nude-600 animate-spin" />
                 )}
               </div>
 
@@ -274,10 +274,10 @@ export default function LocationPicker({
                       key={result.place_id}
                       type="button"
                       onClick={() => selectAddress(result)}
-                      className="w-full p-3 text-left hover:bg-purple-50 transition-colors"
+                      className="w-full p-3 text-left hover:bg-nude-50 transition-colors"
                     >
                       <div className="flex items-start gap-3">
-                        <MapPin className="w-5 h-5 text-purple-600 mt-0.5 flex-shrink-0" />
+                        <MapPin className="w-5 h-5 text-nude-600 mt-0.5 flex-shrink-0" />
                         <div>
                           <p className="text-sm font-medium text-gray-900">
                             {[result.address.house_number, result.address.road].filter(Boolean).join(' ') || result.display_name.split(',')[0]}

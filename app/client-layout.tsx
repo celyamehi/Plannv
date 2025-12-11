@@ -56,7 +56,7 @@ export default function ClientLayout({
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-purple-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-nude-600"></div>
       </div>
     )
   }
@@ -123,7 +123,7 @@ export default function ClientLayout({
       <div className={`fixed inset-y-0 left-0 transform ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 ease-in-out lg:static lg:flex-shrink-0 w-64 bg-white border-r border-gray-200 flex flex-col z-40`}>
         <div className="flex items-center justify-center h-16 px-4 border-b border-gray-200">
           <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-purple-600 to-pink-600 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-br from-nude-600 to-warm-600 rounded-xl flex items-center justify-center">
               <span className="text-white font-bold text-xl">K</span>
             </div>
             <span className="text-xl font-semibold">Kalendo</span>
@@ -137,7 +137,7 @@ export default function ClientLayout({
                 key={item.name}
                 href={item.href}
                 className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${item.active
-                    ? 'bg-purple-50 text-purple-700'
+                    ? 'bg-nude-50 text-nude-700'
                     : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 onClick={() => setIsMenuOpen(false)}

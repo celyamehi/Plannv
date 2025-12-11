@@ -116,7 +116,7 @@ export default function ReviewModal({
                         <textarea
                             value={comment}
                             onChange={(e) => setComment(e.target.value)}
-                            className="w-full px-4 py-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-purple-500"
+                            className="w-full px-4 py-2 border rounded-lg resize-none focus:outline-none focus:ring-2 focus:ring-nude-500"
                             rows={4}
                             placeholder="Partagez votre expérience..."
                             maxLength={500}
@@ -138,7 +138,7 @@ export default function ReviewModal({
                     </Button>
                     <Button
                         onClick={handleSubmit}
-                        className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600"
+                        className="flex-1 bg-gradient-to-r from-nude-600 to-warm-600"
                         disabled={loading || rating === 0}
                     >
                         {loading ? 'Envoi...' : 'Publier l\'avis'}

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { format } from 'date-fns'
 import { supabase } from '@/lib/supabase/client'
 import { BookingCalendar } from '@/components/booking/calendar'
+import BookingConfirmationStep from '@/components/booking/BookingConfirmationStep'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -41,7 +42,15 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
   const [loading, setLoading] = useState(true)
   const [booking, setBooking] = useState(false)
   const [step, setStep] = useState(1)
+  const [showAuthStep, setShowAuthStep] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [editingAppointmentId, setEditingAppointmentId] = useState<string | null>(null)
+  
+  // État pour les prestations multiples
+  const [selectedPrestations, setSelectedPrestations] = useState<Array<{
+    service: Service
+    staff: StaffMember
+  }>>([])
 
   useEffect(() => {
     fetchData()
@@ -53,8 +62,113 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
     }
   }, [params.slug, searchParams])
 
+  // Restaurer les données de réservation depuis localStorage après connexion et créer le RDV automatiquement
+  useEffect(() => {
+    const restoreAndCreateBooking = async () => {
+      const pendingBookingStr = localStorage.getItem('pendingBooking')
+      if (pendingBookingStr) {
+        try {
+          const pendingBooking = JSON.parse(pendingBookingStr)
+          
+          // Vérifier que c'est bien pour cet établissement
+          if (pendingBooking.slug === params.slug) {
+            console.log('Restauration de la réservation en attente:', pendingBooking)
+            
+            // Vérifier si l'utilisateur est maintenant connecté
+            const { data: { session } } = await supabase.auth.getSession()
+            
+            if (session) {
+              // L'utilisateur est connecté, créer le rendez-vous automatiquement
+              console.log('Utilisateur connecté, création automatique du RDV...')
+              
+              // Supprimer les données du localStorage immédiatement pour éviter les doublons
+              localStorage.removeItem('pendingBooking')
+              
+              // Trouver le service pour obtenir la durée
+              const serviceData = services.find(s => s.id === pendingBooking.serviceId)
+              if (!serviceData) {
+                console.error('Service non trouvé')
+                return
+              }
+              
+              // Préparer les données du rendez-vous
+              const bookingDate = new Date(pendingBooking.date)
+              const localDate = new Date(bookingDate.getTime() - bookingDate.getTimezoneOffset() * 60000)
+              const appointmentDate = localDate.toISOString().split('T')[0]
+
+              const [startHour, startMinute] = pendingBooking.time.split(':').map(Number)
+              const duration = serviceData.duration || 0
+              const endTotalMinutes = startHour * 60 + startMinute + duration
+              const endHour = Math.floor(endTotalMinutes / 60) % 24
+              const endMinute = endTotalMinutes % 60
+              const formattedStartTime = `${startHour.toString().padStart(2, '0')}:${startMinute.toString().padStart(2, '0')}:00`
+              const formattedEndTime = `${endHour.toString().padStart(2, '0')}:${endMinute.toString().padStart(2, '0')}:00`
+
+              const appointmentData = {
+                establishment_id: pendingBooking.establishmentId,
+                client_id: session.user.id,
+                staff_member_id: pendingBooking.staffId,
+                service_id: pendingBooking.serviceId,
+                appointment_date: appointmentDate,
+                start_time: formattedStartTime,
+                end_time: formattedEndTime,
+                client_notes: pendingBooking.notes || '',
+                total_price: serviceData.price || 0,
+                status: 'pending'
+              }
+
+              // Créer le rendez-vous
+              const { data: result, error } = await supabase
+                .from('appointments')
+                .insert(appointmentData)
+                .select()
+                .single()
+
+              if (error) {
+                console.error('Erreur création RDV:', error)
+                alert('Erreur lors de la création du rendez-vous: ' + error.message)
+                return
+              }
+
+              console.log('RDV créé avec succès:', result)
+              
+              // Rediriger vers la page de confirmation
+              router.push(`/booking/confirmation/${result.id}`)
+            } else {
+              // L'utilisateur n'est pas connecté, juste restaurer les données
+              if (pendingBooking.serviceId) setSelectedService(pendingBooking.serviceId)
+              if (pendingBooking.date) setSelectedDate(new Date(pendingBooking.date))
+              if (pendingBooking.time) setSelectedTime(pendingBooking.time)
+              if (pendingBooking.notes) setNotes(pendingBooking.notes)
+              
+              if (pendingBooking.staffId && staff.length > 0) {
+                const staffMember = staff.find(s => s.id === pendingBooking.staffId)
+                if (staffMember) {
+                  setSelectedStaff(staffMember)
+                  setStep(2)
+                }
+              }
+            }
+          }
+        } catch (error) {
+          console.error('Erreur lors de la restauration de la réservation:', error)
+          localStorage.removeItem('pendingBooking')
+        }
+      }
+    }
+
+    // Attendre que les données soient chargées
+    if (!loading && staff.length > 0 && services.length > 0) {
+      restoreAndCreateBooking()
+    }
+  }, [loading, staff, services, params.slug, router])
+
   const fetchData = async () => {
     try {
+      // Vérifier si l'utilisateur est connecté
+      const { data: { session } } = await supabase.auth.getSession()
+      setIsLoggedIn(!!session)
+
       // Récupérer l'établissement
       const { data: estData } = await supabase
         .from('establishments')
@@ -154,17 +268,26 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
       return
     }
 
+    // Ajouter la prestation actuelle à la liste
+    const serviceData = services.find(s => s.id === selectedService)
+    if (serviceData && selectedStaff) {
+      const newPrestation = { service: serviceData, staff: selectedStaff }
+      // Toujours ajouter à la liste existante
+      setSelectedPrestations(prev => [...prev, newPrestation])
+    }
+
+    // Vérifier l'authentification
+    const { data: { session } } = await supabase.auth.getSession()
+    
+    if (!session) {
+      // Afficher l'étape d'authentification intégrée
+      setShowAuthStep(true)
+      return
+    }
+
     setBooking(true)
 
     try {
-      // Vérifier l'authentification
-      const { data: { session } } = await supabase.auth.getSession()
-      
-      if (!session) {
-        router.push('/login?redirect=/booking/' + params.slug)
-        return
-      }
-
       // Préparer les données du rendez-vous
       const localDate = new Date(selectedDate.getTime() - selectedDate.getTimezoneOffset() * 60000)
       const appointmentDate = localDate.toISOString().split('T')[0]
@@ -235,7 +358,7 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="w-16 h-16 border-4 border-purple-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <div className="w-16 h-16 border-4 border-nude-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
           <p className="text-gray-600">Chargement...</p>
         </div>
       </div>
@@ -245,6 +368,71 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
   const selectedServiceData = services.find(s => s.id === selectedService)
   const galleryImages = Array.isArray(establishment?.gallery) ? establishment?.gallery : []
   const heroImage = establishment?.cover_image_url || galleryImages[0] || establishment?.logo_url
+
+  // Utiliser directement les prestations sélectionnées
+  const currentPrestations = selectedPrestations
+
+  // Si on affiche l'étape d'authentification
+  if (showAuthStep && currentPrestations.length > 0 && selectedDate && selectedTime) {
+    return (
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <header className="bg-white border-b border-gray-200">
+          <div className="container mx-auto px-4 py-4">
+            <button 
+              onClick={() => setShowAuthStep(false)} 
+              className="flex items-center text-gray-600 hover:text-gray-900"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              Retour à la sélection
+            </button>
+          </div>
+        </header>
+
+        <main className="container mx-auto px-4 py-8">
+          <BookingConfirmationStep
+            establishment={{
+              id: establishment.id,
+              name: establishment.name,
+              address: establishment.address,
+              city: establishment.city,
+              average_rating: establishment.average_rating,
+              total_reviews: establishment.total_reviews
+            }}
+            prestations={currentPrestations}
+            selectedDate={selectedDate}
+            selectedTime={selectedTime}
+            notes={notes}
+            onBack={() => setShowAuthStep(false)}
+            onAddService={() => {
+              // Sauvegarder toutes les prestations actuelles dans l'état
+              setSelectedPrestations([...currentPrestations])
+              // Revenir à l'étape de sélection de service (sans toucher à la date)
+              setShowAuthStep(false)
+              setStep(1)
+              // Réinitialiser seulement le créneau (la durée totale va changer)
+              setSelectedTime(null)
+              // Réinitialiser les sélections de service/staff pour la nouvelle prestation
+              setSelectedService(null)
+              setSelectedStaff(null)
+            }}
+            onRemovePrestation={(index) => {
+              const newPrestations = [...currentPrestations]
+              newPrestations.splice(index, 1)
+              setSelectedPrestations(newPrestations)
+              if (newPrestations.length === 0) {
+                setShowAuthStep(false)
+                setStep(1)
+              }
+            }}
+            onSuccess={(appointmentId) => {
+              router.push(`/booking/confirmation/${appointmentId}`)
+            }}
+          />
+        </main>
+      </div>
+    )
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -296,7 +484,7 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold ${
                     step >= s
-                      ? 'bg-gradient-to-r from-purple-600 to-pink-600 text-white'
+                      ? 'bg-gradient-to-r from-nude-600 to-warm-600 text-white'
                       : 'bg-gray-200 text-gray-500'
                   }`}
                 >
@@ -305,7 +493,7 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                 {s < 3 && (
                   <div
                     className={`w-24 h-1 mx-2 ${
-                      step > s ? 'bg-gradient-to-r from-purple-600 to-pink-600' : 'bg-gray-200'
+                      step > s ? 'bg-gradient-to-r from-nude-600 to-warm-600' : 'bg-gray-200'
                     }`}
                   ></div>
                 )}
@@ -318,10 +506,36 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
             <div className="lg:col-span-2 space-y-6">
               {/* Step 1: Service Selection */}
               {step === 1 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>1. Choisissez un service</CardTitle>
-                  </CardHeader>
+                <>
+                  {/* Afficher les prestations déjà sélectionnées */}
+                  {selectedPrestations.length > 0 && (
+                    <Card className="bg-nude-50 border-nude-200">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base">Prestations déjà sélectionnées</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        {selectedPrestations.map((prestation, index) => (
+                          <div key={index} className="flex justify-between items-center text-sm">
+                            <span>{prestation.service.name} avec {prestation.staff.first_name}</span>
+                            <span className="text-gray-600">{prestation.service.duration} min • {prestation.service.price} DA</span>
+                          </div>
+                        ))}
+                        <div className="pt-2 border-t border-nude-200 flex justify-between font-medium">
+                          <span>Sous-total</span>
+                          <span>
+                            {selectedPrestations.reduce((sum, p) => sum + p.service.duration, 0)} min • {selectedPrestations.reduce((sum, p) => sum + p.service.price, 0)} DA
+                          </span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>
+                        {selectedPrestations.length > 0 ? 'Ajouter une prestation' : '1. Choisissez un service'}
+                      </CardTitle>
+                    </CardHeader>
                   <CardContent className="space-y-3">
                     {services.map((service) => (
                       <div
@@ -329,7 +543,7 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                         onClick={() => setSelectedService(service.id)}
                         className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
                           selectedService === service.id
-                            ? 'border-purple-600 bg-purple-50'
+                            ? 'border-nude-600 bg-nude-50'
                             : 'border-gray-200 hover:border-gray-300'
                         }`}
                       >
@@ -340,8 +554,8 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                               {service.duration} min
                             </p>
                           </div>
-                          <span className="text-lg font-bold text-purple-600">
-                            {service.price}€
+                          <span className="text-lg font-bold text-nude-600">
+                            {service.price}DA
                           </span>
                         </div>
                       </div>
@@ -349,17 +563,58 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                     <Button
                       onClick={() => setStep(2)}
                       disabled={!selectedService}
-                      className="w-full bg-gradient-to-r from-purple-600 to-pink-600"
+                      className="w-full bg-gradient-to-r from-nude-600 to-warm-600"
                     >
                       Continuer
                     </Button>
                   </CardContent>
                 </Card>
+                </>
               )}
 
               {/* Step 2: Staff & Date Selection */}
               {step === 2 && (
                 <>
+                  {/* Afficher les prestations déjà sélectionnées */}
+                  {selectedPrestations.length > 0 && (
+                    <Card className="mb-4 bg-nude-50 border-nude-200">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base">Prestations déjà sélectionnées</CardTitle>
+                      </CardHeader>
+                      <CardContent className="space-y-2">
+                        {selectedPrestations.map((prestation, index) => (
+                          <div key={index} className="flex justify-between items-center text-sm">
+                            <span>{prestation.service.name} avec {prestation.staff.first_name}</span>
+                            <span className="text-gray-600">{prestation.service.duration} min • {prestation.service.price} DA</span>
+                          </div>
+                        ))}
+                        <div className="pt-2 border-t border-nude-200 flex justify-between font-medium">
+                          <span>Sous-total</span>
+                          <span>
+                            {selectedPrestations.reduce((sum, p) => sum + p.service.duration, 0)} min • {selectedPrestations.reduce((sum, p) => sum + p.service.price, 0)} DA
+                          </span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
+                  {/* Prestation en cours de sélection */}
+                  {selectedServiceData && (
+                    <Card className="mb-4 border-green-200 bg-green-50">
+                      <CardHeader className="pb-2">
+                        <CardTitle className="text-base text-green-700">
+                          {selectedPrestations.length > 0 ? 'Nouvelle prestation à ajouter' : 'Prestation sélectionnée'}
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                        <div className="flex justify-between items-center text-sm">
+                          <span className="font-medium">{selectedServiceData.name}</span>
+                          <span className="text-gray-600">{selectedServiceData.duration} min • {selectedServiceData.price} DA</span>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  )}
+
                   <Card>
                     <CardHeader>
                       <CardTitle>2. Choisissez un collaborateur</CardTitle>
@@ -376,12 +631,12 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                             onClick={() => setSelectedStaff(member)}
                             className={`p-4 border-2 rounded-lg cursor-pointer transition-all ${
                               selectedStaff?.id === member.id
-                                ? 'border-purple-600 bg-purple-50'
+                                ? 'border-nude-600 bg-nude-50'
                                 : 'border-gray-200 hover:border-gray-300'
                             }`}
                           >
                             <div className="flex items-center space-x-4">
-                              <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-pink-600 rounded-full flex items-center justify-center text-white font-bold">
+                              <div className="w-12 h-12 bg-gradient-to-br from-nude-600 to-warm-600 rounded-full flex items-center justify-center text-white font-bold">
                                 {member.first_name.charAt(0)}{member.last_name.charAt(0)}
                               </div>
                               <div>
@@ -404,7 +659,10 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                       <CardContent>
                         <BookingCalendar
                           staffMemberId={selectedStaff.id}
-                          serviceDuration={selectedServiceData.duration}
+                          serviceDuration={
+                            // Durée totale = prestations existantes + prestation actuelle
+                            selectedPrestations.reduce((sum, p) => sum + p.service.duration, 0) + selectedServiceData.duration
+                          }
                           onSlotSelect={handleSlotSelect}
                         />
                       </CardContent>
@@ -422,7 +680,7 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                     <Button
                       onClick={() => setStep(3)}
                       disabled={!selectedStaff || !selectedDate || !selectedTime}
-                      className="flex-1 bg-gradient-to-r from-purple-600 to-pink-600"
+                      className="flex-1 bg-gradient-to-r from-nude-600 to-warm-600"
                     >
                       Continuer
                     </Button>
@@ -517,8 +775,8 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
                   <div className="pt-4 border-t border-gray-200">
                     <div className="flex justify-between items-center">
                       <span className="font-semibold">Total</span>
-                      <span className="text-2xl font-bold text-purple-600">
-                        {selectedServiceData?.price || 0}€
+                      <span className="text-2xl font-bold text-nude-600">
+                        {selectedServiceData?.price || 0}DA
                       </span>
                     </div>
                   </div>

@@ -169,7 +169,7 @@ export default function DebugLoginPage() {
             </div>
 
             <div className="text-center text-sm">
-              <a href="/test-session" className="text-purple-600 hover:underline">
+              <a href="/test-session" className="text-nude-600 hover:underline">
                 Vérifier la session
               </a>
             </div>

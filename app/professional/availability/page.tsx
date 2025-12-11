@@ -238,7 +238,7 @@ export default function AvailabilityPage() {
       <ProSidebar>
         <div className="p-10 flex items-center justify-center">
           <div className="text-center">
-            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-purple-600" />
+            <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4 text-nude-600" />
             Chargement des disponibilités...
           </div>
         </div>
@@ -311,7 +311,7 @@ export default function AvailabilityPage() {
                     <label className="inline-flex items-center gap-2 text-sm font-medium">
                       <input
                         type="checkbox"
-                        className="h-4 w-4 text-purple-600"
+                        className="h-4 w-4 text-nude-600"
                         checked={schedule[day.value]?.enabled}
                         onChange={(e) => handleScheduleChange(day.value, "enabled", e.target.checked)}
                       />
@@ -344,7 +344,7 @@ export default function AvailabilityPage() {
                 <Button
                   onClick={handleSaveSchedule}
                   disabled={savingSchedule}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600"
+                  className="bg-gradient-to-r from-nude-600 to-warm-600"
                 >
                   {savingSchedule ? (
                     <>

@@ -37,7 +37,9 @@ const publicPaths = [
   '/confidentialite',
   '/contact',
   '/faq',
-  '/professionals/pricing'
+  '/professionals/pricing',
+  '/sitemap.xml',
+  '/robots.txt'
 ]
 
 export async function middleware(req: NextRequest) {

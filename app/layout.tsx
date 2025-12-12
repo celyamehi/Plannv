@@ -7,6 +7,11 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Kalendo - Réservation Beauté & Bien-être',
   description: 'Réservez vos rendez-vous beauté et bien-être en ligne avec Kalendo',
+  icons: {
+    icon: '/fav.png',
+    shortcut: '/fav.png',
+    apple: '/fav.png',
+  },
 }
 
 export default function RootLayout({
@@ -16,6 +21,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr">
+      <head>
+        <link rel="icon" href="/fav.png" type="image/png" />
+      </head>
       <body className={`${inter.className} min-h-screen`}>
         {children}
       </body>

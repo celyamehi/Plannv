@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { usePathname, useRouter } from 'next/navigation'
 import { supabase } from '../../lib/supabase/client'
 import {
@@ -79,16 +80,15 @@ export default function ClientSidebar({ children }: { children: React.ReactNode 
             <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-white border-r border-gray-200 transition-all duration-300 hidden lg:flex lg:flex-col`}>
                 {/* Header */}
                 <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100 flex-shrink-0">
-                    <div className="flex items-center space-x-3">
-                        <div className="w-8 h-8 bg-gradient-to-br from-nude-600 to-warm-600 rounded-lg flex items-center justify-center">
-                            <span className="text-white font-bold text-sm">K</span>
-                        </div>
-                        {sidebarOpen && (
-                            <span className="text-lg font-bold bg-gradient-to-r from-nude-600 to-warm-600 bg-clip-text text-transparent">
-                                Kalendo
-                            </span>
-                        )}
-                    </div>
+                    <Link href="/" className="flex items-center">
+                        <Image
+                            src="/logo.png"
+                            alt="Kalendo"
+                            width={sidebarOpen ? 120 : 32}
+                            height={40}
+                            className={sidebarOpen ? "h-8 w-auto" : "h-8 w-8 object-contain"}
+                        />
+                    </Link>
                     <Button
                         variant="ghost"
                         size="sm"
@@ -160,12 +160,15 @@ export default function ClientSidebar({ children }: { children: React.ReactNode 
                         {/* Mobile Sidebar Content */}
                         <div className="h-full flex flex-col">
                             <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100">
-                                <div className="flex items-center space-x-3">
-                                    <div className="w-8 h-8 bg-gradient-to-br from-nude-600 to-warm-600 rounded-lg flex items-center justify-center">
-                                        <span className="text-white font-bold text-sm">K</span>
-                                    </div>
-                                    <span className="text-lg font-bold text-gray-900">Kalendo</span>
-                                </div>
+                                <Link href="/" className="flex items-center">
+                                    <Image
+                                        src="/logo.png"
+                                        alt="Kalendo"
+                                        width={120}
+                                        height={40}
+                                        className="h-8 w-auto"
+                                    />
+                                </Link>
                                 <Button
                                     variant="ghost"
                                     size="sm"
@@ -224,7 +227,7 @@ export default function ClientSidebar({ children }: { children: React.ReactNode 
                     >
                         <Menu className="w-5 h-5" />
                     </Button>
-                    <span className="text-lg font-bold text-gray-900">Kalendo</span>
+                    <Image src="/logo.png" alt="Kalendo" width={100} height={32} className="h-6 w-auto" />
                     <div className="w-8" /> {/* Spacer for centering */}
                 </header>
 

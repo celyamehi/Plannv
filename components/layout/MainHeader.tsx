@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Menu, X } from "lucide-react"
 
 interface MainHeaderProps {
@@ -15,13 +16,15 @@ export default function MainHeader({ transparent = false }: MainHeaderProps) {
     <header className={`fixed top-0 left-0 right-0 z-50 ${transparent ? 'bg-transparent' : 'bg-white/90 backdrop-blur-xl border-b border-nude-200'}`}>
       <div className="container mx-auto px-4 py-4 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center space-x-2">
-          <div className="w-10 h-10 bg-gradient-to-br from-nude-600 to-nude-500 rounded-xl flex items-center justify-center shadow-lg shadow-nude-200">
-            <span className="text-white font-bold text-xl">K</span>
-          </div>
-          <span className="text-2xl font-bold bg-gradient-to-r from-nude-700 to-nude-500 bg-clip-text text-transparent">
-            Kalendo
-          </span>
+        <Link href="/" className="flex items-center">
+          <Image
+            src="/logo.png"
+            alt="Kalendo"
+            width={140}
+            height={50}
+            className="h-10 w-auto"
+            priority
+          />
         </Link>
 
         {/* Navigation */}

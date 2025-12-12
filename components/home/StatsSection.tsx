@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Building2, CalendarCheck, MessageSquare, Star } from "lucide-react"
+import { Building2, CalendarCheck, Star } from "lucide-react"
 
 const stats = [
   {
@@ -18,14 +18,7 @@ const stats = [
     color: "text-warm-600",
     bg: "bg-warm-100"
   },
-  {
-    icon: MessageSquare,
-    value: "100%",
-    label: "Rappels SMS automatiques",
-    color: "text-blue-600",
-    bg: "bg-blue-100"
-  },
-  {
+    {
     icon: Star,
     value: "4.8/5",
     label: "Note moyenne des salons",

@@ -1,0 +1,14 @@
+User-agent: *
+Allow: /
+Disallow: /api/
+Disallow: /admin/
+Disallow: /professional/pro-dashboard/
+Disallow: /client/dashboard/
+Disallow: /dashboard/
+Disallow: /auth/
+Disallow: /debug-logs/
+Disallow: /test-auth/
+Disallow: /test-session/
+Disallow: /test-connection/
+
+Sitemap: https://kalendo.space/sitemap.xml

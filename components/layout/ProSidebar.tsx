@@ -180,9 +180,9 @@ export default function ProSidebar({ children }: ProSidebarProps) {
             <Image
               src="/logo.png"
               alt="Kalendo"
-              width={sidebarOpen ? 120 : 32}
-              height={40}
-              className={sidebarOpen ? "h-8 w-auto" : "h-8 w-8 object-contain"}
+              width={sidebarOpen ? 160 : 40}
+              height={55}
+              className={sidebarOpen ? "h-12 w-auto" : "h-10 w-10 object-contain"}
             />
           </Link>
           <Button

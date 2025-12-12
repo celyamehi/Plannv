@@ -20,9 +20,9 @@ export default function MainHeader({ transparent = false }: MainHeaderProps) {
           <Image
             src="/logo.png"
             alt="Kalendo"
-            width={180}
-            height={60}
-            className="h-14 w-auto"
+            width={220}
+            height={75}
+            className="h-16 w-auto"
             priority
           />
         </Link>

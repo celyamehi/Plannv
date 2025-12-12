@@ -35,7 +35,9 @@ const publicPaths = [
   '/mentions-legales',
   '/cgu',
   '/confidentialite',
-  '/contact'
+  '/contact',
+  '/faq',
+  '/professionals/pricing'
 ]
 
 export async function middleware(req: NextRequest) {

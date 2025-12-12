@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 import { supabase } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -135,10 +136,7 @@ export default function SetupProfilePage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex items-center justify-center mb-8">
-          <div className="w-10 h-10 bg-gradient-to-br from-nude-600 to-warm-600 rounded-xl flex items-center justify-center shadow-lg shadow-nude-200">
-            <span className="text-white font-bold text-xl">K</span>
-          </div>
-          <span className="text-3xl font-semibold ml-2">Kalendo</span>
+          <Image src="/logo.png" alt="Kalendo" width={160} height={55} className="h-12 w-auto" />
         </div>
 
         <Card>

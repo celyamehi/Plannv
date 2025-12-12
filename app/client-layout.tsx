@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import Link from 'next/link'
+import Image from 'next/image'
 import { Home, Calendar, User, Settings, LogOut, Menu, X, MapPin, Clock, Bell } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 
@@ -122,11 +123,8 @@ export default function ClientLayout({
       {/* Sidebar */}
       <div className={`fixed inset-y-0 left-0 transform ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 transition-transform duration-300 ease-in-out lg:static lg:flex-shrink-0 w-64 bg-white border-r border-gray-200 flex flex-col z-40`}>
         <div className="flex items-center justify-center h-16 px-4 border-b border-gray-200">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-nude-600 to-warm-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-xl">K</span>
-            </div>
-            <span className="text-xl font-semibold">Kalendo</span>
+          <Link href="/" className="flex items-center">
+            <Image src="/logo.png" alt="Kalendo" width={120} height={40} className="h-8 w-auto" />
           </Link>
         </div>
 

@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronDown, ArrowLeft, Search, MessageCircle } from "lucide-react"
 
@@ -108,13 +109,8 @@ export default function FAQPage() {
       {/* Header */}
       <header className="bg-white border-b border-gray-100">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link href="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-br from-nude-600 to-warm-600 rounded-xl flex items-center justify-center">
-              <span className="text-white font-bold text-xl">K</span>
-            </div>
-            <span className="text-2xl font-bold bg-gradient-to-r from-nude-600 to-warm-600 bg-clip-text text-transparent">
-              Kalendo
-            </span>
+          <Link href="/" className="flex items-center">
+            <Image src="/logo.png" alt="Kalendo" width={140} height={50} className="h-10 w-auto" />
           </Link>
           <Link 
             href="/"

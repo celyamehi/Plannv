@@ -80,7 +80,7 @@ export default function LocationPicker({
     setSearching(true)
     try {
       const response = await fetch(
-        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=fr&addressdetails=1&limit=5`
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&countrycodes=dz&addressdetails=1&limit=5`
       )
       const data: NominatimResult[] = await response.json()
       setSearchResults(data)

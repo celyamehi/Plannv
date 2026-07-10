@@ -1,22 +1,28 @@
 -- =====================================================
 -- DONNÉES DE TEST SIMPLIFIÉES (SEED DATA)
--- Version qui ne dépend pas de auth.users
+-- Version qui rend owner_id nullable temporairement
 -- =====================================================
 
--- NOTE: Cette version crée uniquement les établissements et services
--- Les profils seront créés via l'interface d'authentification
+-- NOTE: Cette version rend owner_id nullable temporairement pour créer les établissements
+-- Les profils réels seront créés via l'interface d'authentification
+-- Les owner_id devront être mis à jour plus tard avec de vrais utilisateurs
 
 -- =====================================================
--- Étape 1: Créer un utilisateur temporaire dans auth.users
+-- Étape 1: Désactiver temporairement RLS sur toutes les tables
 -- =====================================================
--- On crée d'abord un utilisateur dans auth.users pour pouvoir créer le profil
--- Cette partie nécessite des droits admin ou d'utiliser l'interface Supabase
-
--- Pour l'instant, on va sauter les profils et créer directement les établissements
--- avec un owner_id qui sera mis à jour plus tard
+ALTER TABLE profiles DISABLE ROW LEVEL SECURITY;
+ALTER TABLE establishments DISABLE ROW LEVEL SECURITY;
+ALTER TABLE staff_members DISABLE ROW LEVEL SECURITY;
+ALTER TABLE services DISABLE ROW LEVEL SECURITY;
+ALTER TABLE availability_slots DISABLE ROW LEVEL SECURITY;
 
 -- =====================================================
--- Étape 2: Créer les établissements de test (sans owner_id temporairement)
+-- Étape 2: Rendre owner_id nullable temporairement
+-- =====================================================
+ALTER TABLE establishments ALTER COLUMN owner_id DROP NOT NULL;
+
+-- =====================================================
+-- Étape 2: Créer les établissements de test (avec owner_id temporaire)
 -- =====================================================
 
 -- Exemple 1: Salon de coiffure
@@ -39,7 +45,7 @@ INSERT INTO establishments (
     accepts_online_booking
 ) VALUES (
     '11111111-1111-1111-1111-111111111111'::UUID,
-    '00000000-0000-0000-0000-000000000000'::UUID, -- Owner temporaire
+    NULL, -- Owner temporaire (NULL pour contourner la FK)
     'Salon Élégance',
     'salon-elegance-paris',
     'Salon de coiffure haut de gamme au cœur de Paris. Spécialistes de la coloration et des coupes tendances.',
@@ -62,7 +68,7 @@ INSERT INTO establishments (
     }'::JSONB,
     true,
     true
-) ON CONFLICT (id) DO NOTHING;
+);
 
 -- Exemple 2: Institut de beauté
 INSERT INTO establishments (
@@ -84,7 +90,7 @@ INSERT INTO establishments (
     accepts_online_booking
 ) VALUES (
     '22222222-2222-2222-2222-222222222222'::UUID,
-    '00000000-0000-0000-0000-000000000000'::UUID, -- Owner temporaire
+    NULL, -- Owner temporaire (NULL pour contourner la FK)
     'Institut Beauté Divine',
     'institut-beaute-divine-lyon',
     'Institut de beauté proposant soins du visage, épilation, manucure et pédicure.',
@@ -107,7 +113,7 @@ INSERT INTO establishments (
     }'::JSONB,
     true,
     true
-) ON CONFLICT (id) DO NOTHING;
+);
 
 -- =====================================================
 -- Étape 3: Les owner_id sont déjà définis dans les INSERT ci-dessus
@@ -156,7 +162,7 @@ INSERT INTO staff_members (
     ARRAY['coupe homme', 'barbe', 'taille'],
     true,
     true
-) ON CONFLICT (id) DO NOTHING;
+);
 
 -- Collaborateurs pour Institut Beauté Divine
 INSERT INTO staff_members (
@@ -184,7 +190,7 @@ INSERT INTO staff_members (
     ARRAY['soin visage', 'épilation', 'maquillage'],
     true,
     true
-) ON CONFLICT (id) DO NOTHING;
+);
 
 -- =====================================================
 -- Étape 5: Créer les services
@@ -250,7 +256,7 @@ INSERT INTO services (
     true,
     true,
     ARRAY['aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::UUID]
-) ON CONFLICT (id) DO NOTHING;
+);
 
 -- Services pour Institut Beauté Divine
 INSERT INTO services (
@@ -300,7 +306,7 @@ INSERT INTO services (
     true,
     true,
     ARRAY['cccccccc-cccc-cccc-cccc-cccccccccccc'::UUID]
-) ON CONFLICT (id) DO NOTHING;
+);
 
 -- =====================================================
 -- Étape 6: Créer les créneaux de disponibilité
@@ -319,7 +325,7 @@ VALUES
     ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::UUID, 5, '14:00', '20:00', true),
     ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::UUID, 6, '08:00', '12:00', true), -- Samedi
     ('aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa'::UUID, 6, '14:00', '18:00', true)
-ON CONFLICT (staff_member_id, day_of_week, start_time, end_time) DO NOTHING;
+;
 
 -- Disponibilités pour Thomas Dubois
 INSERT INTO availability_slots (staff_member_id, day_of_week, start_time, end_time, is_active)
@@ -329,7 +335,7 @@ VALUES
     ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::UUID, 4, '09:00', '20:00', true), -- Jeudi
     ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::UUID, 5, '09:00', '20:00', true), -- Vendredi
     ('bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb'::UUID, 6, '08:00', '18:00', true) -- Samedi
-ON CONFLICT (staff_member_id, day_of_week, start_time, end_time) DO NOTHING;
+;
 
 -- Disponibilités pour Marie Leclerc
 INSERT INTO availability_slots (staff_member_id, day_of_week, start_time, end_time, is_active)
@@ -339,10 +345,26 @@ VALUES
     ('cccccccc-cccc-cccc-cccc-cccccccccccc'::UUID, 4, '10:00', '20:00', true), -- Jeudi
     ('cccccccc-cccc-cccc-cccc-cccccccccccc'::UUID, 5, '10:00', '20:00', true), -- Vendredi
     ('cccccccc-cccc-cccc-cccc-cccccccccccc'::UUID, 6, '09:00', '18:00', true) -- Samedi
-ON CONFLICT (staff_member_id, day_of_week, start_time, end_time) DO NOTHING;
+;
 
 -- =====================================================
--- Vérification finale
+-- Étape 7: Réactiver la contrainte NOT NULL sur owner_id
+-- =====================================================
+-- Note: Les établissements ont owner_id NULL, donc on ne peut pas réactiver NOT NULL
+-- Les owner_id devront être mis à jour avec de vrais utilisateurs avant de réactiver
+-- ALTER TABLE establishments ALTER COLUMN owner_id SET NOT NULL;
+
+-- =====================================================
+-- Étape 8: Réactiver RLS sur toutes les tables
+-- =====================================================
+ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
+ALTER TABLE establishments ENABLE ROW LEVEL SECURITY;
+ALTER TABLE staff_members ENABLE ROW LEVEL SECURITY;
+ALTER TABLE services ENABLE ROW LEVEL SECURITY;
+ALTER TABLE availability_slots ENABLE ROW LEVEL SECURITY;
+
+-- =====================================================
+-- Étape 9: Vérification finale
 -- =====================================================
 
 -- Vérifier les établissements

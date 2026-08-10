@@ -1,21 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { createClient } from '@supabase/supabase-js'
+import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
+import { cookies } from 'next/headers'
+import { checkRateLimit, RATE_LIMITS } from '@/lib/rate-limiter'
+import algerianCities from '@/data/algerian-cities.json'
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-)
-
-// Liste des villes algériennes principales
-const ALGERIAN_CITIES = [
-  'Alger', 'Oran', 'Constantine', 'Annaba', 'Blida', 'Batna', 'Djelfa', 'Sétif',
-  'Sidi Bel Abbès', 'Biskra', 'Tébessa', 'El Oued', 'Skikda', 'Tiaret', 'Béjaïa',
-  'Tlemcen', 'Bordj Bou Arréridj', 'Béchar', 'Chlef', 'Médéa', 'Mostaganem',
-  'Mascara', 'Ouargla', 'Saïda', 'Jijel', 'Relizane', 'M\'Sila', 'Laghouat',
-  'Guelma', 'Ghardaïa', 'Khenchela', 'Souk Ahras', 'Mila', 'Aïn Defla',
-  'Naâma', 'Aïn Témouchent', 'Tissemsilt', 'El Bayadh', 'Illizi', 'Tindouf',
-  'Tamanrasset', 'Adrar', 'Tipaza', 'Boumerdès', 'El Tarf', 'Bouira'
-]
+// Flatten the Algerian cities data to get all communes
+const ALL_ALGERIAN_CITIES = algerianCities.flatMap(wilaya => [
+  wilaya.wilaya,
+  ...wilaya.communes
+])
 
 interface SearchResult {
   id: string
@@ -209,7 +202,8 @@ function calculateQualiteScore(establishment: any): number {
 
 // Fonction pour calculer le score de disponibilité
 async function calculateDisponibiliteScore(
-  establishmentId: string
+  establishmentId: string,
+  supabase: any
 ): Promise<{ score: number; nextSlot?: string }> {
   try {
     // Vérifier les rendez-vous des 7 prochains jours
@@ -244,7 +238,29 @@ async function calculateDisponibiliteScore(
 }
 
 export async function GET(request: NextRequest) {
+  // Rate limiting
+  const ip = request.headers.get('x-forwarded-for')?.split(',')[0] ||
+             request.headers.get('x-real-ip') ||
+             'unknown'
+  const rateLimitResult = checkRateLimit(ip, RATE_LIMITS.search.limit, RATE_LIMITS.search.window)
+  
+  if (!rateLimitResult.allowed) {
+    return NextResponse.json(
+      { error: 'Too many requests' },
+      { 
+        status: 429,
+        headers: {
+          'X-RateLimit-Limit': RATE_LIMITS.search.limit.toString(),
+          'X-RateLimit-Remaining': '0',
+          'X-RateLimit-Reset': rateLimitResult.resetTime.toString(),
+          'Retry-After': Math.ceil((rateLimitResult.resetTime - Date.now()) / 1000).toString()
+        }
+      }
+    )
+  }
+
   try {
+    const supabase = createRouteHandlerClient({ cookies })
     const { searchParams } = new URL(request.url)
     
     // Paramètres de recherche
@@ -356,14 +372,14 @@ export async function GET(request: NextRequest) {
         const scorePertinence = calculatePertinenceScore(est, services, searchTerms || '')
         const { score: scoreProximite, distance } = calculateProximiteScore(est, city, userLat, userLng)
         const scoreQualite = calculateQualiteScore(est)
-        const { score: scoreDisponibilite, nextSlot } = await calculateDisponibiliteScore(est.id)
+        const { score: scoreDisponibilite, nextSlot } = await calculateDisponibiliteScore(est.id, supabase)
 
-        // Score global pondéré
+        // Score global pondéré (priorité à la proximité et la qualité)
         const scoreGlobal = (
-          scorePertinence * 0.35 +
-          scoreProximite * 0.25 +
-          scoreQualite * 0.25 +
-          scoreDisponibilite * 0.15
+          scorePertinence * 0.20 +
+          scoreProximite * 0.35 +
+          scoreQualite * 0.35 +
+          scoreDisponibilite * 0.10
         )
 
         // Extraire les 3 principales prestations
@@ -438,6 +454,7 @@ export async function GET(request: NextRequest) {
 // Endpoint pour l'auto-complétion des villes
 export async function POST(request: NextRequest) {
   try {
+    const supabase = createRouteHandlerClient({ cookies })
     const { query } = await request.json()
     
     if (!query || query.length < 2) {
@@ -446,8 +463,8 @@ export async function POST(request: NextRequest) {
 
     const normalizedQuery = normalizeText(query)
     
-    // Filtrer les villes algériennes
-    const matchingCities = ALGERIAN_CITIES.filter(city => 
+    // Filtrer les villes algériennes (toutes les wilayas et communes)
+    const matchingCities = ALL_ALGERIAN_CITIES.filter(city => 
       normalizeText(city).includes(normalizedQuery)
     ).slice(0, 10)
 
@@ -460,8 +477,8 @@ export async function POST(request: NextRequest) {
       .limit(10)
 
     // Extraire les villes uniques et aussi les adresses si elles contiennent des noms de villes
-    const dbCityList = [...new Set(dbCities?.map(c => c.city).filter(Boolean) || [])]
-    const addressCities = dbCities?.map(c => {
+    const dbCityList = [...new Set(dbCities?.map((c: any) => c.city).filter(Boolean) || [])]
+    const addressCities = dbCities?.map((c: any) => {
       // Extraire le nom de la ville depuis l'adresse si possible
       const address = c.address || ''
       const words = address.split(' ').filter((w: string) => w.length > 2)

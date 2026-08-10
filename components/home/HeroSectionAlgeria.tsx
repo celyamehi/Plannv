@@ -11,6 +11,8 @@ export default function HeroSectionAlgeria() {
   const [cityQuery, setCityQuery] = useState("")
   const [citySuggestions, setCitySuggestions] = useState<string[]>([])
   const [showCitySuggestions, setShowCitySuggestions] = useState(false)
+  const [userLocation, setUserLocation] = useState<{lat: number, lng: number} | null>(null)
+  const [isLocating, setIsLocating] = useState(false)
   const cityInputRef = useRef<HTMLInputElement>(null)
 
   // Auto-complétion des villes via l'API
@@ -42,6 +44,10 @@ export default function HeroSectionAlgeria() {
     const params = new URLSearchParams()
     if (searchQuery) params.set("q", searchQuery)
     if (cityQuery) params.set("ville", cityQuery)
+    if (userLocation) {
+      params.set("lat", userLocation.lat.toString())
+      params.set("lng", userLocation.lng.toString())
+    }
     router.push(`/search?${params.toString()}`)
   }
 
@@ -54,6 +60,30 @@ export default function HeroSectionAlgeria() {
   const selectCity = (city: string) => {
     setCityQuery(city)
     setShowCitySuggestions(false)
+  }
+
+  const handleGeolocation = () => {
+    if (!navigator.geolocation) {
+      alert("La géolocalisation n'est pas supportée par votre navigateur")
+      return
+    }
+
+    setIsLocating(true)
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords
+        setUserLocation({ lat: latitude, lng: longitude })
+        setCityQuery("Ma position")
+        setShowCitySuggestions(false)
+        setIsLocating(false)
+      },
+      (error) => {
+        console.error("Erreur de géolocalisation:", error)
+        alert("Impossible d'obtenir votre position. Veuillez autoriser la géolocalisation.")
+        setIsLocating(false)
+      },
+      { enableHighAccuracy: true }
+    )
   }
 
   return (
@@ -131,7 +161,14 @@ export default function HeroSectionAlgeria() {
               {/* City Input avec auto-complétion */}
               <div className="relative flex-1 md:max-w-[280px]">
                 <div className="flex items-center px-5 py-4 bg-gray-50 rounded-2xl border border-gray-100 focus-within:border-nude-300 focus-within:ring-4 focus-within:ring-nude-50 focus-within:bg-white transition-all duration-300">
-                  <MapPin className="w-5 h-5 text-warm-500 mr-3 flex-shrink-0" />
+                  <button 
+                    onClick={handleGeolocation}
+                    disabled={isLocating}
+                    className={`mr-3 flex-shrink-0 transition-colors ${isLocating ? 'animate-spin text-nude-500' : 'text-warm-500 hover:text-nude-600'}`}
+                    title="Utiliser ma position"
+                  >
+                    <MapPin className="w-5 h-5" />
+                  </button>
                   <input 
                     ref={cityInputRef}
                     type="text" 
@@ -139,6 +176,7 @@ export default function HeroSectionAlgeria() {
                     onChange={(e) => {
                       setCityQuery(e.target.value)
                       setShowCitySuggestions(true)
+                      setUserLocation(null)
                     }}
                     onFocus={() => setShowCitySuggestions(true)}
                     onBlur={() => setTimeout(() => setShowCitySuggestions(false), 200)}
@@ -148,7 +186,10 @@ export default function HeroSectionAlgeria() {
                   />
                   {cityQuery && (
                     <button 
-                      onClick={() => setCityQuery('')}
+                      onClick={() => {
+                        setCityQuery('')
+                        setUserLocation(null)
+                      }}
                       className="ml-2 text-gray-400 hover:text-gray-600 transition-colors"
                     >
                       <X className="w-5 h-5" />

@@ -28,19 +28,23 @@ export default function MainHeader({ transparent = false }: MainHeaderProps) {
         </Link>
 
         {/* Navigation */}
-        <nav className="hidden md:flex items-center space-x-8">
-          <Link href="/search" className="text-gray-600 hover:text-nude-600 font-medium transition-colors">
-            Trouver un salon
-          </Link>
-          <Link href="/#how-it-works" className="text-gray-600 hover:text-nude-600 font-medium transition-colors">
-            Comment ça marche ?
-          </Link>
-          <Link href="/#professionals" className="text-gray-600 hover:text-nude-600 font-medium transition-colors">
-            Pour les professionnels
-          </Link>
-          <Link href="/faq" className="text-gray-600 hover:text-nude-600 font-medium transition-colors">
-            FAQ
-          </Link>
+        <nav className="hidden md:flex items-center space-x-1">
+          {[
+            { href: "/search", label: "Trouver un salon" },
+            { href: "/#how-it-works", label: "Comment ça marche ?" },
+            { href: "/#professionals", label: "Pour les professionnels" },
+            { href: "/faq", label: "FAQ" },
+          ].map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className="group relative px-4 py-2 text-gray-600 hover:text-nude-700 font-medium transition-all duration-300 hover:-translate-y-0.5 rounded-xl hover:bg-nude-50"
+            >
+              {item.label}
+              {/* Underline animée qui glisse depuis la gauche */}
+              <span className="absolute bottom-0.5 left-4 right-4 h-[2px] bg-gradient-to-r from-nude-500 to-warm-500 rounded-full scale-x-0 group-hover:scale-x-100 transition-transform duration-300 origin-left" />
+            </Link>
+          ))}
         </nav>
 
         {/* Actions */}

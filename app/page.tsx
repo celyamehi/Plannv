@@ -5,7 +5,7 @@ import CategoriesSectionAlgeria from '@/components/home/CategoriesSectionAlgeria
 import VillesSection from '@/components/home/VillesSection'
 import HowItWorksSection from '@/components/home/HowItWorksSection'
 import ProfessionalsSection from '@/components/home/ProfessionalsSection'
-import StatsSection from '@/components/home/StatsSection'
+import TopRatedSalonsSection from '@/components/home/TopRatedSalonsSection'
 
 export default function Home() {
   return (
@@ -23,7 +23,7 @@ export default function Home() {
         <div id="professionals">
           <ProfessionalsSection />
         </div>
-        <StatsSection />
+        <TopRatedSalonsSection />
       </div>
 
       {/* Footer */}
@@ -86,8 +86,8 @@ export default function Home() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/professionals/pricing" className="hover:text-nude-600 transition-colors">
-                    Tarifs
+                  <Link href="/nos-offres" className="hover:text-nude-600 transition-colors">
+                    Nos offres & Tarifs
                   </Link>
                 </li>
               </ul>

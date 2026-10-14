@@ -76,7 +76,7 @@ export default function ProfessionalSignupPage() {
   // Étape 2: Informations établissement
   const [establishmentInfo, setEstablishmentInfo] = useState({
     establishmentName: '',
-    category: 'coiffeur',
+    category: 'institut',
     address: '',
     city: '',
     postalCode: '',
@@ -87,12 +87,11 @@ export default function ProfessionalSignupPage() {
   })
 
   const categories = [
-    { value: 'coiffeur', label: 'Coiffeur' },
-    { value: 'barbier', label: 'Barbier' },
-    { value: 'esthetique', label: 'Institut de beauté' },
+    { value: 'institut', label: 'Institut de beauté' },
+    { value: 'manucure', label: 'Manucure & Pédicure' },
     { value: 'spa', label: 'Spa' },
-    { value: 'onglerie', label: 'Onglerie' },
-    { value: 'massage', label: 'Massage' },
+    { value: 'barbier', label: 'Barbier' },
+    { value: 'coiffeur', label: 'Coiffeur' },
   ]
 
   const handlePersonalSubmit = (e: React.FormEvent) => {
@@ -143,9 +142,9 @@ export default function ProfessionalSignupPage() {
 
         userId = authData.user.id
 
-        // Calculer la date de fin d'essai (7 jours)
+        // Calculer la date de fin d'essai gratuit (30 jours)
         const trialEndsAt = new Date()
-        trialEndsAt.setDate(trialEndsAt.getDate() + 7)
+        trialEndsAt.setDate(trialEndsAt.getDate() + 30)
 
         // Créer le profil avec l'essai activé automatiquement
         const { error: profileError } = await supabase
@@ -414,7 +413,7 @@ export default function ProfessionalSignupPage() {
                   <Input
                     id="establishmentName"
                     type="text"
-                    placeholder="Salon Beauté Paris"
+                    placeholder="Ex : Salon Élégance Alger, Barber Club Oran..."
                     value={establishmentInfo.establishmentName}
                     onChange={(e) => setEstablishmentInfo({ ...establishmentInfo, establishmentName: e.target.value })}
                     required

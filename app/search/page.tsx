@@ -40,12 +40,26 @@ interface SearchResult {
 
 const CATEGORIES = [
   { value: 'all', label: 'Toutes catégories' },
-  { value: 'coiffeur', label: 'Coiffeur' },
+  { value: 'institut', label: 'Institut de beauté' },
+  { value: 'manucure', label: 'Manucure & Pédicure' },
+  { value: 'spa', label: 'Spa' },
   { value: 'barbier', label: 'Barbier' },
-  { value: 'esthetique', label: 'Institut de beauté' },
-  { value: 'spa', label: 'Spa & Massage' },
-  { value: 'onglerie', label: 'Manucure & Pédicure' },
+  { value: 'coiffeur', label: 'Coiffeur' },
 ]
+
+const CATEGORY_LABELS: Record<string, string> = {
+  institut: 'Institut de beauté',
+  esthetique: 'Institut de beauté',
+  manucure: 'Manucure & Pédicure',
+  onglerie: 'Manucure & Pédicure',
+  ongles: 'Manucure & Pédicure',
+  spa: 'Spa',
+  massage: 'Spa',
+  barbier: 'Barbier',
+  barber: 'Barbier',
+  coiffeur: 'Coiffeur',
+  coiffure: 'Coiffeur',
+}
 
 const SORT_OPTIONS = [
   { value: 'recommandes', label: 'Recommandés' },
@@ -100,14 +114,19 @@ export default function SearchPage() {
 
       if (categoryParam) {
         const categoryMap: { [key: string]: string } = {
-          'coiffeur': 'coiffeur',
-          'barbier': 'barbier',
-          'manucure': 'onglerie',
-          'institut': 'esthetique',
+          'institut': 'institut',
+          'esthetique': 'institut',
+          'manucure': 'manucure',
+          'onglerie': 'manucure',
+          'ongles': 'manucure',
           'spa': 'spa',
-          'massage': 'spa'
+          'massage': 'spa',
+          'barbier': 'barbier',
+          'barber': 'barbier',
+          'coiffeur': 'coiffeur',
+          'coiffure': 'coiffeur'
         }
-        setSelectedCategory(categoryMap[categoryParam] || categoryParam)
+        setSelectedCategory(categoryMap[categoryParam.toLowerCase()] || categoryParam)
       }
       if (villeParam) setCityQuery(villeParam)
       if (queryParam) setSearchQuery(queryParam)
@@ -495,8 +514,8 @@ export default function SearchPage() {
                 <CardContent className="p-5">
                   <div className="flex items-start justify-between mb-2">
                     <h3 className="text-lg font-semibold line-clamp-1">{establishment.name}</h3>
-                    <span className="px-2 py-1 bg-nude-100 text-nude-700 text-xs rounded-full whitespace-nowrap ml-2">
-                      {establishment.category}
+                    <span className="px-2.5 py-1 bg-nude-100 text-nude-700 text-xs font-medium rounded-full whitespace-nowrap ml-2">
+                      {CATEGORY_LABELS[establishment.category?.toLowerCase()] || establishment.category}
                     </span>
                   </div>
 

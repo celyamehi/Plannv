@@ -182,13 +182,43 @@ export default function AccountSuspendedPage() {
         </div>
 
         {/* Pricing reminder */}
-        <div className="mt-6 p-4 bg-white rounded-xl shadow text-center">
-          <p className="text-sm text-gray-600 mb-2">Nos offres d'abonnement</p>
-          <div className="flex flex-wrap justify-center gap-2 text-xs">
-            <span className="px-2 py-1 bg-nude-100 text-nude-700 rounded-full">1 mois : 5 000 DA</span>
-            <span className="px-2 py-1 bg-nude-100 text-nude-700 rounded-full">3 mois : 12 000 DA</span>
-            <span className="px-2 py-1 bg-nude-100 text-nude-700 rounded-full">6 mois : 20 000 DA</span>
-            <span className="px-2 py-1 bg-nude-200 text-nude-800 rounded-full font-medium">12 mois : 35 000 DA</span>
+        <div className="mt-6 p-5 bg-white rounded-2xl shadow-sm border border-nude-100 text-center">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-semibold mb-2">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+            30 jours d&apos;essai gratuit inclus
+          </div>
+          <p className="text-xs uppercase tracking-wider text-gray-500 font-semibold mb-1">
+            Tarif unique Kalendo Pro
+          </p>
+          <div className="flex items-baseline justify-center gap-1 my-1">
+            <span className="text-3xl font-extrabold text-gray-900 tracking-tight">1 500</span>
+            <span className="text-sm font-bold text-nude-700">DA</span>
+            <span className="text-xs text-gray-500">/ mois</span>
+          </div>
+          <p className="text-xs text-gray-500 mb-3">
+            Sans engagement • Tout inclus (planning en ligne, gestion employés, réservations 24h/24)
+          </p>
+          <div className="flex flex-wrap justify-center gap-2 text-xs pt-2 border-t border-gray-100">
+            <span className="px-2.5 py-1 bg-nude-50 text-nude-800 rounded-lg font-medium border border-nude-100">
+              1 mois : 1 500 DA
+            </span>
+            <span className="px-2.5 py-1 bg-nude-50 text-nude-800 rounded-lg font-medium border border-nude-100">
+              3 mois : 4 500 DA
+            </span>
+            <span className="px-2.5 py-1 bg-nude-50 text-nude-800 rounded-lg font-medium border border-nude-100">
+              6 mois : 9 000 DA
+            </span>
+            <span className="px-2.5 py-1 bg-nude-100 text-nude-900 rounded-lg font-bold border border-nude-200">
+              12 mois : 18 000 DA
+            </span>
+          </div>
+          <div className="mt-3">
+            <Link
+              href="/nos-offres"
+              className="text-xs text-nude-600 hover:text-nude-800 font-medium underline transition-colors"
+            >
+              Découvrir les détails de l&apos;offre Kalendo Pro →
+            </Link>
           </div>
         </div>
       </div>

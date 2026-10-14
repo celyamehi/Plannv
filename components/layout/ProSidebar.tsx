@@ -21,6 +21,8 @@ import {
   User
 } from 'lucide-react'
 import { Button } from '../ui/button'
+import ProBottomNav from './ProBottomNav'
+
 
 interface ProSidebarProps {
   children: React.ReactNode
@@ -249,88 +251,39 @@ export default function ProSidebar({ children }: ProSidebarProps) {
         </div>
       </aside>
 
-      {/* Mobile Menu Overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden" onClick={() => setMobileMenuOpen(false)}>
-          <div className="fixed left-0 top-0 h-full w-64 bg-white z-50" onClick={(e) => e.stopPropagation()}>
-            {/* Mobile Sidebar Content */}
-            <div className="h-full flex flex-col">
-              <div className="h-16 flex items-center justify-between px-4 border-b border-gray-100">
-                <Link href="/" className="flex items-center">
-                  <Image
-                    src="/logo.png"
-                    alt="Kalendo"
-                    width={120}
-                    height={40}
-                    className="h-8 w-auto"
-                  />
-                </Link>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  <X className="w-4 h-4" />
-                </Button>
-              </div>
-
-              <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
-                {menuItems.map((item) => {
-                  const Icon = item.icon
-                  const isActive = pathname === item.href
-
-                  return (
-                    <Link
-                      key={item.href}
-                      href={item.href}
-                      onClick={() => setMobileMenuOpen(false)}
-                      className={`flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${isActive
-                        ? 'bg-nude-50 text-nude-600'
-                        : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                        }`}
-                    >
-                      <Icon className={`w-5 h-5 ${isActive ? 'text-nude-600' : 'text-gray-400'}`} />
-                      <span className="text-sm font-medium">{item.label}</span>
-                    </Link>
-                  )
-                })}
-              </nav>
-
-              <div className="p-4 border-t border-gray-100">
-                <Button
-                  variant="ghost"
-                  onClick={handleLogout}
-                  className="w-full justify-start text-red-600 hover:bg-red-50 hover:text-red-700"
-                >
-                  <LogOut className="w-4 h-4 mr-3" />
-                  Déconnexion
-                </Button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Main Content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Mobile Header */}
-        <header className="lg:hidden h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 flex-shrink-0">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setMobileMenuOpen(true)}
-            className="text-gray-600"
-          >
-            <Menu className="w-5 h-5" />
-          </Button>
-          <Image src="/logo.png" alt="Kalendo" width={100} height={32} className="h-6 w-auto" />
-          <div className="w-8" /> {/* Spacer for centering */}
+      <div className="flex-1 flex flex-col overflow-hidden relative">
+        {/* Mobile Header (Sans menu gauche, orienté application smartphone) */}
+        <header className="lg:hidden h-14 bg-white/95 backdrop-blur-md border-b border-gray-100 flex items-center justify-between px-4 flex-shrink-0 z-20">
+          <Link href="/professional/pro-dashboard" className="flex items-center">
+            <Image src="/logo.png" alt="Kalendo" width={110} height={36} className="h-7 w-auto" />
+          </Link>
+          <div className="flex items-center space-x-2">
+            <div className="flex items-center space-x-1.5 px-2.5 py-1 bg-nude-50 rounded-full border border-nude-100">
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-xs font-semibold text-nude-800 truncate max-w-[120px]">
+                {user?.business_name || user?.full_name || 'Mon salon'}
+              </span>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={handleLogout}
+              title="Déconnexion"
+              className="text-gray-400 hover:text-red-600 p-1.5 h-8 w-8"
+            >
+              <LogOut className="w-4 h-4" />
+            </Button>
+          </div>
         </header>
 
-        {/* Page Content */}
-        <main className="flex-1 overflow-auto">
+        {/* Page Content avec padding bas pour la barre de navigation mobile */}
+        <main className="flex-1 overflow-auto pb-24 lg:pb-0">
           {children}
         </main>
+
+        {/* Barre de navigation inférieure smartphone */}
+        <ProBottomNav />
       </div>
     </div>
   )

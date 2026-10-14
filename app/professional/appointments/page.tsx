@@ -1,12 +1,35 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useRouter } from 'next/navigation'
+import { useState, useEffect, Suspense } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
+import Link from 'next/link'
 import { supabase } from '../../../lib/supabase/client'
 import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card'
 import { Button } from '../../../components/ui/button'
 import ProSidebar from '../../../components/layout/ProSidebar'
-import { Calendar, Clock, Users, Filter, Plus, X, ChevronLeft, ChevronRight, Phone, PhoneOff, Check, Scissors, User, DollarSign } from 'lucide-react'
+import {
+  Calendar,
+  Clock,
+  Users,
+  Filter,
+  Plus,
+  X,
+  ChevronLeft,
+  ChevronRight,
+  ChevronDown,
+  Phone,
+  PhoneOff,
+  Check,
+  Scissors,
+  User,
+  DollarSign,
+  Eye,
+  Settings,
+  Search,
+  LayoutGrid,
+  CalendarDays,
+  Columns
+} from 'lucide-react'
 
 interface Appointment {
   id: string
@@ -123,8 +146,11 @@ const ensureStaffAvailability = async (
   }
 }
 
-export default function ProAppointmentsPage() {
+function ProAppointmentsContent() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const viewParam = searchParams?.get('view')
+
   const [loading, setLoading] = useState(true)
   const [appointments, setAppointments] = useState<Appointment[]>([])
   const [selectedDate, setSelectedDate] = useState<string | null>(new Date().toISOString().split('T')[0])
@@ -133,6 +159,10 @@ export default function ProAppointmentsPage() {
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null)
   const [showAppointmentDetails, setShowAppointmentDetails] = useState(false)
   const [viewMode, setViewMode] = useState<'calendar' | 'planning'>('calendar')
+  const [mobileTab, setMobileTab] = useState<'timeline' | 'kanban'>('timeline')
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false)
+  const [mobileSearchQuery, setMobileSearchQuery] = useState('')
+  const [hideEmptyHours, setHideEmptyHours] = useState(false)
   const [staffMembers, setStaffMembers] = useState<StaffMember[]>([])
   const [allServices, setAllServices] = useState<Service[]>([])
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([])
@@ -140,6 +170,13 @@ export default function ProAppointmentsPage() {
   const [isEditMode, setIsEditMode] = useState(false)
   const [editingAppointment, setEditingAppointment] = useState<Appointment | null>(null)
   const [establishmentId, setEstablishmentId] = useState<string | null>(null)
+
+  useEffect(() => {
+    if (viewParam === 'planning') {
+      setViewMode('planning')
+      setMobileTab('timeline')
+    }
+  }, [viewParam])
 
   const [newAppointmentData, setNewAppointmentData] = useState({
     client_name: '',
@@ -722,9 +759,504 @@ export default function ProAppointmentsPage() {
     return true
   })
 
+  const handlePrevDay = () => {
+    const base = selectedDate ? new Date(selectedDate + 'T00:00:00') : new Date()
+    base.setDate(base.getDate() - 1)
+    const yyyy = base.getFullYear()
+    const mm = String(base.getMonth() + 1).padStart(2, '0')
+    const dd = String(base.getDate()).padStart(2, '0')
+    setSelectedDate(`${yyyy}-${mm}-${dd}`)
+  }
+
+  const handleNextDay = () => {
+    const base = selectedDate ? new Date(selectedDate + 'T00:00:00') : new Date()
+    base.setDate(base.getDate() + 1)
+    const yyyy = base.getFullYear()
+    const mm = String(base.getMonth() + 1).padStart(2, '0')
+    const dd = String(base.getDate()).padStart(2, '0')
+    setSelectedDate(`${yyyy}-${mm}-${dd}`)
+  }
+
+  const handleToday = () => {
+    const today = new Date().toISOString().split('T')[0]
+    setSelectedDate(today)
+  }
+
+  const formatFrenchDate = (dateStr: string | null) => {
+    if (!dateStr) return ''
+    try {
+      const d = new Date(dateStr + 'T00:00:00')
+      return d.toLocaleDateString('fr-FR', {
+        weekday: 'long',
+        day: 'numeric',
+        month: 'long',
+        year: 'numeric'
+      })
+    } catch {
+      return dateStr
+    }
+  }
+
+  const formatAptTimeRange = (apt: Appointment) => {
+    const start = apt.start_time ? apt.start_time.slice(0, 5) : ''
+    if (apt.end_time) {
+      return `${start} - ${apt.end_time.slice(0, 5)}`
+    }
+    if (apt.services?.duration && start) {
+      const [h, m] = start.split(':').map(Number)
+      const totalMin = h * 60 + m + apt.services.duration
+      const endH = String(Math.floor(totalMin / 60)).padStart(2, '0')
+      const endM = String(totalMin % 60).padStart(2, '0')
+      return `${start} - ${endH}:${endM}`
+    }
+    return start
+  }
+
+  const getTimelineHours = () => {
+    const defaultHours = [
+      '08:00', '09:00', '10:00', '11:00', '12:00', '13:00',
+      '14:00', '15:00', '16:00', '17:00', '18:00', '19:00', '20:00'
+    ]
+    const hourSet = new Set(defaultHours)
+    filteredAppointments.forEach(apt => {
+      if (apt.start_time) {
+        const hour = apt.start_time.split(':')[0].padStart(2, '0') + ':00'
+        hourSet.add(hour)
+      }
+    })
+    return Array.from(hourSet).sort()
+  }
+
+  const getAppointmentsForHour = (hourStr: string) => {
+    const targetHour = parseInt(hourStr.split(':')[0], 10)
+    return filteredAppointments.filter((apt) => {
+      if (!apt.start_time) return false
+      const aptHour = parseInt(apt.start_time.split(':')[0], 10)
+      if (aptHour !== targetHour) return false
+
+      if (mobileSearchQuery.trim()) {
+        const q = mobileSearchQuery.toLowerCase()
+        const clientName = getClientName(apt).toLowerCase()
+        const serviceName = (apt.services?.name || '').toLowerCase()
+        const staffName = `${apt.staff_members?.first_name || ''} ${apt.staff_members?.last_name || ''}`.toLowerCase()
+        return clientName.includes(q) || serviceName.includes(q) || staffName.includes(q)
+      }
+      return true
+    })
+  }
+
+  const kanbanColumns = [
+    {
+      id: 'pending',
+      title: 'En attente',
+      color: 'bg-amber-500',
+      badgeBg: 'bg-amber-100 text-amber-800',
+      items: filteredAppointments.filter(a => a.status === 'pending' || a.status === 'calling')
+    },
+    {
+      id: 'confirmed',
+      title: 'Confirmés',
+      color: 'bg-emerald-500',
+      badgeBg: 'bg-emerald-100 text-emerald-800',
+      items: filteredAppointments.filter(a => a.status === 'confirmed' || a.status === 'call_confirmed')
+    },
+    {
+      id: 'completed',
+      title: 'Terminés',
+      color: 'bg-blue-500',
+      badgeBg: 'bg-blue-100 text-blue-800',
+      items: filteredAppointments.filter(a => a.status === 'completed')
+    },
+    {
+      id: 'cancelled',
+      title: 'Annulés',
+      color: 'bg-rose-500',
+      badgeBg: 'bg-rose-100 text-rose-800',
+      items: filteredAppointments.filter(a => a.status === 'cancelled' || a.status === 'call_cancelled' || a.status === 'call_no_response')
+    }
+  ]
+
   return (
     <ProSidebar>
-      <div className="p-8">
+      {/* ============================================================ */}
+      {/* VUE MOBILE SMARTPHONE (EXACTEMENT COMME LA CAPTURE D'ÉCRAN) */}
+      {/* ============================================================ */}
+      <div className="block lg:hidden min-h-screen bg-gradient-to-b from-[#f8f7ff] via-white to-[#faf9ff] pb-24">
+        {/* 1. Mobile Header: Planning + Eye + Settings */}
+        <div className="px-4 pt-3 pb-2 flex items-center justify-between">
+          <div className="flex items-center">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#6253ec] to-[#4c3ec8] text-white flex items-center justify-center shadow-md shadow-indigo-500/20">
+              <CalendarDays className="w-5 h-5 stroke-[2.2]" />
+            </div>
+            <h1 className="text-xl font-bold text-gray-900 ml-3 tracking-tight">Planning</h1>
+          </div>
+          <div className="flex items-center space-x-1">
+            <button
+              onClick={() => setHideEmptyHours(!hideEmptyHours)}
+              title={hideEmptyHours ? 'Afficher tous les créneaux' : 'Masquer les créneaux vides'}
+              className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+                hideEmptyHours ? 'bg-[#5b50e6] text-white shadow-sm' : 'bg-[#efeefd] text-[#5b50e6] hover:bg-purple-100'
+              }`}
+            >
+              <Eye className="w-4 h-4" />
+            </button>
+            <Link
+              href="/professional/settings"
+              title="Paramètres"
+              className="w-9 h-9 rounded-full flex items-center justify-center text-gray-500 hover:text-gray-700"
+            >
+              <Settings className="w-4 h-4" />
+            </Link>
+          </div>
+        </div>
+
+        {/* 2. Date Navigation Row */}
+        <div className="px-4 py-1.5 flex items-center">
+          <button
+            onClick={handlePrevDay}
+            title="Jour précédent"
+            className="w-8 h-8 rounded-full bg-gray-100/90 text-gray-600 flex items-center justify-center active:scale-90 transition-transform shrink-0"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </button>
+
+          <div className="relative flex-1 mx-2 bg-[#f4f2fe] border border-[#e2dffc] rounded-full py-2 px-3 flex items-center justify-center space-x-1.5 shadow-xs cursor-pointer">
+            <Calendar className="w-3.5 h-3.5 text-[#5b50e6] shrink-0" />
+            <span className="text-[12px] font-semibold text-[#3b32a4] truncate capitalize">
+              {formatFrenchDate(selectedDate)}
+            </span>
+            <input
+              type="date"
+              value={selectedDate || ''}
+              onChange={(e) => setSelectedDate(e.target.value)}
+              className="absolute inset-0 opacity-0 w-full h-full cursor-pointer z-10"
+            />
+          </div>
+
+          <button
+            onClick={handleNextDay}
+            title="Jour suivant"
+            className="w-8 h-8 rounded-full bg-gray-100/90 text-gray-600 flex items-center justify-center active:scale-90 transition-transform shrink-0"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={handleToday}
+            title="Aujourd'hui"
+            className="relative ml-2 bg-[#5b50e6] hover:bg-[#4d42d8] active:scale-95 text-white font-medium text-xs px-3.5 py-2 rounded-2xl shadow-sm shrink-0 transition-all flex items-center"
+          >
+            Aujourd&apos;hui
+            <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white" />
+          </button>
+        </div>
+
+        {/* 3. Switcher Tabs: Timeline vs Kanban */}
+        <div className="px-4 py-2">
+          <div className="bg-[#f0f0f4] p-1 rounded-2xl flex items-center">
+            <button
+              onClick={() => setMobileTab('timeline')}
+              className={`flex-1 py-2 px-3 rounded-xl flex items-center justify-center space-x-2 text-xs font-semibold transition-all ${
+                mobileTab === 'timeline'
+                  ? 'bg-[#5b50e6] text-white shadow-sm'
+                  : 'text-gray-500 hover:text-gray-800'
+              }`}
+            >
+              <Clock className="w-3.5 h-3.5" />
+              <span>Timeline</span>
+            </button>
+            <button
+              onClick={() => setMobileTab('kanban')}
+              className={`flex-1 py-2 px-3 rounded-xl flex items-center justify-center space-x-2 text-xs font-semibold transition-all ${
+                mobileTab === 'kanban'
+                  ? 'bg-[#5b50e6] text-white shadow-sm'
+                  : 'text-gray-500 hover:text-gray-800'
+              }`}
+            >
+              <Columns className="w-3.5 h-3.5" />
+              <span>Kanban</span>
+            </button>
+          </div>
+        </div>
+
+        {/* 4. Staff Filter + Search Row */}
+        <div className="px-4 py-2">
+          <div className="flex items-center">
+            <div className="relative flex-1 bg-white border border-gray-200/90 rounded-2xl px-3.5 py-2.5 flex items-center justify-between shadow-xs">
+              <span className="absolute -top-2 left-3 px-1.5 bg-white text-[10px] text-gray-400 font-medium tracking-tight">
+                Employé
+              </span>
+              <div className="flex items-center space-x-2 min-w-0">
+                <Users className="w-4 h-4 text-gray-400 shrink-0" />
+                <span className="text-xs font-semibold text-gray-800 truncate">
+                  {filterStaff === 'all'
+                    ? 'Tous les employés'
+                    : (() => {
+                        const s = staffMembers.find((m) => m.id === filterStaff)
+                        return s ? `${s.first_name} ${s.last_name || ''}` : 'Tous les employés'
+                      })()}
+                </span>
+              </div>
+              <ChevronDown className="w-4 h-4 text-gray-400 shrink-0 ml-1" />
+              <select
+                value={filterStaff}
+                onChange={(e) => setFilterStaff(e.target.value)}
+                className="absolute inset-0 opacity-0 w-full h-full cursor-pointer z-10"
+              >
+                <option value="all">Tous les employés</option>
+                {staffMembers.map((staff) => (
+                  <option key={staff.id} value={staff.id}>
+                    {staff.first_name} {staff.last_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <button
+              onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
+              title="Rechercher un rendez-vous"
+              className={`w-11 h-11 rounded-full border border-gray-200/90 bg-white flex items-center justify-center shadow-xs shrink-0 ml-2 transition-colors ${
+                mobileSearchOpen || mobileSearchQuery ? 'text-[#5b50e6] border-[#5b50e6]' : 'text-gray-500'
+              }`}
+            >
+              <Search className="w-4 h-4" />
+            </button>
+          </div>
+
+          {/* Quick Search bar if opened */}
+          {mobileSearchOpen && (
+            <div className="mt-2 relative">
+              <Search className="w-3.5 h-3.5 text-gray-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={mobileSearchQuery}
+                onChange={(e) => setMobileSearchQuery(e.target.value)}
+                placeholder="Rechercher par client, service, employé..."
+                className="w-full text-xs pl-8 pr-8 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5b50e6]"
+              />
+              {mobileSearchQuery && (
+                <button
+                  onClick={() => setMobileSearchQuery('')}
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* 5. Main Content: Timeline vs Kanban */}
+        {loading ? (
+          <div className="py-16 text-center">
+            <div className="w-10 h-10 border-3 border-[#5b50e6] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+            <p className="text-xs text-gray-500">Chargement du planning...</p>
+          </div>
+        ) : mobileTab === 'timeline' ? (
+          /* ================= VERTICAL TIMELINE STREAM ================= */
+          <div className="px-4 pt-3 pb-8 space-y-5">
+            {getTimelineHours().map((hourStr) => {
+              const hourApts = getAppointmentsForHour(hourStr)
+              if (hideEmptyHours && hourApts.length === 0) return null
+
+              return (
+                <div key={hourStr} className="space-y-1.5">
+                  {/* Hour Label + Count Badge */}
+                  <div className="flex items-center space-x-2 pl-1">
+                    <span className="text-xs font-bold text-gray-800 tracking-tight">{hourStr}</span>
+                    {hourApts.length > 0 && (
+                      <span className="w-4 h-4 rounded-full bg-[#5b50e6] text-white text-[10px] font-bold flex items-center justify-center">
+                        {hourApts.length}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Vertical Line + Content */}
+                  <div className="relative pl-6">
+                    {/* Vertical tracking line */}
+                    <div className="absolute left-2.5 top-0 bottom-0 w-[1.5px] bg-gray-200/90 -translate-x-1/2" />
+
+                    {/* Node Dot on the line */}
+                    {hourApts.length > 0 ? (
+                      <div className="absolute left-2.5 top-3 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-[#5b50e6] ring-4 ring-indigo-100 z-10" />
+                    ) : (
+                      <div className="absolute left-2.5 top-2.5 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-gray-200 ring-2 ring-white z-10" />
+                    )}
+
+                    {/* Hour Content */}
+                    <div className="ml-1">
+                      {hourApts.length === 0 ? (
+                        <p className="py-1 text-xs italic text-gray-400 font-normal">
+                          Aucun rendez-vous
+                        </p>
+                      ) : (
+                        <div className="space-y-3 pb-2">
+                          {hourApts.map((apt) => (
+                            <div
+                              key={apt.id}
+                              onClick={() => {
+                                setSelectedAppointment(apt)
+                                setShowAppointmentDetails(true)
+                              }}
+                              className="bg-white rounded-2xl p-4 shadow-[0_2px_12px_rgba(0,0,0,0.04)] border border-gray-100/90 active:scale-[0.99] transition-all cursor-pointer relative"
+                            >
+                              {/* Top row: Time range badge + status dot */}
+                              <div className="flex items-center justify-between">
+                                <span
+                                  className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                                    apt.status === 'confirmed' ||
+                                    apt.status === 'call_confirmed' ||
+                                    apt.status === 'completed'
+                                      ? 'bg-[#e6f8ee] text-[#1e824c]'
+                                      : apt.status === 'pending' || apt.status === 'calling'
+                                      ? 'bg-[#ffebe8] text-[#d94f38]'
+                                      : 'bg-gray-100 text-gray-700'
+                                  }`}
+                                >
+                                  {formatAptTimeRange(apt)}
+                                </span>
+                                <span
+                                  className={`w-2.5 h-2.5 rounded-full ${
+                                    apt.status === 'confirmed' ||
+                                    apt.status === 'call_confirmed' ||
+                                    apt.status === 'completed'
+                                      ? 'bg-emerald-500'
+                                      : apt.status === 'pending' || apt.status === 'calling'
+                                      ? 'bg-rose-500'
+                                      : 'bg-gray-400'
+                                  }`}
+                                />
+                              </div>
+
+                              {/* Service Name */}
+                              <h4 className="font-bold text-gray-900 text-base mt-2.5 tracking-tight">
+                                {apt.services?.name || 'Prestation'}
+                              </h4>
+
+                              {/* Staff Name */}
+                              <p className="text-xs text-gray-500 mt-0.5">
+                                {apt.staff_members
+                                  ? `${apt.staff_members.first_name} ${apt.staff_members.last_name || ''}`
+                                  : 'Non assigné'}
+                              </p>
+
+                              {/* Bottom row: Client + Duration */}
+                              <div className="flex items-center justify-between text-xs text-gray-600 mt-3 pt-2.5 border-t border-gray-50">
+                                <div className="flex items-center space-x-1.5">
+                                  <User
+                                    className={`w-3.5 h-3.5 ${
+                                      apt.status === 'confirmed' || apt.status === 'call_confirmed'
+                                        ? 'text-emerald-600'
+                                        : 'text-[#8b5cf6]'
+                                    }`}
+                                  />
+                                  <span
+                                    className={`font-semibold ${
+                                      apt.status === 'confirmed' || apt.status === 'call_confirmed'
+                                        ? 'text-emerald-700'
+                                        : 'text-[#8b5cf6]'
+                                    }`}
+                                  >
+                                    {getClientName(apt)}
+                                  </span>
+                                </div>
+                                <div className="flex items-center space-x-1 text-gray-400 font-medium">
+                                  <Clock className="w-3.5 h-3.5" />
+                                  <span>{apt.services?.duration || 60}min</span>
+                                </div>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        ) : (
+          /* ================= KANBAN VIEW (MOBILE) ================= */
+          <div className="px-4 pt-3 pb-8">
+            <div className="space-y-4">
+              {kanbanColumns.map((col) => (
+                <div key={col.id} className="bg-white rounded-2xl border border-gray-100 p-3 shadow-xs">
+                  <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-100">
+                    <div className="flex items-center space-x-2">
+                      <span className={`w-2.5 h-2.5 rounded-full ${col.color}`} />
+                      <span className="font-bold text-xs text-gray-800">{col.title}</span>
+                    </div>
+                    <span className={`text-[11px] font-bold px-2 py-0.5 rounded-full ${col.badgeBg}`}>
+                      {col.items.length}
+                    </span>
+                  </div>
+
+                  {col.items.length === 0 ? (
+                    <p className="text-xs text-gray-400 italic py-2 text-center">Aucun rendez-vous</p>
+                  ) : (
+                    <div className="space-y-2.5">
+                      {col.items.map((apt) => (
+                        <div
+                          key={apt.id}
+                          onClick={() => {
+                            setSelectedAppointment(apt)
+                            setShowAppointmentDetails(true)
+                          }}
+                          className="p-3 bg-gray-50/70 hover:bg-gray-50 border border-gray-100 rounded-xl cursor-pointer"
+                        >
+                          <div className="flex items-center justify-between text-xs mb-1.5">
+                            <span className="font-bold text-[#5b50e6]">{formatAptTimeRange(apt)}</span>
+                            <span className="text-[11px] text-gray-500 font-medium">
+                              {apt.staff_members?.first_name || ''}
+                            </span>
+                          </div>
+                          <div className="font-semibold text-gray-900 text-xs mb-1">
+                            {apt.services?.name}
+                          </div>
+                          <div className="text-[11px] text-gray-600 flex items-center justify-between">
+                            <span>{getClientName(apt)}</span>
+                            <span>{apt.services?.price ? `${apt.services.price} DA` : ''}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* 6. Floating Action Button (FAB) Mobile */}
+        <div className="fixed bottom-20 right-4 z-30 lg:hidden">
+          <button
+            onClick={() => {
+              setShowNewAppointmentModal(true)
+              setNewAppointmentData({
+                client_name: '',
+                client_phone: '',
+                service_id: '',
+                staff_member_id: '',
+                appointment_date: selectedDate || new Date().toISOString().split('T')[0],
+                start_time: '',
+                client_notes: ''
+              })
+              setFilteredServices(allServices)
+              setFilteredStaff(staffMembers)
+            }}
+            className="relative bg-[#5b50e6] hover:bg-[#4d42d8] active:scale-95 text-white font-medium text-xs px-4 py-3 rounded-2xl shadow-xl shadow-indigo-600/30 flex items-center space-x-2 transition-all"
+          >
+            <Plus className="w-4 h-4 text-white stroke-[2.5]" />
+            <span className="font-semibold text-[13px]">Nouveau RDV</span>
+            <span className="w-1.5 h-1.5 rounded-full bg-rose-500 absolute -bottom-0.5 left-1/2 -translate-x-1/2" />
+          </button>
+        </div>
+      </div>
+
+      {/* ============================================================ */}
+      {/* VUE DESKTOP (ORDINATEUR) */}
+      {/* ============================================================ */}
+      <div className="hidden lg:block p-8">
         <div className="flex items-center justify-between mb-8">
           <div>
             <h1 className="text-3xl font-bold mb-2">Rendez-vous</h1>
@@ -866,6 +1398,7 @@ export default function ProAppointmentsPage() {
             )}
           </>
         )}
+      </div>
 
         {showAppointmentDetails && selectedAppointment && (
           <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
@@ -1153,7 +1686,20 @@ export default function ProAppointmentsPage() {
             </div>
           </div>
         )}
-      </div>
     </ProSidebar>
+  )
+}
+
+export default function ProAppointmentsPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+          <div className="w-10 h-10 border-4 border-[#5b50e6] border-t-transparent rounded-full animate-spin" />
+        </div>
+      }
+    >
+      <ProAppointmentsContent />
+    </Suspense>
   )
 }

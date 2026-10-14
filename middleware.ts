@@ -17,6 +17,7 @@ const publicPaths = [
   '/professionals/signup',
   '/professionals/login',
   '/admin/login',
+  '/account-suspended',
   '/auth/selection',
   '/search',
   '/establishments',
@@ -38,6 +39,7 @@ const publicPaths = [
   '/contact',
   '/faq',
   '/professionals/pricing',
+  '/nos-offres',
   '/sitemap.xml',
   '/robots.txt'
 ]

@@ -1,0 +1,339 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { motion } from "framer-motion"
+import { Star, MapPin, Sparkles, CheckCircle2, ArrowRight, Calendar } from "lucide-react"
+import { supabase } from "@/lib/supabase/client"
+import AuroraMeshBackground from "@/components/ui/AuroraMeshBackground"
+
+interface SalonItem {
+  id: string
+  name: string
+  slug: string
+  category: string
+  city: string
+  address?: string
+  average_rating: number
+  total_reviews: number
+  cover_image_url: string
+  logo_url: string
+  is_verified?: boolean
+  services: string[]
+}
+
+const DEFAULT_TOP_SALONS: SalonItem[] = [
+  {
+    id: "1",
+    name: "L'Atelier Beauté & Spa",
+    slug: "latelier-beaute-alger",
+    category: "Institut de beauté",
+    city: "Alger (Hydra)",
+    address: "Rue Djenane El Malik, Hydra",
+    average_rating: 4.9,
+    total_reviews: 64,
+    cover_image_url: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80",
+    logo_url: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=200&q=80",
+    is_verified: true,
+    services: ["Soin Visage Éclat", "Massage Relaxant", "Épilation Définitive"]
+  },
+  {
+    id: "2",
+    name: "Barber Lounge El-Biar",
+    slug: "barber-lounge-el-biar",
+    category: "Barbier",
+    city: "Alger (El Biar)",
+    address: "Boulevard Bougara, El Biar",
+    average_rating: 4.9,
+    total_reviews: 82,
+    cover_image_url: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80",
+    logo_url: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=200&q=80",
+    is_verified: true,
+    services: ["Coupe Dégradé Homme", "Taille de Barbe VIP", "Soin Vapeur"]
+  },
+  {
+    id: "3",
+    name: "Maison de Beauté & Onglerie",
+    slug: "maison-beaute-onglerie-oran",
+    category: "Manucure & Pédicure",
+    city: "Oran (Akid Lotfi)",
+    address: "Résidence El Bahia, Akid Lotfi",
+    average_rating: 4.8,
+    total_reviews: 53,
+    cover_image_url: "https://images.unsplash.com/photo-1632345031435-8727f6897d53?auto=format&fit=crop&w=800&q=80",
+    logo_url: "https://images.unsplash.com/photo-1607779097040-26e80aa78e66?auto=format&fit=crop&w=200&q=80",
+    is_verified: true,
+    services: ["Pose Gel & Capsules", "Nail Art Personnalisé", "Soin Russe"]
+  },
+  {
+    id: "4",
+    name: "Royal Spa & Hammam",
+    slug: "royal-spa-hammam-constantine",
+    category: "Spa",
+    city: "Constantine",
+    address: "Cité Sidi Mabrouk",
+    average_rating: 4.9,
+    total_reviews: 41,
+    cover_image_url: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
+    logo_url: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=200&q=80",
+    is_verified: true,
+    services: ["Hammam Traditionnel", "Massage aux Huiles", "Gommage"]
+  },
+  {
+    id: "5",
+    name: "Institut Glow & Chic",
+    slug: "institut-glow-chic-annaba",
+    category: "Institut de beauté",
+    city: "Annaba",
+    address: "Avenue de l'ALN",
+    average_rating: 4.8,
+    total_reviews: 37,
+    cover_image_url: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80",
+    logo_url: "https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=format&fit=crop&w=200&q=80",
+    is_verified: true,
+    services: ["Hydrafacial", "Rehaussement Cils", "Maquillage Soirée"]
+  },
+  {
+    id: "6",
+    name: "Le Gentlemen Club",
+    slug: "le-gentlemen-club-setif",
+    category: "Barbier",
+    city: "Sétif",
+    address: "Boulevard 8 Mai 1945",
+    average_rating: 4.9,
+    total_reviews: 29,
+    cover_image_url: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=800&q=80",
+    logo_url: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80",
+    is_verified: true,
+    services: ["Coupe Signature", "Rasage à l'Ancienne", "Soin Visage"]
+  }
+]
+
+export default function TopRatedSalonsSection() {
+  const [salons, setSalons] = useState<SalonItem[]>(DEFAULT_TOP_SALONS)
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    async function loadSalonsFromDb() {
+      try {
+        setLoading(true)
+        // 1. Récupérer les établissements actifs classés par note moyenne
+        const { data: dbEstabs, error: estError } = await supabase
+          .from("establishments")
+          .select(`
+            id,
+            name,
+            slug,
+            category,
+            city,
+            address,
+            average_rating,
+            total_reviews,
+            cover_image_url,
+            logo_url,
+            is_verified
+          `)
+          .eq("is_active", true)
+          .order("average_rating", { ascending: false })
+          .limit(6)
+
+        if (!estError && dbEstabs && dbEstabs.length > 0) {
+          // 2. Récupérer les services pour chacun de ces établissements
+          const ids = dbEstabs.map((e) => e.id)
+          const { data: dbServices } = await supabase
+            .from("services")
+            .select("establishment_id, name")
+            .in("establishment_id", ids)
+            .eq("is_active", true)
+
+          const servicesMap: Record<string, string[]> = {}
+          for (const s of dbServices || []) {
+            if (!servicesMap[s.establishment_id]) {
+              servicesMap[s.establishment_id] = []
+            }
+            if (servicesMap[s.establishment_id].length < 3) {
+              servicesMap[s.establishment_id].push(s.name)
+            }
+          }
+
+          const formatted: SalonItem[] = dbEstabs.map((e) => ({
+            id: e.id,
+            name: e.name,
+            slug: e.slug || e.id,
+            category: e.category || "Beauté",
+            city: e.city || "Algérie",
+            address: e.address || "",
+            average_rating: e.average_rating || 5.0,
+            total_reviews: e.total_reviews || 1,
+            cover_image_url:
+              e.cover_image_url ||
+              "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80",
+            logo_url:
+              e.logo_url ||
+              "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=200&q=80",
+            is_verified: e.is_verified ?? true,
+            services:
+              servicesMap[e.id] && servicesMap[e.id].length > 0
+                ? servicesMap[e.id]
+                : ["Réservation en ligne", "Prestations beauté", "Soins experts"]
+          }))
+
+          setSalons(formatted)
+        }
+      } catch (err) {
+        console.warn("Utilisation des établissements vedettes:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadSalonsFromDb()
+  }, [])
+
+  return (
+    <section className="relative py-24 bg-gradient-to-b from-gray-50/80 via-white to-gray-50/80 border-t border-gray-100 overflow-hidden">
+      {/* Animated Aurora Mesh Background */}
+      <AuroraMeshBackground variant="salons" opacity="opacity-75" showGrid={true} />
+
+      <div className="container mx-auto px-4 max-w-7xl relative z-10">
+        {/* Section Header */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-14"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-nude-100/90 backdrop-blur-sm text-nude-800 text-xs font-semibold mb-3 border border-nude-200/60 shadow-sm">
+            <Sparkles className="w-3.5 h-3.5 text-nude-700" />
+            <span>Ils nous font confiance • Sélection d'excellence en Algérie</span>
+          </div>
+
+          <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 mb-4 tracking-tight">
+            Les salons les mieux notés
+          </h2>
+          <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto">
+            Découvrez les établissements plébiscités par nos clientes pour la qualité de leurs prestations et leur accueil
+          </p>
+        </motion.div>
+
+        {/* Salons Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 mb-12">
+          {salons.map((salon, index) => (
+            <motion.div
+              key={salon.id}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.08, duration: 0.5 }}
+              className="h-full"
+            >
+              <Link
+                href={`/establishments/${salon.slug}`}
+                className="group block bg-white/90 backdrop-blur-xl rounded-3xl overflow-hidden border border-white/80 shadow-md hover:shadow-2xl hover:border-nude-300 transition-all duration-300 h-full flex flex-col justify-between focus:outline-none"
+              >
+                <div>
+                  {/* Photo de couverture */}
+                  <div className="relative h-52 w-full overflow-hidden bg-gray-100">
+                    <img
+                      src={salon.cover_image_url}
+                      alt={salon.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                      loading="lazy"
+                    />
+
+                    {/* Dark gradient for text & badges readability */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20" />
+
+                    {/* Category pill */}
+                    <div className="absolute top-3 left-3 bg-white/95 backdrop-blur-md px-3 py-1 rounded-full text-xs font-bold text-gray-800 shadow-sm">
+                      {salon.category}
+                    </div>
+
+                    {/* Rating badge */}
+                    <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-semibold text-white flex items-center gap-1 shadow-sm">
+                      <Star className="w-3.5 h-3.5 text-amber-400 fill-amber-400" />
+                      <span>{salon.average_rating ? salon.average_rating.toFixed(1) : "5.0"}</span>
+                      <span className="text-white/70 text-[10px]">({salon.total_reviews})</span>
+                    </div>
+
+                    {/* Photo de profil (Logo en médaillon flottant) */}
+                    <div className="absolute -bottom-5 left-6">
+                      <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white shadow-md bg-white">
+                        <img
+                          src={salon.logo_url}
+                          alt={`Logo ${salon.name}`}
+                          className="w-full h-full object-cover"
+                          loading="lazy"
+                        />
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Body Content */}
+                  <div className="pt-8 px-6 pb-4">
+                    {/* Salon Name & Verified Badge */}
+                    <div className="flex items-center gap-1.5 mb-1.5">
+                      <h3 className="font-extrabold text-lg text-gray-900 group-hover:text-nude-700 transition-colors line-clamp-1">
+                        {salon.name}
+                      </h3>
+                      {salon.is_verified && (
+                        <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                      )}
+                    </div>
+
+                    {/* Wilaya / Localisation */}
+                    <div className="flex items-center text-xs font-medium text-gray-500 mb-4">
+                      <MapPin className="w-3.5 h-3.5 text-nude-600 mr-1 flex-shrink-0" />
+                      <span className="line-clamp-1">{salon.city}</span>
+                    </div>
+
+                    {/* Services de l'établissement */}
+                    {salon.services && salon.services.length > 0 && (
+                      <div className="mb-4">
+                        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">
+                          Prestations proposées :
+                        </p>
+                        <div className="flex flex-wrap gap-1.5">
+                          {salon.services.slice(0, 3).map((service, sIdx) => (
+                            <span
+                              key={sIdx}
+                              className="text-xs bg-nude-50 text-nude-900 px-2.5 py-1 rounded-lg border border-nude-100 font-medium"
+                            >
+                              {service}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+                {/* Footer Action Button */}
+                <div className="px-6 pb-6 pt-2">
+                  <div className="w-full py-3 px-4 rounded-xl bg-gray-900 group-hover:bg-gradient-to-r group-hover:from-nude-700 group-hover:to-warm-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-all duration-300">
+                    <Calendar className="w-4 h-4" />
+                    <span>Réserver un rendez-vous</span>
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </div>
+                </div>
+              </Link>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Explore all salons button */}
+        <div className="text-center">
+          <Link
+            href="/search"
+            className="inline-flex items-center gap-2 px-8 py-3.5 bg-white border border-gray-200 hover:border-nude-300 text-gray-800 hover:text-nude-800 rounded-full text-sm font-bold shadow-sm hover:shadow-md transition-all duration-200"
+          >
+            <span>Explorer tous les établissements en Algérie</span>
+            <ArrowRight className="w-4 h-4 text-nude-700" />
+          </Link>
+        </div>
+      </div>
+    </section>
+  )
+}

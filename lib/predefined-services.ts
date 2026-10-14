@@ -161,6 +161,11 @@ export const PREDEFINED_SERVICES: Record<string, PreDefinedService[]> = {
   ]
 }
 
+// Alias pour compatibilité complète avec les catégories du site
+PREDEFINED_SERVICES.institut = PREDEFINED_SERVICES.esthetique
+PREDEFINED_SERVICES.manucure = PREDEFINED_SERVICES.onglerie
+PREDEFINED_SERVICES.coiffeur = PREDEFINED_SERVICES.coiffure
+
 // Catégories disponibles par type d'établissement
 export const CATEGORIES_BY_TYPE: Record<string, string[]> = {
   coiffure: ['Coupes Femme', 'Coupes Homme', 'Coupes Enfant', 'Brushing', 'Colorations', 'Soins', 'Coiffures', 'Autres'],
@@ -170,3 +175,9 @@ export const CATEGORIES_BY_TYPE: Record<string, string[]> = {
   spa: ['Soins Corps', 'Rituels', 'Forfaits', 'Autres'],
   barbier: ['Coupes', 'Barbe', 'Forfaits', 'Autres'],
 }
+
+// Alias pour les catégories disponibles
+CATEGORIES_BY_TYPE.institut = CATEGORIES_BY_TYPE.esthetique
+CATEGORIES_BY_TYPE.manucure = CATEGORIES_BY_TYPE.onglerie
+CATEGORIES_BY_TYPE.coiffeur = CATEGORIES_BY_TYPE.coiffure
+

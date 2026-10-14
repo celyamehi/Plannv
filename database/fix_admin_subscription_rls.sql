@@ -100,7 +100,7 @@ CREATE TABLE IF NOT EXISTS admin_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   admin_id UUID NOT NULL REFERENCES profiles(id),
   action TEXT NOT NULL,
-  target_user_id UUID REFERENCES profiles(id),
+  target_user_id UUID REFERENCES profiles(id) ON DELETE SET NULL,
   target_type TEXT,
   details JSONB,
   created_at TIMESTAMPTZ DEFAULT NOW()

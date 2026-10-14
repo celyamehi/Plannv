@@ -182,8 +182,8 @@ export default function AdminDashboard() {
       const newStatus = activationForm.plan === 'trial' ? 'trial' : 'active'
       console.log('Activation:', { userId: selectedUser.id, newStatus, endsAt: endsAt.toISOString() })
 
-      // Mettre à jour le profil
-      const { error: profileError } = await supabase
+      // Mettre à jour le profil avec .select() pour vérifier que la ligne a bien été modifiée
+      const { data: updatedProfiles, error: profileError } = await supabase
         .from('profiles')
         .update({
           subscription_status: newStatus,
@@ -192,17 +192,24 @@ export default function AdminDashboard() {
           updated_at: new Date().toISOString()
         })
         .eq('id', selectedUser.id)
+        .select()
 
       if (profileError) {
         console.error('Erreur mise à jour profil:', profileError)
         throw profileError
       }
 
-      console.log('✅ Profil mis à jour avec succès')
+      if (!updatedProfiles || updatedProfiles.length === 0) {
+        throw new Error(
+          "La modification a été bloquée par la sécurité Supabase (RLS). Veuillez exécuter le script fix_admin_subscription_rls.sql dans l'éditeur SQL de votre dashboard Supabase pour accorder les droits d'administration."
+        )
+      }
 
-      // Essayer de créer l'abonnement (table optionnelle)
+      console.log('✅ Profil mis à jour avec succès:', updatedProfiles)
+
+      // Essayer de créer l'abonnement (si la table existe)
       try {
-        await supabase
+        const { error: subError } = await supabase
           .from('subscriptions')
           .insert({
             user_id: selectedUser.id,
@@ -217,9 +224,9 @@ export default function AdminDashboard() {
             notes: activationForm.notes,
             created_by: session?.user.id
           })
-        console.log('✅ Abonnement créé')
+        if (!subError) console.log('✅ Abonnement créé')
       } catch (subError) {
-        console.warn('Table subscriptions non disponible:', subError)
+        // Table optionnelle
       }
 
       // Activer l'établissement
@@ -231,9 +238,9 @@ export default function AdminDashboard() {
         console.log('✅ Établissement activé')
       }
 
-      // Essayer de logger l'action (table optionnelle)
+      // Essayer de logger l'action (si la table existe)
       try {
-        await supabase.from('admin_logs').insert({
+        const { error: logError } = await supabase.from('admin_logs').insert({
           admin_id: session?.user.id,
           action: 'activate_subscription',
           target_user_id: selectedUser.id,
@@ -244,9 +251,9 @@ export default function AdminDashboard() {
             payment_method: activationForm.paymentMethod
           }
         })
-        console.log('✅ Action loggée')
+        if (!logError) console.log('✅ Action loggée')
       } catch (logError) {
-        console.warn('Table admin_logs non disponible:', logError)
+        // Table optionnelle
       }
 
       // Fermer le modal et rafraîchir
@@ -273,13 +280,21 @@ export default function AdminDashboard() {
     try {
       const { data: { session } } = await supabase.auth.getSession()
 
-      await supabase
+      const { data: updated, error: suspError } = await supabase
         .from('profiles')
         .update({
           subscription_status: 'suspended',
           updated_at: new Date().toISOString()
         })
         .eq('id', selectedUser.id)
+        .select()
+
+      if (suspError) throw suspError
+      if (!updated || updated.length === 0) {
+        throw new Error(
+          "La modification a été bloquée par la sécurité Supabase (RLS). Veuillez exécuter le script fix_admin_subscription_rls.sql dans Supabase."
+        )
+      }
 
       // Désactiver l'établissement
       await supabase
@@ -288,12 +303,16 @@ export default function AdminDashboard() {
         .eq('owner_id', selectedUser.id)
 
       // Logger
-      await supabase.from('admin_logs').insert({
-        admin_id: session?.user.id,
-        action: 'suspend_user',
-        target_user_id: selectedUser.id,
-        target_type: 'user'
-      })
+      try {
+        await supabase.from('admin_logs').insert({
+          admin_id: session?.user.id,
+          action: 'suspend_user',
+          target_user_id: selectedUser.id,
+          target_type: 'user'
+        })
+      } catch {
+        // Table optionnelle
+      }
 
       setShowModal(null)
       setSelectedUser(null)

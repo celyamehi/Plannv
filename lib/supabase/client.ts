@@ -10,14 +10,16 @@ export const supabase = createClientComponentClient({
   supabaseKey: defaultKey,
 })
 
-// Client pour les opérations serveur (avec service role key si nécessaire)
-export const supabaseAdmin = createClient(
-  defaultUrl,
-  process.env.SUPABASE_SERVICE_ROLE_KEY || defaultKey,
-  {
-    auth: {
-      autoRefreshToken: false,
-      persistSession: false
-    }
-  }
-)
+// Client pour les opérations serveur (avec service role key si nécessaire, sans instancier dans le navigateur)
+export const supabaseAdmin = typeof window === 'undefined'
+  ? createClient(
+      defaultUrl,
+      process.env.SUPABASE_SERVICE_ROLE_KEY || defaultKey,
+      {
+        auth: {
+          autoRefreshToken: false,
+          persistSession: false
+        }
+      }
+    )
+  : (supabase as any)

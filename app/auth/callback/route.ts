@@ -7,95 +7,108 @@ export async function GET(request: NextRequest) {
   const timestamp = new Date().toISOString()
   const requestUrl = new URL(request.url)
   const code = requestUrl.searchParams.get('code')
+  const typeParam = requestUrl.searchParams.get('type') || ''
+  const redirectedFrom = requestUrl.searchParams.get('redirectedFrom') || ''
   
   console.log(`\n🔗 [${timestamp}] AUTH CALLBACK - Début du callback OAuth`)
   console.log(`📍 URL complète: ${request.url}`)
   console.log(`🔑 Code présent: ${code ? 'OUI' : 'NON'}`)
-  console.log(`📊 Paramètres URL:`, Object.fromEntries(requestUrl.searchParams.entries()))
+  console.log(`👤 Type demandé: ${typeParam || 'non spécifié'}`)
 
   if (code) {
-    console.log(`🔄 AUTH CALLBACK - Échange du code contre une session...`)
     const supabase = createRouteHandlerClient({ cookies })
     const { data, error } = await supabase.auth.exchangeCodeForSession(code)
-    
-    console.log(`📥 AUTH CALLBACK - Réponse échange code:`, {
-      hasData: !!data,
-      hasError: !!error,
-      user: data.user ? {
-        id: data.user.id,
-        email: data.user.email,
-        confirmed_at: data.user.confirmed_at
-      } : null,
-      session: data.session ? {
-        expiresAt: new Date(data.session.expires_at! * 1000).toISOString()
-      } : null,
-      error: error ? {
-        message: error.message,
-        status: error.status
-      } : null
-    })
 
     if (error) {
       console.error(`❌ AUTH CALLBACK - Erreur lors de l'échange de code:`, error)
-      return NextResponse.redirect(new URL('/login?error=auth_failed', request.url))
+      return NextResponse.redirect(new URL(`/login?error=${encodeURIComponent(error.message)}`, request.url))
     }
-    
-    // Récupérer le profil pour vérifier le type d'utilisateur
-    if (data.user) {
-      console.log(`👤 AUTH CALLBACK - Utilisateur authentifié, récupération du profil...`)
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('user_type')
-        .eq('id', data.user.id)
-        .single()
 
-      console.log(`📊 AUTH CALLBACK - Profil récupéré:`, {
-        profile: profile,
-        error: profileError,
-        userType: profile?.user_type
+    if (data?.user) {
+      const user = data.user
+      const meta = user.user_metadata || {}
+
+      console.log(`👤 AUTH CALLBACK - Utilisateur connecté:`, {
+        id: user.id,
+        email: user.email,
+        metaName: meta.full_name || meta.name
       })
 
-      // Si le profil n'existe pas, rediriger vers la page de setup
-      if (profileError || !profile) {
-        console.log(`⚠️ AUTH CALLBACK - Profil non trouvé, redirection vers /setup-profile`)
-        return NextResponse.redirect(new URL('/setup-profile', request.url))
-      }
+      // 1. Vérifier si le profil existe déjà
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', user.id)
+        .maybeSingle()
 
-      // Pour les professionnels, vérifier si l'établissement est configuré
-      if (profile.user_type === 'professional') {
-        console.log(`🏢 AUTH CALLBACK - Vérification établissement pour professionnel...`)
-        const { data: establishment, error: establishmentError } = await supabase
-          .from('establishments')
-          .select('id')
-          .eq('owner_id', data.user.id)
-          .maybeSingle() // Utiliser maybeSingle pour ne pas retourner d'erreur si pas de résultat
+      let finalUserType = profile?.user_type
 
-        console.log(`📊 AUTH CALLBACK - Établissement vérifié:`, {
-          establishment: establishment,
-          error: establishmentError,
-          hasEstablishment: !!establishment
-        })
+      // Si le profil n'existe pas encore, on le crée automatiquement avec les données Google
+      if (!profile) {
+        console.log(`🆕 AUTH CALLBACK - Création automatique du profil Google...`)
+        finalUserType = typeParam === 'professional' ? 'professional' : 'client'
+        const fullName = meta.full_name || meta.name || user.email?.split('@')[0] || 'Utilisateur'
+        const phone = meta.phone || ''
 
-        // Si l'établissement n'existe pas, rediriger vers setup
-        if (!establishment) {
-          console.log(`⚠️ AUTH CALLBACK - Établissement non configuré, redirection vers /setup-profile`)
-          return NextResponse.redirect(new URL('/setup-profile', request.url))
+        const trialEndsAt = new Date()
+        trialEndsAt.setDate(trialEndsAt.getDate() + 30)
+
+        const newProfile: any = {
+          id: user.id,
+          email: user.email,
+          full_name: fullName,
+          phone: phone,
+          user_type: finalUserType,
+          created_at: new Date().toISOString(),
+          updated_at: new Date().toISOString()
+        }
+
+        if (finalUserType === 'professional') {
+          newProfile.subscription_status = 'trial'
+          newProfile.trial_ends_at = trialEndsAt.toISOString()
+          newProfile.subscription_ends_at = trialEndsAt.toISOString()
+        }
+
+        const { error: insertError } = await supabase
+          .from('profiles')
+          .insert(newProfile)
+
+        if (insertError) {
+          console.warn('⚠️ Erreur création profil OAuth:', insertError)
+        } else {
+          console.log(`✅ Profil créé avec succès (type: ${finalUserType})`)
         }
       }
 
-      // Redirection selon le type d'utilisateur
-      const redirectUrl = profile.user_type === 'professional' || profile.user_type === 'admin' 
-        ? '/professional/pro-dashboard' 
-        : '/dashboard'
-      
-      console.log(`🎯 AUTH CALLBACK - Redirection vers: ${redirectUrl} (user_type: ${profile.user_type})`)
-      return NextResponse.redirect(new URL(redirectUrl, request.url))
+      // 2. Redirection selon le type
+      if (finalUserType === 'professional' || finalUserType === 'admin') {
+        // Vérifier si l'établissement existe
+        const { data: establishment } = await supabase
+          .from('establishments')
+          .select('id')
+          .eq('owner_id', user.id)
+          .maybeSingle()
+
+        if (!establishment) {
+          console.log(`🏢 Établissement non trouvé, redirection vers /professionals/signup`)
+          return NextResponse.redirect(new URL('/professionals/signup', request.url))
+        }
+
+        console.log(`🚀 Redirection pro vers /professional/pro-dashboard`)
+        return NextResponse.redirect(new URL('/professional/pro-dashboard', request.url))
+      }
+
+      // Pour les clients : si une page de destination était prévue (ex: réservation)
+      if (redirectedFrom && redirectedFrom.startsWith('/')) {
+        console.log(`🎯 Redirection client vers page demandée: ${redirectedFrom}`)
+        return NextResponse.redirect(new URL(redirectedFrom, request.url))
+      }
+
+      console.log(`🎯 Redirection client vers /client/dashboard`)
+      return NextResponse.redirect(new URL('/client/dashboard', request.url))
     }
-  } else {
-    console.log(`❌ AUTH CALLBACK - Aucun code dans l'URL`)
   }
 
-  // Redirection par défaut vers le dashboard client
-  console.log(`🏠 AUTH CALLBACK - Redirection par défaut vers /dashboard`)
-  return NextResponse.redirect(new URL('/dashboard', request.url))
+  // Redirection par défaut
+  return NextResponse.redirect(new URL('/login', request.url))
 }

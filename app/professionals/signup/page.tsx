@@ -10,6 +10,7 @@ import { Input } from '../../../components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card'
 import { ArrowLeft, Building, MapPin, Phone, Mail, Check, Loader2 } from 'lucide-react'
 import LocationPicker from '../../../components/ui/LocationPicker'
+import GoogleAuthButton from '@/components/auth/GoogleAuthButton'
 
 export default function ProfessionalSignupPage() {
   const router = useRouter()
@@ -251,12 +252,27 @@ export default function ProfessionalSignupPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
+              {error && (
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm mb-4">
+                  {error}
+                </div>
+              )}
+
+              {/* Bouton Google pour professionnels */}
+              <div className="mb-4">
+                <GoogleAuthButton
+                  userType="professional"
+                  text="S'inscrire avec Google (Pro)"
+                  onError={(msg) => setError(msg)}
+                />
+                <div className="flex items-center gap-3 my-4">
+                  <div className="flex-1 h-px bg-gray-200"></div>
+                  <span className="text-xs uppercase text-gray-400 font-semibold tracking-wider">ou par email</span>
+                  <div className="flex-1 h-px bg-gray-200"></div>
+                </div>
+              </div>
+
               <form onSubmit={handlePersonalSubmit} className="space-y-4">
-                {error && (
-                  <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-                    {error}
-                  </div>
-                )}
 
                 <div className="space-y-2">
                   <label htmlFor="fullName" className="text-sm font-medium">

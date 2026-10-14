@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { supabase } from '../../lib/supabase/client'
 import { User, Building, ArrowLeft, Eye, EyeOff, Loader2, Check } from 'lucide-react'
+import GoogleAuthButton from '@/components/auth/GoogleAuthButton'
 
 export default function SignupPage() {
   const router = useRouter()
@@ -311,12 +312,28 @@ export default function SignupPage() {
                 <Loader2 className="w-6 h-6 animate-spin text-nude-600 mx-auto" />
               </div>
             ) : (
-              <form onSubmit={handleSignup} className="space-y-5">
+              <div>
                 {error && (
-                  <div className="p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm">
+                  <div className="p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm mb-5">
                     {error}
                   </div>
                 )}
+
+                {/* Bouton Google */}
+                <div className="mb-5">
+                  <GoogleAuthButton
+                    userType={userType || 'client'}
+                    redirectedFrom={redirectedFrom}
+                    onError={(msg) => setError(msg)}
+                  />
+                  <div className="flex items-center gap-3 my-5">
+                    <div className="flex-1 h-px bg-gray-200"></div>
+                    <span className="text-xs uppercase text-gray-400 font-semibold tracking-wider">ou par email</span>
+                    <div className="flex-1 h-px bg-gray-200"></div>
+                  </div>
+                </div>
+
+                <form onSubmit={handleSignup} className="space-y-5">
 
                 <div>
                   <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2">
@@ -429,7 +446,8 @@ export default function SignupPage() {
                     'Créer mon compte'
                   )}
                 </button>
-              </form>
+                </form>
+              </div>
             )}
 
             {!success && (

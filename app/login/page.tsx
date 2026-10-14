@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { supabase } from '@/lib/supabase/client'
 import { Eye, EyeOff, ArrowLeft, Loader2, User, Building } from 'lucide-react'
+import GoogleAuthButton from '@/components/auth/GoogleAuthButton'
 
 export default function LoginPage() {
   const router = useRouter()
@@ -234,12 +235,27 @@ export default function LoginPage() {
 
           {/* Formulaire */}
           <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8">
+            {error && (
+              <div className="p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm mb-5">
+                {error}
+              </div>
+            )}
+
+            {/* Bouton Google */}
+            <div className="mb-5">
+              <GoogleAuthButton
+                userType={userType || 'client'}
+                redirectedFrom={redirectedFrom}
+                onError={(msg) => setError(msg)}
+              />
+              <div className="flex items-center gap-3 my-5">
+                <div className="flex-1 h-px bg-gray-200"></div>
+                <span className="text-xs uppercase text-gray-400 font-semibold tracking-wider">ou par email</span>
+                <div className="flex-1 h-px bg-gray-200"></div>
+              </div>
+            </div>
+
             <form onSubmit={handleLogin} className="space-y-5">
-              {error && (
-                <div className="p-4 bg-red-50 border border-red-100 rounded-xl text-red-600 text-sm">
-                  {error}
-                </div>
-              )}
 
               <div>
                 <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">

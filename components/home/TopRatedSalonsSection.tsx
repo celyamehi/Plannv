@@ -22,103 +22,16 @@ interface SalonItem {
   is_verified?: boolean
   services: string[]
 }
-
-const DEFAULT_TOP_SALONS: SalonItem[] = [
-  {
-    id: "1",
-    name: "L'Atelier Beauté & Spa",
-    slug: "latelier-beaute-alger",
-    category: "Institut de beauté",
-    city: "Alger (Hydra)",
-    address: "Rue Djenane El Malik, Hydra",
-    average_rating: 4.9,
-    total_reviews: 64,
-    cover_image_url: "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80",
-    logo_url: "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?auto=format&fit=crop&w=200&q=80",
-    is_verified: true,
-    services: ["Soin Visage Éclat", "Massage Relaxant", "Épilation Définitive"]
-  },
-  {
-    id: "2",
-    name: "Barber Lounge El-Biar",
-    slug: "barber-lounge-el-biar",
-    category: "Barbier",
-    city: "Alger (El Biar)",
-    address: "Boulevard Bougara, El Biar",
-    average_rating: 4.9,
-    total_reviews: 82,
-    cover_image_url: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1?auto=format&fit=crop&w=800&q=80",
-    logo_url: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?auto=format&fit=crop&w=200&q=80",
-    is_verified: true,
-    services: ["Coupe Dégradé Homme", "Taille de Barbe VIP", "Soin Vapeur"]
-  },
-  {
-    id: "3",
-    name: "Maison de Beauté & Onglerie",
-    slug: "maison-beaute-onglerie-oran",
-    category: "Manucure & Pédicure",
-    city: "Oran (Akid Lotfi)",
-    address: "Résidence El Bahia, Akid Lotfi",
-    average_rating: 4.8,
-    total_reviews: 53,
-    cover_image_url: "https://images.unsplash.com/photo-1632345031435-8727f6897d53?auto=format&fit=crop&w=800&q=80",
-    logo_url: "https://images.unsplash.com/photo-1607779097040-26e80aa78e66?auto=format&fit=crop&w=200&q=80",
-    is_verified: true,
-    services: ["Pose Gel & Capsules", "Nail Art Personnalisé", "Soin Russe"]
-  },
-  {
-    id: "4",
-    name: "Royal Spa & Hammam",
-    slug: "royal-spa-hammam-constantine",
-    category: "Spa",
-    city: "Constantine",
-    address: "Cité Sidi Mabrouk",
-    average_rating: 4.9,
-    total_reviews: 41,
-    cover_image_url: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
-    logo_url: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?auto=format&fit=crop&w=200&q=80",
-    is_verified: true,
-    services: ["Hammam Traditionnel", "Massage aux Huiles", "Gommage"]
-  },
-  {
-    id: "5",
-    name: "Institut Glow & Chic",
-    slug: "institut-glow-chic-annaba",
-    category: "Institut de beauté",
-    city: "Annaba",
-    address: "Avenue de l'ALN",
-    average_rating: 4.8,
-    total_reviews: 37,
-    cover_image_url: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?auto=format&fit=crop&w=800&q=80",
-    logo_url: "https://images.unsplash.com/photo-1516975080664-ed2fc6a32937?auto=format&fit=crop&w=200&q=80",
-    is_verified: true,
-    services: ["Hydrafacial", "Rehaussement Cils", "Maquillage Soirée"]
-  },
-  {
-    id: "6",
-    name: "Le Gentlemen Club",
-    slug: "le-gentlemen-club-setif",
-    category: "Barbier",
-    city: "Sétif",
-    address: "Boulevard 8 Mai 1945",
-    average_rating: 4.9,
-    total_reviews: 29,
-    cover_image_url: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?auto=format&fit=crop&w=800&q=80",
-    logo_url: "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=200&q=80",
-    is_verified: true,
-    services: ["Coupe Signature", "Rasage à l'Ancienne", "Soin Visage"]
-  }
-]
-
 export default function TopRatedSalonsSection() {
-  const [salons, setSalons] = useState<SalonItem[]>(DEFAULT_TOP_SALONS)
-  const [loading, setLoading] = useState(false)
+  const [salons, setSalons] = useState<SalonItem[]>([])
+  const [loading, setLoading] = useState(true)
+  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
     async function loadSalonsFromDb() {
       try {
         setLoading(true)
-        // 1. Récupérer les établissements actifs classés par note moyenne
+        // Récupérer uniquement les vrais établissements créés dans la base de données
         const { data: dbEstabs, error: estError } = await supabase
           .from("establishments")
           .select(`
@@ -134,12 +47,10 @@ export default function TopRatedSalonsSection() {
             logo_url,
             is_verified
           `)
-          .eq("is_active", true)
-          .order("average_rating", { ascending: false })
+          .order("created_at", { ascending: false })
           .limit(6)
 
         if (!estError && dbEstabs && dbEstabs.length > 0) {
-          // 2. Récupérer les services pour chacun de ces établissements
           const ids = dbEstabs.map((e) => e.id)
           const { data: dbServices } = await supabase
             .from("services")
@@ -165,7 +76,7 @@ export default function TopRatedSalonsSection() {
             city: e.city || "Algérie",
             address: e.address || "",
             average_rating: e.average_rating || 5.0,
-            total_reviews: e.total_reviews || 1,
+            total_reviews: e.total_reviews || 0,
             cover_image_url:
               e.cover_image_url ||
               "https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80",
@@ -176,20 +87,29 @@ export default function TopRatedSalonsSection() {
             services:
               servicesMap[e.id] && servicesMap[e.id].length > 0
                 ? servicesMap[e.id]
-                : ["Réservation en ligne", "Prestations beauté", "Soins experts"]
+                : ["Réservation en ligne", "Prestations beauté"]
           }))
 
           setSalons(formatted)
+        } else {
+          setSalons([])
         }
       } catch (err) {
-        console.warn("Utilisation des établissements vedettes:", err)
+        console.warn("Erreur chargement des salons:", err)
+        setSalons([])
       } finally {
         setLoading(false)
+        setLoaded(true)
       }
     }
 
     loadSalonsFromDb()
   }, [])
+
+  // S'il n'y a aucun vrai salon créé dans la base de données, ne rien afficher (pas de faux comptes)
+  if (loaded && salons.length === 0) {
+    return null
+  }
 
   return (
     <section className="relative py-24 bg-gradient-to-b from-gray-50/80 via-white to-gray-50/80 border-t border-gray-100 overflow-hidden">

@@ -148,7 +148,7 @@ export default function SubscriptionBanner() {
             )}
             {subscription.status === 'pending' && (
               <p className="text-white/90 mt-1">
-                Contactez-nous pour activer votre période d'essai gratuite de 7 jours.
+                Contactez-nous pour activer votre période d'essai gratuite de 30 jours.
               </p>
             )}
             {subscription.status === 'suspended' && (

@@ -41,11 +41,11 @@ interface Stats {
 }
 
 const PLAN_OPTIONS = [
-  { value: 'trial', label: 'Essai gratuit (7 jours)', duration: 7, price: 0, isTrial: true },
-  { value: '1_month', label: '1 mois', duration: 30, price: 5000, isTrial: false },
-  { value: '3_months', label: '3 mois', duration: 90, price: 12000, isTrial: false },
-  { value: '6_months', label: '6 mois', duration: 180, price: 20000, isTrial: false },
-  { value: '12_months', label: '12 mois', duration: 365, price: 35000, isTrial: false },
+  { value: 'trial', label: 'Essai gratuit (30 jours)', duration: 30, price: 0, isTrial: true },
+  { value: '1_month', label: '1 mois', duration: 30, price: 1500, isTrial: false },
+  { value: '3_months', label: '3 mois', duration: 90, price: 4500, isTrial: false },
+  { value: '6_months', label: '6 mois', duration: 180, price: 9000, isTrial: false },
+  { value: '12_months', label: '12 mois', duration: 365, price: 15000, isTrial: false },
 ]
 
 const PAYMENT_METHODS = [
@@ -71,7 +71,7 @@ export default function AdminDashboard() {
   // Formulaire d'activation
   const [activationForm, setActivationForm] = useState({
     plan: '1_month',
-    amount: 5000,
+    amount: 1500,
     paymentMethod: 'cash',
     paymentReference: '',
     notes: ''
@@ -772,13 +772,13 @@ export default function AdminDashboard() {
                     }`}
                   >
                     <div className="font-semibold text-blue-600">🎁 Essai gratuit</div>
-                    <div className="text-xs text-gray-500">7 jours gratuits</div>
+                    <div className="text-xs text-gray-500">30 jours gratuits</div>
                   </button>
                   <button
                     type="button"
                     onClick={() => {
                       const plan = PLAN_OPTIONS.find(p => p.value === '1_month')
-                      setActivationForm({ ...activationForm, plan: '1_month', amount: plan?.price || 5000 })
+                      setActivationForm({ ...activationForm, plan: '1_month', amount: plan?.price || 1500 })
                     }}
                     className={`p-3 rounded-lg border-2 text-left transition-all ${
                       activationForm.plan !== 'trial'

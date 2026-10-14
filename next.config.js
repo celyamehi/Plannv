@@ -9,7 +9,7 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
   images: {
-    domains: ['tnfnsgztpsuhymjxqifp.supabase.co'],
+    domains: ['iwhxbwikjfyvzuasybvs.supabase.co', 'tnfnsgztpsuhymjxqifp.supabase.co'],
   },
   experimental: {
     // Améliorer la stabilité des rendus côté serveur

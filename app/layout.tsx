@@ -20,12 +20,12 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="fr">
+    <html lang="fr" className="font-sans">
       <head>
         <link rel="icon" href="/fav.png" type="image/png" />
         <meta name="google-site-verification" content="94J3jUNLPsqn8uTDYkSkyD9YJwb9wOKFHWeEiPK83wo" />
       </head>
-      <body className={`${inter.className} min-h-screen`}>
+      <body className="font-sans antialiased min-h-screen text-gray-800 selection:bg-nude-200 selection:text-nude-900">
         {children}
       </body>
     </html>

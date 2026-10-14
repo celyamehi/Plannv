@@ -63,11 +63,6 @@ export default function Home() {
                     Comment ça marche
                   </Link>
                 </li>
-                <li>
-                  <Link href="/faq" className="hover:text-nude-600 transition-colors">
-                    FAQ
-                  </Link>
-                </li>
               </ul>
             </div>
 

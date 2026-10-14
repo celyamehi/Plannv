@@ -34,7 +34,6 @@ export default function MainHeader({ transparent = false }: MainHeaderProps) {
             { href: "/#how-it-works", label: "Comment ça marche ?" },
             { href: "/#professionals", label: "Pour les professionnels" },
             { href: "/nos-offres", label: "Nos offres" },
-            { href: "/faq", label: "FAQ" },
           ].map((item) => (
             <Link
               key={item.href}
@@ -108,13 +107,6 @@ export default function MainHeader({ transparent = false }: MainHeaderProps) {
               className="block text-gray-600 hover:text-nude-600 font-medium transition-colors py-2"
             >
               Nos offres
-            </Link>
-            <Link
-              href="/faq"
-              onClick={() => setIsMenuOpen(false)}
-              className="block text-gray-600 hover:text-nude-600 font-medium transition-colors py-2"
-            >
-              FAQ
             </Link>
             
             {/* Séparateur */}

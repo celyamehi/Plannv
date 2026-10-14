@@ -11,6 +11,7 @@ import { Label } from '../../../components/ui/label'
 import { Save, Building, Phone, Mail, MapPin, Globe, Clock, LogOut } from 'lucide-react'
 import ProSidebar from '../../../components/layout/ProSidebar'
 import { ImageUploader } from '../../../components/ui/ImageUploader'
+import LocationPicker from '../../../components/ui/LocationPicker'
 
 export default function ProSettingsPage() {
   const router = useRouter()
@@ -31,7 +32,9 @@ export default function ProSettingsPage() {
     address: '',
     city: '',
     postal_code: '',
-    country: '',
+    country: 'Algérie',
+    latitude: null as number | null,
+    longitude: null as number | null,
     phone: '',
     email: '',
     website: '',
@@ -87,7 +90,9 @@ export default function ProSettingsPage() {
           address: establishmentData.address || '',
           city: establishmentData.city || '',
           postal_code: establishmentData.postal_code || '',
-          country: establishmentData.country || '',
+          country: establishmentData.country || 'Algérie',
+          latitude: establishmentData.latitude || null,
+          longitude: establishmentData.longitude || null,
           phone: establishmentData.phone || '',
           email: establishmentData.email || '',
           website: establishmentData.website || '',
@@ -276,43 +281,32 @@ export default function ProSettingsPage() {
                   rows={3}
                 />
               </div>
-              <div>
-                <Label htmlFor="address">Adresse</Label>
-                <Input
-                  id="address"
-                  value={establishmentData.address}
-                  onChange={(e) => setEstablishmentData({...establishmentData, address: e.target.value})}
-                  placeholder="Adresse complète"
+              <div className="space-y-2">
+                <Label>Localisation de l'établissement (Adresse & Google Maps)</Label>
+                <LocationPicker
+                  initialLocation={{
+                    address: establishmentData.address,
+                    city: establishmentData.city,
+                    postalCode: establishmentData.postal_code,
+                    latitude: establishmentData.latitude,
+                    longitude: establishmentData.longitude,
+                  }}
+                  onLocationSelect={(location) => {
+                    setEstablishmentData(prev => ({
+                      ...prev,
+                      address: location.address,
+                      city: location.city,
+                      postal_code: location.postalCode,
+                      latitude: location.latitude,
+                      longitude: location.longitude,
+                      country: 'Algérie'
+                    }))
+                  }}
+                  showDirectFields={true}
                 />
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="city">Ville</Label>
-                  <Input
-                    id="city"
-                    value={establishmentData.city}
-                    onChange={(e) => setEstablishmentData({...establishmentData, city: e.target.value})}
-                    placeholder="Ville"
-                  />
-                </div>
-                <div>
-                  <Label htmlFor="postalCode">Code postal</Label>
-                  <Input
-                    id="postalCode"
-                    value={establishmentData.postal_code}
-                    onChange={(e) => setEstablishmentData({...establishmentData, postal_code: e.target.value})}
-                    placeholder="Code postal"
-                  />
-                </div>
-              </div>
-              <div>
-                <Label htmlFor="country">Pays</Label>
-                <Input
-                  id="country"
-                  value={establishmentData.country}
-                  onChange={(e) => setEstablishmentData({...establishmentData, country: e.target.value})}
-                  placeholder="Pays"
-                />
+                <p className="text-xs text-gray-500">
+                  Vous pouvez coller un lien partagé depuis Google Maps, utiliser le GPS ou ajuster les coordonnées manuellement.
+                </p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>

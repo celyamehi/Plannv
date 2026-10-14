@@ -12,6 +12,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { ImageUploader } from '@/components/ui/ImageUploader'
 import { toast } from 'sonner'
 import ProSidebar from '@/components/layout/ProSidebar'
+import LocationPicker from '@/components/ui/LocationPicker'
 
 export default function EstablishmentSettings() {
   const [loading, setLoading] = useState(true)
@@ -23,6 +24,8 @@ export default function EstablishmentSettings() {
     address: string | null
     city: string | null
     postal_code: string | null
+    latitude?: number | null
+    longitude?: number | null
     phone: string | null
     email: string | null
     website: string | null
@@ -81,6 +84,8 @@ export default function EstablishmentSettings() {
           address: establishment.address,
           city: establishment.city,
           postal_code: establishment.postal_code,
+          latitude: establishment.latitude,
+          longitude: establishment.longitude,
           phone: establishment.phone,
           email: establishment.email,
           website: establishment.website,
@@ -227,31 +232,30 @@ export default function EstablishmentSettings() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="address">Adresse</Label>
-                    <Input
-                      id="address"
-                      value={establishment.address || ''}
-                      onChange={(e) => setEstablishment({ ...establishment, address: e.target.value })}
+                    <Label>Localisation de l'établissement (Adresse & Google Maps)</Label>
+                    <LocationPicker
+                      initialLocation={{
+                        address: establishment.address || '',
+                        city: establishment.city || '',
+                        postalCode: establishment.postal_code || '',
+                        latitude: establishment.latitude,
+                        longitude: establishment.longitude,
+                      }}
+                      onLocationSelect={(location) => {
+                        setEstablishment({
+                          ...establishment,
+                          address: location.address,
+                          city: location.city,
+                          postal_code: location.postalCode,
+                          latitude: location.latitude,
+                          longitude: location.longitude,
+                        })
+                      }}
+                      showDirectFields={true}
                     />
-                  </div>
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <div className="space-y-2">
-                      <Label htmlFor="postal_code">Code postal</Label>
-                      <Input
-                        id="postal_code"
-                        value={establishment.postal_code || ''}
-                        onChange={(e) => setEstablishment({ ...establishment, postal_code: e.target.value })}
-                      />
-                    </div>
-                    <div className="space-y-2 md:col-span-2">
-                      <Label htmlFor="city">Ville</Label>
-                      <Input
-                        id="city"
-                        value={establishment.city || ''}
-                        onChange={(e) => setEstablishment({ ...establishment, city: e.target.value })}
-                      />
-                    </div>
+                    <p className="text-xs text-gray-500">
+                      Vous pouvez coller un lien partagé depuis Google Maps, utiliser le GPS ou ajuster les coordonnées manuellement.
+                    </p>
                   </div>
                   
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

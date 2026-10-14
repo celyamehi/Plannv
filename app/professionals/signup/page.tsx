@@ -458,10 +458,13 @@ export default function ProfessionalSignupPage() {
                       address: establishmentInfo.address,
                       city: establishmentInfo.city,
                       postalCode: establishmentInfo.postalCode,
+                      latitude: establishmentInfo.latitude,
+                      longitude: establishmentInfo.longitude,
                     }}
+                    showDirectFields={true}
                   />
                   <p className="text-xs text-gray-500">
-                    Utilisez votre position GPS ou recherchez votre adresse
+                    Collez un lien partagé depuis Google Maps, utilisez votre position GPS ou renseignez l'adresse manuellement.
                   </p>
                 </div>
 

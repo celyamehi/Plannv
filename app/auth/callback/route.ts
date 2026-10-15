@@ -109,6 +109,28 @@ export async function GET(request: NextRequest) {
     }
   }
 
-  // Redirection par défaut
-  return NextResponse.redirect(new URL('/login', request.url))
+  // Si pas de code en paramètre GET, vérifier si le token est dans le hash (#access_token) côté client
+  const fallbackHtml = `<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Authentification en cours...</title>
+  </head>
+  <body style="font-family: system-ui, -apple-system, sans-serif; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; background: #fafafa;">
+    <div style="text-align: center;">
+      <p style="font-size: 16px; color: #444;">Connexion en cours avec Google...</p>
+    </div>
+    <script>
+      if (window.location.hash && window.location.hash.includes('access_token')) {
+        window.location.href = '/client/dashboard' + window.location.hash;
+      } else {
+        window.location.href = '/login';
+      }
+    </script>
+  </body>
+</html>`
+
+  return new NextResponse(fallbackHtml, {
+    headers: { 'Content-Type': 'text/html; charset=utf-8' }
+  })
 }

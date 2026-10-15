@@ -14,6 +14,8 @@ export const metadata: Metadata = {
   },
 }
 
+import AuthRedirectCatch from '@/components/auth/AuthRedirectCatch'
+
 export default function RootLayout({
   children,
 }: {
@@ -26,6 +28,7 @@ export default function RootLayout({
         <meta name="google-site-verification" content="94J3jUNLPsqn8uTDYkSkyD9YJwb9wOKFHWeEiPK83wo" />
       </head>
       <body className="font-sans antialiased min-h-screen text-gray-800 selection:bg-nude-200 selection:text-nude-900">
+        <AuthRedirectCatch />
         {children}
       </body>
     </html>

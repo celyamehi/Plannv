@@ -6,7 +6,8 @@ import type { NextRequest } from 'next/server'
 const allowedOrigins = [
   'http://localhost:3000',
   'http://localhost:3001',
-  'https://votresite.com', // Remplacez par votre domaine de production
+  'https://kalendo.space',
+  'https://www.kalendo.space',
 ]
 
 // Configuration des chemins publics (liste consolidée)
@@ -18,6 +19,8 @@ const publicPaths = [
   '/professionals/login',
   '/admin/login',
   '/account-suspended',
+  '/auth',
+  '/auth/callback',
   '/auth/selection',
   '/search',
   '/establishments',

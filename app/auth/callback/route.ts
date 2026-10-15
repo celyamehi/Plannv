@@ -2,6 +2,7 @@ import { createRouteHandlerClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
+import { sendWelcomeEmail } from '@/lib/email/welcome'
 
 export async function GET(request: NextRequest) {
   const timestamp = new Date().toISOString()
@@ -77,6 +78,14 @@ export async function GET(request: NextRequest) {
           console.warn('⚠️ Erreur création profil OAuth:', insertError)
         } else {
           console.log(`✅ Profil créé avec succès (type: ${finalUserType})`)
+          // Envoi de l'e-mail de bienvenue
+          if (user.email) {
+            sendWelcomeEmail({
+              to: user.email,
+              fullName: fullName,
+              userType: finalUserType as 'client' | 'professional'
+            }).catch(e => console.warn('⚠️ Erreur envoi mail bienvenue:', e))
+          }
         }
       }
 

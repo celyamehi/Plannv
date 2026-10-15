@@ -125,6 +125,17 @@ export default function SignupPage() {
           }
 
           console.log('✅ SIGNUP - Profil créé avec user_type:', userType)
+
+          // Envoi de l'e-mail de bienvenue (non-bloquant)
+          fetch('/api/send-welcome-email', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              to: email,
+              fullName: fullName,
+              userType: userType
+            })
+          }).catch(e => console.warn('Erreur envoi email bienvenue:', e))
         }
       }
 

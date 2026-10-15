@@ -205,11 +205,11 @@ export default function SubscriptionBanner() {
               WhatsApp
             </a>
             <a
-              href="mailto:contact@kalendo.space"
+              href="mailto:kalendodz@gmail.com"
               className="flex items-center justify-center gap-2 px-4 py-2 bg-white/20 text-white rounded-lg font-medium hover:bg-white/30 transition-colors"
             >
               <Mail className="w-4 h-4" />
-              contact@kalendo.space
+              kalendodz@gmail.com
             </a>
           </div>
         )}

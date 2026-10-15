@@ -80,8 +80,8 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-bold text-gray-900 mb-1">Email</h3>
-                    <a href="mailto:contact@kalendo.space" className="text-nude-600 hover:underline">
-                      contact@kalendo.space
+                    <a href="mailto:kalendodz@gmail.com" className="text-nude-600 hover:underline">
+                      kalendodz@gmail.com
                     </a>
                     <p className="text-sm text-gray-500 mt-1">Réponse sous 24h</p>
                   </div>

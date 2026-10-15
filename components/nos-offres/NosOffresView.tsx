@@ -699,8 +699,8 @@ export default function NosOffresView() {
               </p>
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <span>📧</span>
-                <a href="mailto:contact@kalendo.space" className="hover:text-nude-600 transition-colors">
-                  contact@kalendo.space
+                <a href="mailto:kalendodz@gmail.com" className="hover:text-nude-600 transition-colors">
+                  kalendodz@gmail.com
                 </a>
               </div>
             </div>

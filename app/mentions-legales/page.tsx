@@ -33,7 +33,7 @@ export default function MentionsLegalesPage() {
                 Le site Kalendo est édité par :<br />
                 <strong>Kalendo</strong><br />
                 Adresse : Alger, Algérie<br />
-                Email : contact@kalendo.space
+                Email : kalendodz@gmail.com
               </p>
             </div>
 
@@ -67,8 +67,8 @@ export default function MentionsLegalesPage() {
               <h2 className="text-xl font-bold mb-4">5. Contact</h2>
               <p className="text-gray-600 leading-relaxed">
                 Pour toute question concernant ces mentions légales, vous pouvez nous contacter à l'adresse : 
-                <a href="mailto:contact@kalendo.space" className="text-nude-600 hover:underline ml-1">
-                  contact@kalendo.space
+                <a href="mailto:kalendodz@gmail.com" className="text-nude-600 hover:underline ml-1">
+                  kalendodz@gmail.com
                 </a>
               </p>
             </div>

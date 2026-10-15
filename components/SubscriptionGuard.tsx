@@ -224,11 +224,11 @@ export default function SubscriptionGuard({ children }: SubscriptionGuardProps) 
             Contacter sur WhatsApp
           </a>
           <a
-            href="mailto:contact@kalendo.space"
+            href="mailto:kalendodz@gmail.com"
             className="flex items-center justify-center gap-2 w-full py-3 border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all"
           >
             <Mail className="w-5 h-5" />
-            contact@kalendo.space
+            kalendodz@gmail.com
           </a>
         </div>
 

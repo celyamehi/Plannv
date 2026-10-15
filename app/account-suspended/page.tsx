@@ -154,11 +154,11 @@ export default function AccountSuspendedPage() {
             </a>
 
             <a
-              href="mailto:contact@kalendo.space"
+              href="mailto:kalendodz@gmail.com"
               className="flex items-center justify-center gap-2 w-full px-4 py-3 border-2 border-nude-600 text-nude-600 rounded-xl font-medium hover:bg-nude-50 transition-all"
             >
               <Mail className="w-5 h-5" />
-              contact@kalendo.space
+              kalendodz@gmail.com
             </a>
           </div>
 

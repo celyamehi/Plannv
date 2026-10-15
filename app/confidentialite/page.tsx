@@ -91,8 +91,8 @@ export default function ConfidentialitePage() {
               </ul>
               <p className="text-gray-600 mt-3">
                 Pour exercer ces droits, contactez-nous à : 
-                <a href="mailto:contact@kalendo.space" className="text-nude-600 hover:underline ml-1">
-                  contact@kalendo.space
+                <a href="mailto:kalendodz@gmail.com" className="text-nude-600 hover:underline ml-1">
+                  kalendodz@gmail.com
                 </a>
               </p>
             </div>

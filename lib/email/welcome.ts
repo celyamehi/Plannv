@@ -267,17 +267,10 @@ function getClientEmailHtml(fullName: string): string {
 }
 
 /**
- * Envoie un email de bienvenue via Resend
+ * Envoie un email de bienvenue soit via Gmail (kalendodz@gmail.com), soit via Resend
  */
 export async function sendWelcomeEmail({ to, fullName = '', userType }: SendWelcomeEmailParams): Promise<{ success: boolean; error?: string }> {
   try {
-    const apiKey = process.env.RESEND_API_KEY
-
-    if (!apiKey) {
-      console.warn('⚠️ [RESEND] Aucune clé RESEND_API_KEY trouvée dans les variables d\'environnement. E-mail simulé.')
-      return { success: false, error: 'RESEND_API_KEY non configurée' }
-    }
-
     const isPro = userType === 'professional'
     const subject = isPro 
       ? 'Bienvenue sur Kalendo - Ajoutez votre salon !' 
@@ -287,8 +280,41 @@ export async function sendWelcomeEmail({ to, fullName = '', userType }: SendWelc
       ? getProfessionalEmailHtml(fullName) 
       : getClientEmailHtml(fullName)
 
-    // Expéditeur par défaut : onboarding@resend.dev (fourni par défaut par Resend avant validation de domaine)
-    // ou "Kalendo <kalendodz@gmail.com>" si configuré
+    // Option 1 : Envoi direct depuis votre adresse Gmail kalendodz@gmail.com
+    const gmailAppPassword = process.env.GMAIL_APP_PASSWORD
+    if (gmailAppPassword) {
+      try {
+        const nodemailer = require('nodemailer')
+        const transporter = nodemailer.createTransport({
+          service: 'gmail',
+          auth: {
+            user: 'kalendodz@gmail.com',
+            pass: gmailAppPassword.replace(/\s+/g, '') // supprime les espaces
+          }
+        })
+
+        const info = await transporter.sendMail({
+          from: '"Kalendo" <kalendodz@gmail.com>',
+          to: to,
+          subject: subject,
+          html: html
+        })
+
+        console.log(`✅ [GMAIL] E-mail envoyé avec succès depuis kalendodz@gmail.com à ${to} (MessageId: ${info.messageId})`)
+        return { success: true }
+      } catch (gmailErr: any) {
+        console.error('❌ [GMAIL] Erreur envoi via Gmail SMTP:', gmailErr)
+        // Continuer vers Resend en fallback si disponible
+      }
+    }
+
+    // Option 2 : Envoi via Resend
+    const apiKey = process.env.RESEND_API_KEY
+    if (!apiKey) {
+      console.warn('⚠️ Aucun service d\'email configuré (ni GMAIL_APP_PASSWORD, ni RESEND_API_KEY).')
+      return { success: false, error: 'Aucun service email configuré' }
+    }
+
     const fromAddress = process.env.RESEND_FROM_EMAIL || 'Kalendo <onboarding@resend.dev>'
 
     const response = await fetch('https://api.resend.com/emails', {
@@ -315,7 +341,7 @@ export async function sendWelcomeEmail({ to, fullName = '', userType }: SendWelc
     console.log(`✅ [RESEND] E-mail de bienvenue envoyé avec succès à ${to} (ID: ${data.id})`)
     return { success: true }
   } catch (err: any) {
-    console.error('❌ [RESEND] Exception lors de l\'envoi:', err)
+    console.error('❌ Exception lors de l\'envoi de l\'e-mail:', err)
     return { success: false, error: err.message }
   }
 }

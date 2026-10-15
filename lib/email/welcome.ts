@@ -1,17 +1,167 @@
 /**
- * Module d'envoi d'e-mails de bienvenue Kalendo via Resend
+ * Module d'envoi d'e-mails de bienvenue Kalendo via Gmail SMTP ou Resend
  */
 
-interface SendWelcomeEmailParams {
+export interface SendWelcomeEmailParams {
   to: string
   fullName?: string
-  userType: 'client' | 'professional'
+  userType: 'client' | 'professional' | 'professional_completed'
+  establishmentName?: string
 }
 
 /**
- * Génère le template HTML pour un professionnel (inspiré du style moderne Zayna/Planity)
+ * Template pour un professionnel dont l'inscription et le salon sont TERMINÉS
  */
-function getProfessionalEmailHtml(fullName: string): string {
+function getProfessionalCompletedEmailHtml(fullName: string, establishmentName?: string): string {
+  const name = fullName ? fullName.split(' ')[0] : 'Cher partenaire'
+  const appUrl = 'https://www.kalendo.space'
+  const salonText = establishmentName ? `« ${establishmentName} »` : 'Votre salon'
+
+  return `
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Votre salon est en ligne sur Kalendo Pro</title>
+</head>
+<body style="margin: 0; padding: 0; background-color: #f7f5f2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #2d2a26; -webkit-font-smoothing: antialiased;">
+  <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f7f5f2; padding: 40px 15px;">
+    <tr>
+      <td align="center">
+        <!-- Conteneur principal -->
+        <table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width: 600px; background-color: #ffffff; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid #ebe5df;">
+          
+          <!-- En-tête avec Logo -->
+          <tr>
+            <td style="padding: 35px 40px 25px 40px; border-bottom: 1px solid #f0eae4;">
+              <table width="100%" border="0" cellspacing="0" cellpadding="0">
+                <tr>
+                  <td align="left">
+                    <span style="font-size: 26px; font-weight: 800; letter-spacing: -0.5px; color: #1a1816;">
+                      Kalendo <span style="display: inline-block; font-size: 11px; font-weight: 700; background: #9d7854; color: #ffffff; padding: 3px 8px; border-radius: 6px; vertical-align: middle; margin-left: 6px; letter-spacing: 0.5px;">PRO</span>
+                    </span>
+                  </td>
+                  <td align="right">
+                    <a href="${appUrl}" style="color: #9d7854; font-size: 13px; text-decoration: none; font-weight: 600;">kalendo.space</a>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Titre principal -->
+          <tr>
+            <td style="padding: 40px 40px 20px 40px;">
+              <div style="display: inline-block; background: #ecfdf5; border: 1px solid #a7f3d0; color: #047857; font-size: 12px; font-weight: 700; padding: 4px 12px; border-radius: 20px; margin-bottom: 14px;">
+                ✓ Établissement créé avec succès
+              </div>
+              <h1 style="margin: 0 0 14px 0; font-size: 30px; font-weight: 800; color: #1a1816; line-height: 1.25; letter-spacing: -0.6px;">
+                Félicitations ${name} !
+              </h1>
+              <p style="margin: 0; font-size: 17px; line-height: 1.5; color: #9d7854; font-weight: 700;">
+                ${salonText} est prêt à recevoir vos clients
+              </p>
+            </td>
+          </tr>
+
+          <!-- Encadré d'information / Essai gratuit -->
+          <tr>
+            <td style="padding: 0 40px 30px 40px;">
+              <div style="background-color: #fbf8f5; border-left: 4px solid #9d7854; border-radius: 0 12px 12px 0; padding: 18px 20px;">
+                <p style="margin: 0 0 6px 0; font-size: 15px; font-weight: 700; color: #1a1816;">
+                  🎉 30 jours d'essai gratuit activés !
+                </p>
+                <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #5a544e;">
+                  Votre compte professionnel est actif. Vous bénéficiez de 30 jours d'accès complet sans engagement pour gérer votre planning, vos rendez-vous et vos clients en ligne.
+                </p>
+              </div>
+            </td>
+          </tr>
+
+          <!-- Ce que vous pouvez faire dès maintenant -->
+          <tr>
+            <td style="padding: 0 40px 30px 40px;">
+              <h3 style="margin: 0 0 18px 0; font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #8a8279;">
+                Gérez votre salon depuis votre tableau de bord :
+              </h3>
+
+              <!-- Prestations -->
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 14px; background: #faf8f6; border-radius: 12px; padding: 14px 16px;">
+                <tr>
+                  <td width="36" valign="top">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #9d7854; color: #fff; font-size: 14px; line-height: 28px; text-align: center;">✂️</div>
+                  </td>
+                  <td>
+                    <p style="margin: 0 0 2px 0; font-size: 14px; font-weight: 700; color: #1a1816;">Services & Tarifs en Dinar (DZD)</p>
+                    <p style="margin: 0; font-size: 12px; color: #6e6760; line-height: 1.4;">Ajustez vos prestations (coupe, coiffure, barbe, soins...) avec leurs prix et durées.</p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Horaires -->
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 14px; background: #faf8f6; border-radius: 12px; padding: 14px 16px;">
+                <tr>
+                  <td width="36" valign="top">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #9d7854; color: #fff; font-size: 14px; line-height: 28px; text-align: center;">⏰</div>
+                  </td>
+                  <td>
+                    <p style="margin: 0 0 2px 0; font-size: 14px; font-weight: 700; color: #1a1816;">Horaires d'ouverture & Créneaux</p>
+                    <p style="margin: 0; font-size: 12px; color: #6e6760; line-height: 1.4;">Configurez vos jours travaillés et vos heures d'ouverture pour ouvrir les réservations.</p>
+                  </td>
+                </tr>
+              </table>
+
+              <!-- Équipe -->
+              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: #faf8f6; border-radius: 12px; padding: 14px 16px;">
+                <tr>
+                  <td width="36" valign="top">
+                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #9d7854; color: #fff; font-size: 14px; line-height: 28px; text-align: center;">👥</div>
+                  </td>
+                  <td>
+                    <p style="margin: 0 0 2px 0; font-size: 14px; font-weight: 700; color: #1a1816;">Collaborateurs & Équipe</p>
+                    <p style="margin: 0; font-size: 12px; color: #6e6760; line-height: 1.4;">Ajoutez vos coiffeurs et esthéticiennes pour organiser leurs plannings respectifs.</p>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+
+          <!-- Bouton CTA vers Dashboard -->
+          <tr>
+            <td align="center" style="padding: 10px 40px 40px 40px;">
+              <a href="${appUrl}/professional/pro-dashboard" style="display: inline-block; background: linear-gradient(135deg, #9d7854 0%, #b68d63 100%); color: #ffffff; text-decoration: none; padding: 16px 36px; border-radius: 12px; font-weight: 700; font-size: 15px; letter-spacing: 0.2px; box-shadow: 0 6px 18px rgba(157, 120, 84, 0.28);">
+                Accéder à mon tableau de bord Pro →
+              </a>
+            </td>
+          </tr>
+
+          <!-- Pied de page du mail -->
+          <tr>
+            <td style="background-color: #fcfbfa; padding: 25px 40px; border-top: 1px solid #f0eae4; text-align: center;">
+              <p style="margin: 0 0 8px 0; font-size: 12px; color: #8a8279;">
+                Besoin d'aide ? Contactez notre support : 
+                <a href="https://wa.me/213776393135" style="color: #9d7854; text-decoration: none; font-weight: 700;">WhatsApp +213 776 39 31 35</a> ou <a href="mailto:kalendodz@gmail.com" style="color: #9d7854; text-decoration: none; font-weight: 600;">kalendodz@gmail.com</a>
+              </p>
+              <p style="margin: 0; font-size: 11px; color: #a9a29a;">
+                © ${new Date().getFullYear()} Kalendo. La plateforme de réservation beauté & bien-être en Algérie 🇩🇿
+              </p>
+            </td>
+          </tr>
+
+        </table>
+      </td>
+    </tr>
+  </table>
+</body>
+</html>
+`
+}
+
+/**
+ * Template pour un professionnel dont l'inscription est encore INCOMPLÈTE (étape 1 sans étape 2)
+ */
+function getProfessionalIncompleteEmailHtml(fullName: string): string {
   const name = fullName ? fullName.split(' ')[0] : 'Cher partenaire'
   const appUrl = 'https://www.kalendo.space'
 
@@ -21,7 +171,7 @@ function getProfessionalEmailHtml(fullName: string): string {
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bienvenue sur Kalendo Pro</title>
+  <title>Finalisez votre inscription Kalendo Pro</title>
 </head>
 <body style="margin: 0; padding: 0; background-color: #f7f5f2; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #2d2a26; -webkit-font-smoothing: antialiased;">
   <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background-color: #f7f5f2; padding: 40px 15px;">
@@ -56,70 +206,22 @@ function getProfessionalEmailHtml(fullName: string): string {
               </h1>
               <p style="margin: 0; font-size: 18px; line-height: 1.5; color: #9d7854; font-weight: 700;">
                 Bonjour ${name},<br>
-                Ajoutez votre établissement étape par étape
+                Finalisez l'ajout de votre établissement
               </p>
             </td>
           </tr>
 
-          <!-- Encadré d'information / Essai gratuit -->
+          <!-- Encadré d'information -->
           <tr>
             <td style="padding: 0 40px 30px 40px;">
               <div style="background-color: #fbf8f5; border-left: 4px solid #9d7854; border-radius: 0 12px 12px 0; padding: 18px 20px;">
                 <p style="margin: 0 0 6px 0; font-size: 14px; font-weight: 700; color: #1a1816;">
-                  🎉 Accès Kalendo Pro activé (30 jours d'essai gratuit offerts) :
+                  🎉 Accès Kalendo Pro (30 jours d'essai gratuit offerts) :
                 </p>
                 <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #5a544e;">
-                  Votre compte professionnel est prêt. Pour commencer à recevoir des rendez-vous en ligne, finalisez l'ajout de votre salon en quelques minutes depuis notre plateforme.
+                  Votre compte est créé. Il ne vous reste plus qu'à renseigner les détails de votre salon pour commencer à recevoir des réservations en ligne.
                 </p>
               </div>
-            </td>
-          </tr>
-
-          <!-- Étapes à suivre -->
-          <tr>
-            <td style="padding: 0 40px 30px 40px;">
-              <h3 style="margin: 0 0 18px 0; font-size: 15px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #8a8279;">
-                Les 3 étapes pour lancer votre salon :
-              </h3>
-
-              <!-- Étape 1 -->
-              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 14px; background: #faf8f6; border-radius: 12px; padding: 14px 16px;">
-                <tr>
-                  <td width="36" valign="top">
-                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #9d7854; color: #fff; font-weight: 700; font-size: 13px; line-height: 28px; text-align: center;">1</div>
-                  </td>
-                  <td>
-                    <p style="margin: 0 0 2px 0; font-size: 14px; font-weight: 700; color: #1a1816;">Informations & Localisation</p>
-                    <p style="margin: 0; font-size: 12px; color: #6e6760; line-height: 1.4;">Renseignez le nom, l'adresse exacte et ajoutez les photos de votre établissement.</p>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Étape 2 -->
-              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="margin-bottom: 14px; background: #faf8f6; border-radius: 12px; padding: 14px 16px;">
-                <tr>
-                  <td width="36" valign="top">
-                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #9d7854; color: #fff; font-weight: 700; font-size: 13px; line-height: 28px; text-align: center;">2</div>
-                  </td>
-                  <td>
-                    <p style="margin: 0 0 2px 0; font-size: 14px; font-weight: 700; color: #1a1816;">Services & Tarifs</p>
-                    <p style="margin: 0; font-size: 12px; color: #6e6760; line-height: 1.4;">Ajoutez vos prestations (coupe, coiffure, soin, barbe...) avec leurs prix en DA et durée.</p>
-                  </td>
-                </tr>
-              </table>
-
-              <!-- Étape 3 -->
-              <table width="100%" border="0" cellspacing="0" cellpadding="0" style="background: #faf8f6; border-radius: 12px; padding: 14px 16px;">
-                <tr>
-                  <td width="36" valign="top">
-                    <div style="width: 28px; height: 28px; border-radius: 50%; background: #9d7854; color: #fff; font-weight: 700; font-size: 13px; line-height: 28px; text-align: center;">3</div>
-                  </td>
-                  <td>
-                    <p style="margin: 0 0 2px 0; font-size: 14px; font-weight: 700; color: #1a1816;">Horaires d'ouverture</p>
-                    <p style="margin: 0; font-size: 12px; color: #6e6760; line-height: 1.4;">Définissez vos jours d'ouverture et heures de travail pour ouvrir votre planning.</p>
-                  </td>
-                </tr>
-              </table>
             </td>
           </tr>
 
@@ -136,7 +238,8 @@ function getProfessionalEmailHtml(fullName: string): string {
           <tr>
             <td style="background-color: #fcfbfa; padding: 25px 40px; border-top: 1px solid #f0eae4; text-align: center;">
               <p style="margin: 0 0 8px 0; font-size: 12px; color: #8a8279;">
-                Besoin d'aide ? Notre équipe est disponible : <a href="mailto:kalendodz@gmail.com" style="color: #9d7854; text-decoration: none; font-weight: 600;">kalendodz@gmail.com</a>
+                Besoin d'aide ? Contactez notre support : 
+                <a href="https://wa.me/213776393135" style="color: #9d7854; text-decoration: none; font-weight: 700;">WhatsApp +213 776 39 31 35</a> ou <a href="mailto:kalendodz@gmail.com" style="color: #9d7854; text-decoration: none; font-weight: 600;">kalendodz@gmail.com</a>
               </p>
               <p style="margin: 0; font-size: 11px; color: #a9a29a;">
                 © ${new Date().getFullYear()} Kalendo. La plateforme de réservation beauté & bien-être en Algérie 🇩🇿
@@ -269,16 +372,26 @@ function getClientEmailHtml(fullName: string): string {
 /**
  * Envoie un email de bienvenue soit via Gmail (kalendodz@gmail.com), soit via Resend
  */
-export async function sendWelcomeEmail({ to, fullName = '', userType }: SendWelcomeEmailParams): Promise<{ success: boolean; error?: string }> {
+export async function sendWelcomeEmail({ 
+  to, 
+  fullName = '', 
+  userType,
+  establishmentName 
+}: SendWelcomeEmailParams): Promise<{ success: boolean; error?: string }> {
   try {
-    const isPro = userType === 'professional'
-    const subject = isPro 
-      ? 'Bienvenue sur Kalendo - Ajoutez votre salon !' 
-      : 'Bienvenue sur Kalendo ! Vos rendez-vous beauté en quelques clics'
+    let subject = ''
+    let html = ''
 
-    const html = isPro 
-      ? getProfessionalEmailHtml(fullName) 
-      : getClientEmailHtml(fullName)
+    if (userType === 'professional_completed') {
+      subject = '🎉 Félicitations ! Votre salon est en ligne sur Kalendo Pro'
+      html = getProfessionalCompletedEmailHtml(fullName, establishmentName)
+    } else if (userType === 'professional') {
+      subject = 'Bienvenue sur Kalendo - Finalisez l\'ajout de votre salon'
+      html = getProfessionalIncompleteEmailHtml(fullName)
+    } else {
+      subject = 'Bienvenue sur Kalendo ! Vos rendez-vous beauté en quelques clics'
+      html = getClientEmailHtml(fullName)
+    }
 
     // Option 1 : Envoi direct depuis votre adresse Gmail kalendodz@gmail.com
     const gmailAppPassword = process.env.GMAIL_APP_PASSWORD

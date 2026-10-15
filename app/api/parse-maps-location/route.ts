@@ -88,7 +88,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json<LocationResponse>({
         success: false,
         error: 'Veuillez fournir un lien Google Maps, des coordonnées ou une adresse.'
-      }, { status: 400 })
+      }, { status: 200 })
     }
 
     const rawInput = query.trim()
@@ -250,7 +250,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json<LocationResponse>({
       success: false,
       error: 'Impossible d\'extraire automatiquement l\'adresse depuis ce lien ou ce texte. Vous pouvez renseigner votre adresse manuellement ci-dessous.'
-    }, { status: 404 })
+    }, { status: 200 })
 
   } catch (error: any) {
     console.error('Erreur API parse-maps-location:', error)

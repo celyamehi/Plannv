@@ -304,9 +304,6 @@ export default function ProSettingsPage() {
                   }}
                   showDirectFields={true}
                 />
-                <p className="text-xs text-gray-500">
-                  Vous pouvez coller un lien partagé depuis Google Maps, utiliser le GPS ou ajuster les coordonnées manuellement.
-                </p>
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>

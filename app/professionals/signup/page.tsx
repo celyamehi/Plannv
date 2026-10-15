@@ -10,6 +10,7 @@ import { Input } from '../../../components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../../components/ui/card'
 import { ArrowLeft, Building, MapPin, Phone, Mail, Check, Loader2 } from 'lucide-react'
 import LocationPicker from '../../../components/ui/LocationPicker'
+import PhoneInputWithCountry from '../../../components/ui/PhoneInputWithCountry'
 import GoogleAuthButton from '@/components/auth/GoogleAuthButton'
 
 export default function ProfessionalSignupPage() {
@@ -180,17 +181,6 @@ export default function ProfessionalSignupPage() {
             throw profileError
           }
         }
-
-        // Envoi de l'e-mail de bienvenue pro (non-bloquant)
-        fetch('/api/send-welcome-email', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            to: personalInfo.email,
-            fullName: personalInfo.fullName,
-            userType: 'professional'
-          })
-        }).catch(e => console.warn('Erreur envoi email pro:', e))
       }
 
       // Créer l'établissement
@@ -219,6 +209,22 @@ export default function ProfessionalSignupPage() {
         })
 
       if (establishmentError) throw establishmentError
+
+      // Envoi de l'e-mail de félicitations et bienvenue pro terminé (non-bloquant)
+      const recipientEmail = existingUser ? existingUser.email : personalInfo.email
+      const recipientName = existingUser ? existingUser.fullName : personalInfo.fullName
+      if (recipientEmail) {
+        fetch('/api/send-welcome-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            to: recipientEmail,
+            fullName: recipientName,
+            userType: 'professional_completed',
+            establishmentName: establishmentInfo.establishmentName
+          })
+        }).catch(e => console.warn('Erreur envoi email pro terminé:', e))
+      }
 
       // Rediriger vers le dashboard professionnel
       router.push('/professional/pro-dashboard')
@@ -315,14 +321,13 @@ export default function ProfessionalSignupPage() {
 
                 <div className="space-y-2">
                   <label htmlFor="phone" className="text-sm font-medium">
-                    Téléphone professionnel
+                    Téléphone professionnel *
                   </label>
-                  <Input
+                  <PhoneInputWithCountry
                     id="phone"
-                    type="tel"
-                    placeholder="+33 6 12 34 56  78"
+                    name="phone"
                     value={personalInfo.phone}
-                    onChange={(e) => setPersonalInfo({ ...personalInfo, phone: e.target.value })}
+                    onChange={(val) => setPersonalInfo({ ...personalInfo, phone: val })}
                     required
                   />
                 </div>
@@ -468,18 +473,18 @@ export default function ProfessionalSignupPage() {
 
                 <div className="space-y-2">
                   <label className="text-sm font-medium">
-                    Adresse de l'établissement *
+                    Adresse & Localisation de l'établissement *
                   </label>
                   <LocationPicker
                     onLocationSelect={(location) => {
-                      setEstablishmentInfo({
-                        ...establishmentInfo,
+                      setEstablishmentInfo(prev => ({
+                        ...prev,
                         address: location.address,
                         city: location.city,
                         postalCode: location.postalCode,
                         latitude: location.latitude,
                         longitude: location.longitude,
-                      })
+                      }))
                     }}
                     initialLocation={{
                       address: establishmentInfo.address,
@@ -488,23 +493,18 @@ export default function ProfessionalSignupPage() {
                       latitude: establishmentInfo.latitude,
                       longitude: establishmentInfo.longitude,
                     }}
-                    showDirectFields={true}
                   />
-                  <p className="text-xs text-gray-500">
-                    Collez un lien partagé depuis Google Maps, utilisez votre position GPS ou renseignez l'adresse manuellement.
-                  </p>
                 </div>
 
                 <div className="space-y-2">
                   <label htmlFor="establishmentPhone" className="text-sm font-medium">
                     Téléphone de l'établissement *
                   </label>
-                  <Input
+                  <PhoneInputWithCountry
                     id="establishmentPhone"
-                    type="tel"
-                    placeholder="+33 0 12 34 56  78"
+                    name="establishmentPhone"
                     value={establishmentInfo.phone}
-                    onChange={(e) => setEstablishmentInfo({ ...establishmentInfo, phone: e.target.value })}
+                    onChange={(val) => setEstablishmentInfo({ ...establishmentInfo, phone: val })}
                     required
                   />
                 </div>

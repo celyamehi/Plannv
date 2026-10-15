@@ -6,6 +6,7 @@ import Image from 'next/image'
 import { supabase } from '@/lib/supabase/client'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import PhoneInputWithCountry from '@/components/ui/PhoneInputWithCountry'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { User, Check } from 'lucide-react'
 
@@ -175,12 +176,11 @@ export default function SetupProfilePage() {
                 <label htmlFor="phone" className="text-sm font-medium">
                   Téléphone
                 </label>
-                <Input
+                <PhoneInputWithCountry
                   id="phone"
-                  type="tel"
-                  placeholder="+33 6 12 34 56 78"
+                  name="phone"
                   value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                  onChange={(val) => setFormData({ ...formData, phone: val })}
                 />
               </div>
 

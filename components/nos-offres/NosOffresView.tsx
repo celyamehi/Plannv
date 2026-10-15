@@ -44,7 +44,7 @@ export default function NosOffresView() {
     const message = encodeURIComponent(
       "Bonjour, je suis gérant(e) de salon et je souhaite avoir des informations sur l'offre Kalendo Pro (1500 DA / mois avec 30 jours d'essai gratuit)."
     )
-    window.open(`https://wa.me/213555123456?text=${message}`, "_blank")
+    window.open(`https://wa.me/213776393135?text=${message}`, "_blank")
   }
 
   const faqItems = [
@@ -699,8 +699,8 @@ export default function NosOffresView() {
               </p>
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <span>📧</span>
-                <a href="mailto:contact@kalendo.dz" className="hover:text-nude-600 transition-colors">
-                  contact@kalendo.dz
+                <a href="mailto:contact@kalendo.space" className="hover:text-nude-600 transition-colors">
+                  contact@kalendo.space
                 </a>
               </div>
             </div>

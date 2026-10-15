@@ -136,7 +136,7 @@ function getProfessionalEmailHtml(fullName: string): string {
           <tr>
             <td style="background-color: #fcfbfa; padding: 25px 40px; border-top: 1px solid #f0eae4; text-align: center;">
               <p style="margin: 0 0 8px 0; font-size: 12px; color: #8a8279;">
-                Besoin d'aide ? Notre équipe est disponible : <a href="mailto:contact@kalendo.dz" style="color: #9d7854; text-decoration: none; font-weight: 600;">contact@kalendo.dz</a>
+                Besoin d'aide ? Notre équipe est disponible : <a href="mailto:contact@kalendo.space" style="color: #9d7854; text-decoration: none; font-weight: 600;">contact@kalendo.space</a>
               </p>
               <p style="margin: 0; font-size: 11px; color: #a9a29a;">
                 © ${new Date().getFullYear()} Kalendo. La plateforme de réservation beauté & bien-être en Algérie 🇩🇿
@@ -249,7 +249,7 @@ function getClientEmailHtml(fullName: string): string {
           <tr>
             <td style="background-color: #fcfbfa; padding: 25px 40px; border-top: 1px solid #f0eae4; text-align: center;">
               <p style="margin: 0 0 8px 0; font-size: 12px; color: #8a8279;">
-                Une question ? Écrivez-nous à <a href="mailto:contact@kalendo.dz" style="color: #9d7854; text-decoration: none; font-weight: 600;">contact@kalendo.dz</a>
+                Une question ? Écrivez-nous à <a href="mailto:contact@kalendo.space" style="color: #9d7854; text-decoration: none; font-weight: 600;">contact@kalendo.space</a>
               </p>
               <p style="margin: 0; font-size: 11px; color: #a9a29a;">
                 © ${new Date().getFullYear()} Kalendo. La plateforme de réservation beauté & bien-être en Algérie 🇩🇿
@@ -288,7 +288,7 @@ export async function sendWelcomeEmail({ to, fullName = '', userType }: SendWelc
       : getClientEmailHtml(fullName)
 
     // Expéditeur par défaut : onboarding@resend.dev (fourni par défaut par Resend avant validation de domaine)
-    // ou "Kalendo <contact@kalendo.dz>" si le domaine est configuré
+    // ou "Kalendo <contact@kalendo.space>" si le domaine est configuré
     const fromAddress = process.env.RESEND_FROM_EMAIL || 'Kalendo <onboarding@resend.dev>'
 
     const response = await fetch('https://api.resend.com/emails', {

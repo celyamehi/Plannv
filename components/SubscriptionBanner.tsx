@@ -197,18 +197,19 @@ export default function SubscriptionBanner() {
         {(subscription.status === 'pending' || subscription.status === 'expired' || subscription.status === 'suspended') && (
           <div className="flex flex-col gap-2">
             <a
-              href="tel:+213555123456"
-              className="flex items-center justify-center gap-2 px-4 py-2 bg-white text-gray-800 rounded-lg font-medium hover:bg-gray-100 transition-colors"
+              href="https://wa.me/213776393135?text=Bonjour%2C%20je%20vous%20contacte%20concernant%20mon%20abonnement%20Kalendo%20Pro"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 px-4 py-2 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-lg font-medium transition-colors"
             >
-              <Phone className="w-4 h-4" />
-              Nous appeler
+              WhatsApp
             </a>
             <a
-              href="mailto:contact@kalendo.dz"
+              href="mailto:contact@kalendo.space"
               className="flex items-center justify-center gap-2 px-4 py-2 bg-white/20 text-white rounded-lg font-medium hover:bg-white/30 transition-colors"
             >
               <Mail className="w-4 h-4" />
-              contact@kalendo.dz
+              contact@kalendo.space
             </a>
           </div>
         )}

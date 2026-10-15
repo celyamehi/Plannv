@@ -80,8 +80,8 @@ export default function CGUPage() {
               <h2 className="text-xl font-bold mb-4">7. Contact</h2>
               <p className="text-gray-600 leading-relaxed">
                 Pour toute question relative aux CGU : 
-                <a href="mailto:contact@kalendo.dz" className="text-nude-600 hover:underline ml-1">
-                  contact@kalendo.dz
+                <a href="mailto:contact@kalendo.space" className="text-nude-600 hover:underline ml-1">
+                  contact@kalendo.space
                 </a>
               </p>
             </div>

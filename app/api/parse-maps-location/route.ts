@@ -128,7 +128,7 @@ export async function POST(request: NextRequest) {
         const reverseUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lng}&addressdetails=1&accept-language=fr`
         const revRes = await fetch(reverseUrl, {
           headers: {
-            'User-Agent': 'KalendoApp/1.0 (contact@kalendo.dz)'
+            'User-Agent': 'KalendoApp/1.0 (contact@kalendo.space)'
           }
         })
         
@@ -211,7 +211,7 @@ export async function POST(request: NextRequest) {
     
     const searchRes = await fetch(searchUrl, {
       headers: {
-        'User-Agent': 'KalendoApp/1.0 (contact@kalendo.dz)'
+        'User-Agent': 'KalendoApp/1.0 (contact@kalendo.space)'
       }
     })
 

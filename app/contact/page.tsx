@@ -4,7 +4,7 @@ import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { motion } from "framer-motion"
-import { ArrowLeft, Mail, Phone, MapPin, Send, CheckCircle } from "lucide-react"
+import { ArrowLeft, Mail, Phone, MapPin, Send, CheckCircle, MessageCircle } from "lucide-react"
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -80,23 +80,28 @@ export default function ContactPage() {
                   </div>
                   <div>
                     <h3 className="font-bold text-gray-900 mb-1">Email</h3>
-                    <a href="mailto:contact@kalendo.dz" className="text-nude-600 hover:underline">
-                      contact@kalendo.dz
+                    <a href="mailto:contact@kalendo.space" className="text-nude-600 hover:underline">
+                      contact@kalendo.space
                     </a>
                     <p className="text-sm text-gray-500 mt-1">Réponse sous 24h</p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 bg-warm-100 rounded-xl flex items-center justify-center flex-shrink-0">
-                    <Phone className="w-6 h-6 text-warm-600" />
+                  <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <MessageCircle className="w-6 h-6 text-green-600" />
                   </div>
                   <div>
-                    <h3 className="font-bold text-gray-900 mb-1">Téléphone</h3>
-                    <a href="tel:+213555123456" className="text-nude-600 hover:underline">
-                      +213 555 123 456
+                    <h3 className="font-bold text-gray-900 mb-1">WhatsApp</h3>
+                    <a 
+                      href="https://wa.me/213776393135" 
+                      target="_blank" 
+                      rel="noopener noreferrer" 
+                      className="text-green-700 font-medium hover:underline"
+                    >
+                      +213 776 39 31 35
                     </a>
-                    <p className="text-sm text-gray-500 mt-1">Du dimanche au jeudi, 9h-17h</p>
+                    <p className="text-sm text-gray-500 mt-1">Disponible sur WhatsApp 7j/7</p>
                   </div>
                 </div>
 

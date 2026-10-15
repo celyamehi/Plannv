@@ -43,8 +43,8 @@ export default function Home() {
               </p>
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <span>📧</span>
-                <a href="mailto:contact@kalendo.dz" className="hover:text-nude-600 transition-colors">
-                  contact@kalendo.dz
+                <a href="mailto:contact@kalendo.space" className="hover:text-nude-600 transition-colors">
+                  contact@kalendo.space
                 </a>
               </div>
             </div>

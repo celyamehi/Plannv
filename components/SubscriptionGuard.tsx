@@ -122,11 +122,12 @@ export default function SubscriptionGuard({ children }: SubscriptionGuardProps) 
                 </span>
               </div>
               <a 
-                href="tel:+213555123456" 
+                href="https://wa.me/213776393135?text=Bonjour%2C%20je%20souhaite%20renouveler%20mon%20abonnement%20Kalendo%20Pro" 
+                target="_blank"
+                rel="noopener noreferrer"
                 className="text-yellow-800 font-medium hover:underline flex items-center gap-1"
               >
-                <Phone className="w-4 h-4" />
-                Renouveler
+                Renouveler sur WhatsApp
               </a>
             </div>
           </div>
@@ -215,18 +216,19 @@ export default function SubscriptionGuard({ children }: SubscriptionGuardProps) 
         {/* Contact */}
         <div className="space-y-3">
           <a
-            href="tel:+213555123456"
-            className="flex items-center justify-center gap-2 w-full py-3 bg-gradient-to-r from-nude-600 to-warm-600 text-white rounded-xl font-semibold hover:shadow-lg transition-all"
+            href="https://wa.me/213776393135?text=Bonjour%2C%20je%20souhaite%20renouveler%20mon%20abonnement%20Kalendo%20Pro"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center justify-center gap-2 w-full py-3 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl font-semibold hover:shadow-lg transition-all"
           >
-            <Phone className="w-5 h-5" />
-            Appeler : +213 555 123 456
+            Contacter sur WhatsApp
           </a>
           <a
-            href="mailto:contact@kalendo.dz"
+            href="mailto:contact@kalendo.space"
             className="flex items-center justify-center gap-2 w-full py-3 border border-gray-200 text-gray-700 rounded-xl font-medium hover:bg-gray-50 transition-all"
           >
             <Mail className="w-5 h-5" />
-            contact@kalendo.dz
+            contact@kalendo.space
           </a>
         </div>
 

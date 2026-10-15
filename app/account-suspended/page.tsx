@@ -145,19 +145,20 @@ export default function AccountSuspendedPage() {
             </p>
 
             <a
-              href="tel:+213555123456"
-              className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-gradient-to-r from-nude-600 to-warm-600 text-white rounded-xl font-medium hover:shadow-lg transition-all"
+              href="https://wa.me/213776393135?text=Bonjour%2C%20mon%20compte%20Kalendo%20Pro%20est%20suspendu%2C%20je%20souhaite%20le%20r%C3%A9activer"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-[#25D366] hover:bg-[#20bd5a] text-white rounded-xl font-medium hover:shadow-lg transition-all"
             >
-              <Phone className="w-5 h-5" />
-              Appeler : 0555 123 456
+              Contacter le support sur WhatsApp
             </a>
 
             <a
-              href="mailto:contact@kalendo.dz"
+              href="mailto:contact@kalendo.space"
               className="flex items-center justify-center gap-2 w-full px-4 py-3 border-2 border-nude-600 text-nude-600 rounded-xl font-medium hover:bg-nude-50 transition-all"
             >
               <Mail className="w-5 h-5" />
-              contact@kalendo.dz
+              contact@kalendo.space
             </a>
           </div>
 

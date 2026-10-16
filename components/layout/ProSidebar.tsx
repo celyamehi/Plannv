@@ -224,11 +224,11 @@ export default function ProSidebar({ children }: ProSidebarProps) {
                 key={item.href}
                 href={item.href}
                 className={`flex items-center space-x-3 px-3 py-2.5 rounded-xl transition-all ${isActive
-                  ? 'bg-nude-50 text-nude-600 font-semibold'
+                  ? 'bg-[#5b50e6]/10 text-[#5b50e6] font-semibold'
                   : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900 font-medium'
                   }`}
               >
-                <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-nude-600' : 'text-gray-400'}`} />
+                <Icon className={`w-5 h-5 flex-shrink-0 ${isActive ? 'text-[#5b50e6]' : 'text-gray-400'}`} />
                 {sidebarOpen && (
                   <span className="text-sm">{item.label}</span>
                 )}
@@ -269,9 +269,9 @@ export default function ProSidebar({ children }: ProSidebarProps) {
           </div>
 
           <div className="flex items-center space-x-2">
-            <div className="flex items-center space-x-1.5 px-2.5 py-1 bg-nude-50 rounded-full border border-nude-100">
+            <div className="flex items-center space-x-1.5 px-2.5 py-1 bg-indigo-50/80 rounded-full border border-indigo-100">
               <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-xs font-semibold text-nude-800 truncate max-w-[120px]">
+              <span className="text-xs font-semibold text-[#5b50e6] truncate max-w-[120px]">
                 {user?.business_name || user?.full_name || 'Mon salon'}
               </span>
             </div>
@@ -325,15 +325,15 @@ export default function ProSidebar({ children }: ProSidebarProps) {
             {user && (
               <div className="p-4 bg-gray-50/90 border-b border-gray-100 flex-shrink-0">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-nude-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <User className="w-5 h-5 text-nude-600" />
+                  <div className="w-10 h-10 bg-indigo-50 rounded-full flex items-center justify-center flex-shrink-0">
+                    <User className="w-5 h-5 text-[#5b50e6]" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-gray-900 truncate">
                       {user.business_name || user.full_name || 'Mon salon'}
                     </p>
                     <p className="text-xs text-gray-500 truncate">{user.email}</p>
-                    <span className="inline-block mt-1 text-[10px] font-semibold text-nude-700 bg-nude-100 px-2 py-0.5 rounded-full">
+                    <span className="inline-block mt-1 text-[10px] font-semibold text-[#5b50e6] bg-indigo-50 border border-indigo-100 px-2 py-0.5 rounded-full">
                       Espace Professionnel Pro
                     </span>
                   </div>
@@ -357,7 +357,7 @@ export default function ProSidebar({ children }: ProSidebarProps) {
                     onClick={() => setMobileMenuOpen(false)}
                     className={`flex items-center justify-between px-3 py-2.5 rounded-xl transition-all ${
                       isActive
-                        ? 'bg-nude-600 text-white font-semibold shadow-xs'
+                        ? 'bg-[#5b50e6] text-white font-semibold shadow-xs'
                         : 'text-gray-700 hover:bg-gray-100 font-medium'
                     }`}
                   >

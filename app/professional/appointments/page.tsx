@@ -881,11 +881,11 @@ function ProAppointmentsContent() {
       {/* ============================================================ */}
       {/* VUE MOBILE SMARTPHONE (EXACTEMENT COMME LA CAPTURE D'ÉCRAN) */}
       {/* ============================================================ */}
-      <div className="block lg:hidden min-h-screen bg-gradient-to-b from-[#f8f7ff] via-white to-[#faf9ff] pb-24">
+      <div className="block lg:hidden min-h-screen bg-gradient-to-b from-warm-50/60 via-white to-nude-50/40 pb-24">
         {/* 1. Mobile Header: Planning + Eye + Settings */}
         <div className="px-4 pt-3 pb-2 flex items-center justify-between">
           <div className="flex items-center">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#6253ec] to-[#4c3ec8] text-white flex items-center justify-center shadow-md shadow-indigo-500/20">
+            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-nude-600 to-warm-600 text-white flex items-center justify-center shadow-md shadow-nude-600/20">
               <CalendarDays className="w-5 h-5 stroke-[2.2]" />
             </div>
             <h1 className="text-xl font-bold text-gray-900 ml-3 tracking-tight">Planning</h1>
@@ -895,7 +895,7 @@ function ProAppointmentsContent() {
               onClick={() => setHideEmptyHours(!hideEmptyHours)}
               title={hideEmptyHours ? 'Afficher tous les créneaux' : 'Masquer les créneaux vides'}
               className={`w-9 h-9 rounded-full flex items-center justify-center transition-all ${
-                hideEmptyHours ? 'bg-[#5b50e6] text-white shadow-sm' : 'bg-[#efeefd] text-[#5b50e6] hover:bg-purple-100'
+                hideEmptyHours ? 'bg-gradient-to-r from-nude-600 to-warm-600 text-white shadow-sm' : 'bg-nude-50 text-nude-600 hover:bg-nude-100'
               }`}
             >
               <Eye className="w-4 h-4" />
@@ -920,9 +920,9 @@ function ProAppointmentsContent() {
             <ChevronLeft className="w-4 h-4" />
           </button>
 
-          <div className="relative flex-1 mx-2 bg-[#f4f2fe] border border-[#e2dffc] rounded-full py-2 px-3 flex items-center justify-center space-x-1.5 shadow-xs cursor-pointer">
-            <Calendar className="w-3.5 h-3.5 text-[#5b50e6] shrink-0" />
-            <span className="text-[12px] font-semibold text-[#3b32a4] truncate capitalize">
+          <div className="relative flex-1 mx-2 bg-nude-50/90 border border-nude-200/90 rounded-full py-2 px-3 flex items-center justify-center space-x-1.5 shadow-xs cursor-pointer">
+            <Calendar className="w-3.5 h-3.5 text-nude-600 shrink-0" />
+            <span className="text-[12px] font-semibold text-nude-900 truncate capitalize">
               {formatFrenchDate(selectedDate)}
             </span>
             <input
@@ -944,7 +944,7 @@ function ProAppointmentsContent() {
           <button
             onClick={handleToday}
             title="Aujourd'hui"
-            className="relative ml-2 bg-[#5b50e6] hover:bg-[#4d42d8] active:scale-95 text-white font-medium text-xs px-3.5 py-2 rounded-2xl shadow-sm shrink-0 transition-all flex items-center"
+            className="relative ml-2 bg-gradient-to-r from-nude-600 to-warm-600 hover:from-nude-700 hover:to-warm-700 active:scale-95 text-white font-medium text-xs px-3.5 py-2 rounded-2xl shadow-sm shrink-0 transition-all flex items-center"
           >
             Aujourd&apos;hui
             <span className="absolute -top-0.5 -right-0.5 w-2 h-2 bg-rose-500 rounded-full border-2 border-white" />
@@ -958,7 +958,7 @@ function ProAppointmentsContent() {
               onClick={() => setMobileTab('timeline')}
               className={`flex-1 py-2 px-3 rounded-xl flex items-center justify-center space-x-2 text-xs font-semibold transition-all ${
                 mobileTab === 'timeline'
-                  ? 'bg-[#5b50e6] text-white shadow-sm'
+                  ? 'bg-gradient-to-r from-nude-600 to-warm-600 text-white shadow-sm'
                   : 'text-gray-500 hover:text-gray-800'
               }`}
             >
@@ -969,7 +969,7 @@ function ProAppointmentsContent() {
               onClick={() => setMobileTab('kanban')}
               className={`flex-1 py-2 px-3 rounded-xl flex items-center justify-center space-x-2 text-xs font-semibold transition-all ${
                 mobileTab === 'kanban'
-                  ? 'bg-[#5b50e6] text-white shadow-sm'
+                  ? 'bg-gradient-to-r from-nude-600 to-warm-600 text-white shadow-sm'
                   : 'text-gray-500 hover:text-gray-800'
               }`}
             >
@@ -1016,7 +1016,7 @@ function ProAppointmentsContent() {
               onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
               title="Rechercher un rendez-vous"
               className={`w-11 h-11 rounded-full border border-gray-200/90 bg-white flex items-center justify-center shadow-xs shrink-0 ml-2 transition-colors ${
-                mobileSearchOpen || mobileSearchQuery ? 'text-[#5b50e6] border-[#5b50e6]' : 'text-gray-500'
+                mobileSearchOpen || mobileSearchQuery ? 'text-nude-600 border-nude-600' : 'text-gray-500'
               }`}
             >
               <Search className="w-4 h-4" />
@@ -1032,7 +1032,7 @@ function ProAppointmentsContent() {
                 value={mobileSearchQuery}
                 onChange={(e) => setMobileSearchQuery(e.target.value)}
                 placeholder="Rechercher par client, service, employé..."
-                className="w-full text-xs pl-8 pr-8 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#5b50e6]"
+                className="w-full text-xs pl-8 pr-8 py-2 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-nude-500"
               />
               {mobileSearchQuery && (
                 <button
@@ -1049,7 +1049,7 @@ function ProAppointmentsContent() {
         {/* 5. Main Content: Timeline vs Kanban */}
         {loading ? (
           <div className="py-16 text-center">
-            <div className="w-10 h-10 border-3 border-[#5b50e6] border-t-transparent rounded-full animate-spin mx-auto mb-3" />
+            <div className="w-10 h-10 border-3 border-nude-600 border-t-transparent rounded-full animate-spin mx-auto mb-3" />
             <p className="text-xs text-gray-500">Chargement du planning...</p>
           </div>
         ) : mobileTab === 'timeline' ? (
@@ -1065,7 +1065,7 @@ function ProAppointmentsContent() {
                   <div className="flex items-center space-x-2 pl-1">
                     <span className="text-xs font-bold text-gray-800 tracking-tight">{hourStr}</span>
                     {hourApts.length > 0 && (
-                      <span className="w-4 h-4 rounded-full bg-[#5b50e6] text-white text-[10px] font-bold flex items-center justify-center">
+                      <span className="w-4 h-4 rounded-full bg-nude-600 text-white text-[10px] font-bold flex items-center justify-center">
                         {hourApts.length}
                       </span>
                     )}
@@ -1078,7 +1078,7 @@ function ProAppointmentsContent() {
 
                     {/* Node Dot on the line */}
                     {hourApts.length > 0 ? (
-                      <div className="absolute left-2.5 top-3 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-[#5b50e6] ring-4 ring-indigo-100 z-10" />
+                      <div className="absolute left-2.5 top-3 -translate-x-1/2 w-3.5 h-3.5 rounded-full bg-nude-600 ring-4 ring-nude-100 z-10" />
                     ) : (
                       <div className="absolute left-2.5 top-2.5 -translate-x-1/2 w-2.5 h-2.5 rounded-full bg-gray-200 ring-2 ring-white z-10" />
                     )}
@@ -1147,14 +1147,14 @@ function ProAppointmentsContent() {
                                     className={`w-3.5 h-3.5 ${
                                       apt.status === 'confirmed' || apt.status === 'call_confirmed'
                                         ? 'text-emerald-600'
-                                        : 'text-[#8b5cf6]'
+                                        : 'text-nude-600'
                                     }`}
                                   />
                                   <span
                                     className={`font-semibold ${
                                       apt.status === 'confirmed' || apt.status === 'call_confirmed'
                                         ? 'text-emerald-700'
-                                        : 'text-[#8b5cf6]'
+                                        : 'text-nude-600'
                                     }`}
                                   >
                                     {getClientName(apt)}
@@ -1205,7 +1205,7 @@ function ProAppointmentsContent() {
                           className="p-3 bg-gray-50/70 hover:bg-gray-50 border border-gray-100 rounded-xl cursor-pointer"
                         >
                           <div className="flex items-center justify-between text-xs mb-1.5">
-                            <span className="font-bold text-[#5b50e6]">{formatAptTimeRange(apt)}</span>
+                            <span className="font-bold text-nude-600">{formatAptTimeRange(apt)}</span>
                             <span className="text-[11px] text-gray-500 font-medium">
                               {apt.staff_members?.first_name || ''}
                             </span>
@@ -1244,7 +1244,7 @@ function ProAppointmentsContent() {
               setFilteredServices(allServices)
               setFilteredStaff(staffMembers)
             }}
-            className="relative bg-[#5b50e6] hover:bg-[#4d42d8] active:scale-95 text-white font-medium text-xs px-4 py-3 rounded-2xl shadow-xl shadow-indigo-600/30 flex items-center space-x-2 transition-all"
+            className="relative bg-gradient-to-r from-nude-600 to-warm-600 hover:from-nude-700 hover:to-warm-700 active:scale-95 text-white font-medium text-xs px-4 py-3 rounded-2xl shadow-xl shadow-nude-600/30 flex items-center space-x-2 transition-all"
           >
             <Plus className="w-4 h-4 text-white stroke-[2.5]" />
             <span className="font-semibold text-[13px]">Nouveau RDV</span>
@@ -1695,7 +1695,7 @@ export default function ProAppointmentsPage() {
     <Suspense
       fallback={
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="w-10 h-10 border-4 border-[#5b50e6] border-t-transparent rounded-full animate-spin" />
+          <div className="w-10 h-10 border-4 border-nude-600 border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >

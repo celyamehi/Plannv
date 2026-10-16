@@ -66,23 +66,23 @@ export default function ProBottomNav({ onOpenMenu }: ProBottomNavProps) {
               title={item.fullLabel}
               className={`flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl transition-all duration-200 ${
                 active
-                  ? "text-[#5b50e6]"
-                  : "text-gray-400 hover:text-gray-600 active:scale-95"
+                  ? "text-nude-600 font-semibold"
+                  : "text-gray-400 hover:text-gray-700 active:scale-95"
               }`}
             >
               <div className="relative">
                 <Icon
                   className={`w-5 h-5 transition-transform duration-200 ${
-                    active ? "scale-110 stroke-[2.4] text-[#5b50e6]" : "stroke-[1.8]"
+                    active ? "scale-110 stroke-[2.4] text-nude-600" : "stroke-[1.8]"
                   }`}
                 />
                 {active && (
-                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-[#5b50e6]" />
+                  <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-nude-600" />
                 )}
               </div>
               <span
                 className={`text-[10px] mt-1 tracking-tight truncate max-w-full leading-tight ${
-                  active ? "font-bold text-[#5b50e6]" : "font-normal text-gray-500"
+                  active ? "font-bold text-nude-600" : "font-medium text-gray-500"
                 }`}
               >
                 {item.label}
@@ -96,12 +96,12 @@ export default function ProBottomNav({ onOpenMenu }: ProBottomNavProps) {
           type="button"
           onClick={onOpenMenu}
           title="Toutes les pages"
-          className="flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-gray-400 hover:text-[#5b50e6] active:scale-95 transition-all duration-200 cursor-pointer"
+          className="flex flex-col items-center justify-center py-1.5 px-0.5 rounded-xl text-gray-500 hover:text-nude-600 active:scale-95 transition-all duration-200 cursor-pointer"
         >
           <div className="relative p-0.5">
-            <Menu className="w-5 h-5 stroke-[1.8] text-gray-400 hover:text-[#5b50e6]" />
+            <Menu className="w-5 h-5 stroke-[2] text-gray-700 hover:text-nude-600 transition-colors" />
           </div>
-          <span className="text-[10px] mt-1 tracking-tight font-normal text-gray-500 leading-tight">
+          <span className="text-[10px] mt-1 tracking-tight font-semibold text-gray-700 leading-tight">
             Menu
           </span>
         </button>

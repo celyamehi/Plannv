@@ -204,23 +204,23 @@ export default function ClientSidebar({ children }: { children: React.ReactNode 
                                     href={item.href}
                                     className={`flex flex-col items-center justify-center py-1 px-1 rounded-xl transition-all duration-200 ${
                                         active
-                                            ? "text-[#5b50e6]"
+                                            ? "text-nude-600 font-semibold"
                                             : "text-gray-400 hover:text-gray-600 active:scale-95"
                                     }`}
                                 >
                                     <div className="relative">
                                         <Icon
                                             className={`w-5 h-5 transition-transform duration-200 ${
-                                                active ? "scale-110 stroke-[2.4]" : "stroke-[1.8]"
+                                                active ? "scale-110 stroke-[2.4] text-nude-600" : "stroke-[1.8]"
                                             }`}
                                         />
                                         {active && (
-                                            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-[#5b50e6]" />
+                                            <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-1.5 h-1.5 rounded-full bg-nude-600" />
                                         )}
                                     </div>
                                     <span
                                         className={`text-[10px] sm:text-[11px] mt-1 tracking-tight truncate max-w-full leading-tight ${
-                                            active ? "font-bold text-[#5b50e6]" : "font-normal text-gray-500"
+                                            active ? "font-bold text-nude-600" : "font-normal text-gray-500"
                                         }`}
                                     >
                                         {shortLabel}

@@ -177,22 +177,10 @@ export default function TopRatedSalonsSection() {
                       <span>{salon.average_rating ? salon.average_rating.toFixed(1) : "5.0"}</span>
                       <span className="text-white/70 text-[10px]">({salon.total_reviews})</span>
                     </div>
-
-                    {/* Photo de profil (Logo en médaillon flottant) */}
-                    <div className="absolute -bottom-5 left-6">
-                      <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-white shadow-md bg-white">
-                        <img
-                          src={salon.logo_url}
-                          alt={`Logo ${salon.name}`}
-                          className="w-full h-full object-cover"
-                          loading="lazy"
-                        />
-                      </div>
-                    </div>
                   </div>
 
                   {/* Body Content */}
-                  <div className="pt-8 px-6 pb-5 flex-1 flex flex-col justify-between">
+                  <div className="p-5 flex-1 flex flex-col justify-between">
                     <div>
                       {/* Salon Name & Verified Badge */}
                       <div className="flex items-center gap-1.5 mb-1.5">

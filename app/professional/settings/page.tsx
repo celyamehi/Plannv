@@ -23,8 +23,7 @@ export default function ProSettingsPage() {
   const [profileData, setProfileData] = useState({
     full_name: '',
     phone: '',
-    email: '',
-    avatar_url: ''
+    email: ''
   })
   
   const [establishmentData, setEstablishmentData] = useState({
@@ -60,7 +59,7 @@ export default function ProSettingsPage() {
       // Vérifier le type d'utilisateur
       const { data: profile } = await supabase
         .from('profiles')
-        .select('user_type, full_name, phone, email, avatar_url')
+        .select('user_type, full_name, phone, email')
         .eq('id', session.user.id)
         .single()
 
@@ -73,8 +72,7 @@ export default function ProSettingsPage() {
       setProfileData({
         full_name: profile.full_name || '',
         phone: profile.phone || '',
-        email: profile.email || '',
-        avatar_url: profile.avatar_url || ''
+        email: profile.email || ''
       })
 
       // Récupérer l'établissement
@@ -122,20 +120,11 @@ export default function ProSettingsPage() {
         .from('profiles')
         .update({
           full_name: profileData.full_name,
-          phone: profileData.phone,
-          avatar_url: profileData.avatar_url
+          phone: profileData.phone
         })
         .eq('id', session.user.id)
 
       if (error) throw error
-
-      // Synchroniser également dans professionals si la ligne existe
-      await supabase
-        .from('professionals')
-        .update({
-          avatar_url: profileData.avatar_url
-        })
-        .eq('id', session.user.id)
       
       alert('Profil mis à jour avec succès')
     } catch (error) {
@@ -143,32 +132,6 @@ export default function ProSettingsPage() {
       alert('Erreur lors de la mise à jour du profil')
     } finally {
       setSaving(false)
-    }
-  }
-
-  const handleAvatarUpload = async (urls: string[]) => {
-    const newAvatar = urls[0] || ''
-    setProfileData(prev => ({
-      ...prev,
-      avatar_url: newAvatar
-    }))
-
-    // Sauvegarde automatique et immédiate de l'avatar
-    try {
-      const { data: { session } } = await supabase.auth.getSession()
-      if (session) {
-        await supabase
-          .from('profiles')
-          .update({ avatar_url: newAvatar })
-          .eq('id', session.user.id)
-
-        await supabase
-          .from('professionals')
-          .update({ avatar_url: newAvatar })
-          .eq('id', session.user.id)
-      }
-    } catch (err) {
-      console.error('Erreur auto-save avatar:', err)
     }
   }
 
@@ -256,25 +219,10 @@ export default function ProSettingsPage() {
                 Profil personnel
               </CardTitle>
               <CardDescription>
-                Informations et photo de votre compte professionnel
+                Informations de votre compte professionnel
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-5">
-              {/* Photo de profil */}
-              <div className="space-y-2">
-                <Label className="text-sm font-semibold text-gray-900">Photo de profil</Label>
-                <p className="text-xs text-gray-500 mb-2">
-                  Choisissez une photo qui vous représente sur la plateforme et auprès de vos clients.
-                </p>
-                <ImageUploader
-                  onUpload={handleAvatarUpload}
-                  maxFiles={1}
-                  initialImages={profileData.avatar_url ? [profileData.avatar_url] : []}
-                  folder={`avatars/${user?.id || 'pro'}`}
-                  isAvatar={true}
-                />
-              </div>
-
+            <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                   <Label htmlFor="fullName">Nom complet</Label>

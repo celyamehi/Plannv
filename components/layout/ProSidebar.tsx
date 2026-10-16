@@ -200,16 +200,8 @@ export default function ProSidebar({ children }: ProSidebarProps) {
         {sidebarOpen && user && (
           <div className="p-4 border-b border-gray-100 flex-shrink-0">
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-nude-100 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden border border-nude-200">
-                {user.avatar_url ? (
-                  <img
-                    src={user.avatar_url}
-                    alt={user.full_name || 'Profil'}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  <User className="w-5 h-5 text-nude-600" />
-                )}
+              <div className="w-10 h-10 bg-nude-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <User className="w-5 h-5 text-nude-600" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-bold text-gray-900 truncate">
@@ -278,11 +270,7 @@ export default function ProSidebar({ children }: ProSidebarProps) {
 
           <div className="flex items-center space-x-2">
             <div className="flex items-center space-x-1.5 px-2.5 py-1 bg-nude-50 rounded-full border border-nude-100">
-              {user?.avatar_url ? (
-                <img src={user.avatar_url} alt="" className="w-4 h-4 rounded-full object-cover" />
-              ) : (
-                <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              )}
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
               <span className="text-xs font-semibold text-nude-800 truncate max-w-[120px]">
                 {user?.business_name || user?.full_name || 'Mon salon'}
               </span>
@@ -337,16 +325,8 @@ export default function ProSidebar({ children }: ProSidebarProps) {
             {user && (
               <div className="p-4 bg-gray-50/90 border-b border-gray-100 flex-shrink-0">
                 <div className="flex items-center space-x-3">
-                  <div className="w-10 h-10 bg-nude-100 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden border border-nude-200">
-                    {user.avatar_url ? (
-                      <img
-                        src={user.avatar_url}
-                        alt={user.full_name || 'Profil'}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <User className="w-5 h-5 text-nude-600" />
-                    )}
+                  <div className="w-10 h-10 bg-nude-100 rounded-full flex items-center justify-center flex-shrink-0">
+                    <User className="w-5 h-5 text-nude-600" />
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-bold text-gray-900 truncate">

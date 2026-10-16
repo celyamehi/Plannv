@@ -23,7 +23,8 @@ export default function ProSettingsPage() {
   const [profileData, setProfileData] = useState({
     full_name: '',
     phone: '',
-    email: ''
+    email: '',
+    avatar_url: ''
   })
   
   const [establishmentData, setEstablishmentData] = useState({
@@ -39,7 +40,6 @@ export default function ProSettingsPage() {
     email: '',
     website: '',
     opening_hours: '',
-    logo_url: '',
     gallery: [] as string[]
   })
 
@@ -59,7 +59,7 @@ export default function ProSettingsPage() {
       // Vérifier le type d'utilisateur
       const { data: profile } = await supabase
         .from('profiles')
-        .select('user_type, full_name, phone, email')
+        .select('user_type, full_name, phone, email, avatar_url')
         .eq('id', session.user.id)
         .single()
 
@@ -72,33 +72,33 @@ export default function ProSettingsPage() {
       setProfileData({
         full_name: profile.full_name || '',
         phone: profile.phone || '',
-        email: profile.email || ''
+        email: profile.email || '',
+        avatar_url: profile.avatar_url || ''
       })
 
       // Récupérer l'établissement
-      const { data: establishmentData } = await supabase
+      const { data: estData } = await supabase
         .from('establishments')
         .select('*')
         .eq('owner_id', session.user.id)
         .single()
 
-      if (establishmentData) {
-        setEstablishment(establishmentData)
+      if (estData) {
+        setEstablishment(estData)
         setEstablishmentData({
-          name: establishmentData.name || '',
-          description: establishmentData.description || '',
-          address: establishmentData.address || '',
-          city: establishmentData.city || '',
-          postal_code: establishmentData.postal_code || '',
-          country: establishmentData.country || 'Algérie',
-          latitude: establishmentData.latitude || null,
-          longitude: establishmentData.longitude || null,
-          phone: establishmentData.phone || '',
-          email: establishmentData.email || '',
-          website: establishmentData.website || '',
-          opening_hours: establishmentData.opening_hours || '',
-          logo_url: establishmentData.logo_url || '',
-          gallery: establishmentData.gallery || []
+          name: estData.name || '',
+          description: estData.description || '',
+          address: estData.address || '',
+          city: estData.city || '',
+          postal_code: estData.postal_code || '',
+          country: estData.country || 'Algérie',
+          latitude: estData.latitude || null,
+          longitude: estData.longitude || null,
+          phone: estData.phone || '',
+          email: estData.email || '',
+          website: estData.website || '',
+          opening_hours: estData.opening_hours || '',
+          gallery: estData.gallery || []
         })
       }
 
@@ -120,11 +120,20 @@ export default function ProSettingsPage() {
         .from('profiles')
         .update({
           full_name: profileData.full_name,
-          phone: profileData.phone
+          phone: profileData.phone,
+          avatar_url: profileData.avatar_url
         })
         .eq('id', session.user.id)
 
       if (error) throw error
+
+      // Synchroniser également dans professionals si la ligne existe
+      await supabase
+        .from('professionals')
+        .update({
+          avatar_url: profileData.avatar_url
+        })
+        .eq('id', session.user.id)
       
       alert('Profil mis à jour avec succès')
     } catch (error) {
@@ -135,6 +144,32 @@ export default function ProSettingsPage() {
     }
   }
 
+  const handleAvatarUpload = async (urls: string[]) => {
+    const newAvatar = urls[0] || ''
+    setProfileData(prev => ({
+      ...prev,
+      avatar_url: newAvatar
+    }))
+
+    // Sauvegarde automatique et immédiate de l'avatar
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      if (session) {
+        await supabase
+          .from('profiles')
+          .update({ avatar_url: newAvatar })
+          .eq('id', session.user.id)
+
+        await supabase
+          .from('professionals')
+          .update({ avatar_url: newAvatar })
+          .eq('id', session.user.id)
+      }
+    } catch (err) {
+      console.error('Erreur auto-save avatar:', err)
+    }
+  }
+
   const handleEstablishmentUpdate = async () => {
     setSaving(true)
     try {
@@ -142,7 +177,21 @@ export default function ProSettingsPage() {
 
       const { error } = await supabase
         .from('establishments')
-        .update(establishmentData)
+        .update({
+          name: establishmentData.name,
+          description: establishmentData.description,
+          address: establishmentData.address,
+          city: establishmentData.city,
+          postal_code: establishmentData.postal_code,
+          country: establishmentData.country,
+          latitude: establishmentData.latitude,
+          longitude: establishmentData.longitude,
+          phone: establishmentData.phone,
+          email: establishmentData.email,
+          website: establishmentData.website,
+          opening_hours: establishmentData.opening_hours,
+          gallery: establishmentData.gallery
+        })
         .eq('id', establishment.id)
 
       if (error) throw error
@@ -154,13 +203,6 @@ export default function ProSettingsPage() {
     } finally {
       setSaving(false)
     }
-  }
-
-  const handleLogoUpload = (urls: string[]) => {
-    setEstablishmentData((prev) => ({
-      ...prev,
-      logo_url: urls[0] || ''
-    }))
   }
 
   const handleGalleryUpload = (urls: string[]) => {
@@ -206,32 +248,49 @@ export default function ProSettingsPage() {
           {/* Profil personnel */}
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Mail className="w-5 h-5 mr-2" />
+              <CardTitle className="flex items-center text-gray-900">
+                <Mail className="w-5 h-5 mr-2 text-nude-600" />
                 Profil personnel
               </CardTitle>
               <CardDescription>
-                Informations sur votre compte professionnel
+                Informations et photo de votre compte professionnel
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <Label htmlFor="fullName">Nom complet</Label>
-                <Input
-                  id="fullName"
-                  value={profileData.full_name}
-                  onChange={(e) => setProfileData({...profileData, full_name: e.target.value})}
-                  placeholder="Votre nom complet"
+            <CardContent className="space-y-5">
+              {/* Photo de profil */}
+              <div className="space-y-2">
+                <Label className="text-sm font-semibold text-gray-900">Photo de profil</Label>
+                <p className="text-xs text-gray-500 mb-2">
+                  Choisissez une photo qui vous représente sur la plateforme et auprès de vos clients.
+                </p>
+                <ImageUploader
+                  onUpload={handleAvatarUpload}
+                  maxFiles={1}
+                  initialImages={profileData.avatar_url ? [profileData.avatar_url] : []}
+                  folder={`avatars/${user?.id || 'pro'}`}
+                  isAvatar={true}
                 />
               </div>
-              <div>
-                <Label htmlFor="phone">Téléphone</Label>
-                <Input
-                  id="phone"
-                  value={profileData.phone}
-                  onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
-                  placeholder="Votre numéro de téléphone"
-                />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="fullName">Nom complet</Label>
+                  <Input
+                    id="fullName"
+                    value={profileData.full_name}
+                    onChange={(e) => setProfileData({...profileData, full_name: e.target.value})}
+                    placeholder="Votre nom complet"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="phone">Téléphone</Label>
+                  <Input
+                    id="phone"
+                    value={profileData.phone}
+                    onChange={(e) => setProfileData({...profileData, phone: e.target.value})}
+                    placeholder="Votre numéro de téléphone"
+                  />
+                </div>
               </div>
               <div>
                 <Label htmlFor="email">Email</Label>
@@ -243,7 +302,7 @@ export default function ProSettingsPage() {
                   placeholder="Votre email (non modifiable)"
                 />
               </div>
-              <Button onClick={handleProfileUpdate} disabled={saving} className="mt-4">
+              <Button onClick={handleProfileUpdate} disabled={saving} className="mt-2 bg-gradient-to-r from-nude-600 to-warm-600 hover:from-nude-700 hover:to-warm-700 text-white">
                 <Save className="w-4 h-4 mr-2" />
                 {saving ? 'Enregistrement...' : 'Enregistrer le profil'}
               </Button>
@@ -253,12 +312,12 @@ export default function ProSettingsPage() {
           {/* Informations établissement */}
           <Card className="mb-6">
             <CardHeader>
-              <CardTitle className="flex items-center">
-                <Building className="w-5 h-5 mr-2" />
+              <CardTitle className="flex items-center text-gray-900">
+                <Building className="w-5 h-5 mr-2 text-nude-600" />
                 Établissement
               </CardTitle>
               <CardDescription>
-                Informations sur votre établissement professionnel
+                Informations et galerie photos de votre établissement professionnel
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -345,25 +404,12 @@ export default function ProSettingsPage() {
                 />
               </div>
 
-              <div className="border rounded-lg p-4 space-y-6">
+              {/* Galerie photos uniquement */}
+              <div className="border border-nude-200/80 rounded-2xl p-5 bg-nude-50/20 space-y-3">
                 <div>
-                  <h3 className="text-lg font-semibold mb-1">Logo</h3>
+                  <h3 className="text-base font-bold text-gray-900 mb-1">Galerie photos du salon</h3>
                   <p className="text-sm text-gray-500 mb-4">
-                    Téléchargez le logo de votre établissement. Format carré recommandé.
-                  </p>
-                  <ImageUploader
-                    onUpload={handleLogoUpload}
-                    maxFiles={1}
-                    initialImages={establishmentData.logo_url ? [establishmentData.logo_url] : []}
-                    folder={establishment ? `${establishment.id}/logo` : 'default/logo'}
-                    isLogo
-                  />
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-semibold mb-1">Galerie photos</h3>
-                  <p className="text-sm text-gray-500 mb-4">
-                    Ajoutez jusqu'à 10 photos pour présenter votre établissement aux clients.
+                    Ajoutez jusqu'à 10 photos pour présenter votre salon, vos prestations et vos réalisations aux clients.
                   </p>
                   <ImageUploader
                     onUpload={handleGalleryUpload}
@@ -374,7 +420,7 @@ export default function ProSettingsPage() {
                 </div>
               </div>
 
-              <Button onClick={handleEstablishmentUpdate} disabled={saving} className="mt-4">
+              <Button onClick={handleEstablishmentUpdate} disabled={saving} className="mt-4 bg-gradient-to-r from-nude-600 to-warm-600 hover:from-nude-700 hover:to-warm-700 text-white">
                 <Save className="w-4 h-4 mr-2" />
                 {saving ? 'Enregistrement...' : 'Enregistrer l\'établissement'}
               </Button>

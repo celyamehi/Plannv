@@ -2,8 +2,9 @@
 -- CORRECTION ERREUR RLS STORAGE : "new row violates row-level security policy"
 -- =========================================================================
 -- À exécuter dans votre Dashboard Supabase → "SQL Editor" → "Run"
--- Ce script configure le bucket 'establishments' pour permettre l'upload
--- des photos de la galerie et des logos par les professionnels.
+-- Ce script configure le bucket 'establishments' pour permettre l'upload :
+--   1. Des photos de la Galerie du Salon ({establishment_id}/gallery/...)
+--   2. Des photos de Profil des Professionnels (avatars/{user_id}/...)
 -- =========================================================================
 
 -- 1. S'assurer que le bucket 'establishments' existe et est PUBLIC

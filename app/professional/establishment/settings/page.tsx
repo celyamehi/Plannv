@@ -89,7 +89,6 @@ export default function EstablishmentSettings() {
           phone: establishment.phone,
           email: establishment.email,
           website: establishment.website,
-          logo_url: establishment.logo_url,
           gallery: establishment.gallery,
           updated_at: new Date().toISOString()
         })
@@ -104,14 +103,6 @@ export default function EstablishmentSettings() {
     } finally {
       setSaving(false)
     }
-  }
-
-  const handleLogoUpload = (urls: string[]) => {
-    if (!establishment) return
-    setEstablishment({
-      ...establishment,
-      logo_url: urls[0] || null
-    })
   }
 
   const handleGalleryUpload = (urls: string[]) => {
@@ -173,8 +164,7 @@ export default function EstablishmentSettings() {
         <form onSubmit={handleSubmit}>
           <Tabs defaultValue="general" className="space-y-6">
             <TabsList>
-              <TabsTrigger value="general">Général</TabsTrigger>
-              <TabsTrigger value="appearance">Apparence</TabsTrigger>
+              <TabsTrigger value="general">Informations générales</TabsTrigger>
               <TabsTrigger value="gallery">Galerie photos</TabsTrigger>
             </TabsList>
 
@@ -280,34 +270,6 @@ export default function EstablishmentSettings() {
               </Card>
             </TabsContent>
 
-            <TabsContent value="appearance" className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle>Apparence</CardTitle>
-                  <CardDescription>
-                    Personnalisez l'apparence de votre page d'établissement.
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="text-sm font-medium mb-2">Logo</h3>
-                      <p className="text-sm text-muted-foreground mb-4">
-                        Téléchargez le logo de votre établissement. Il sera affiché sur votre page et dans les confirmations de rendez-vous.
-                      </p>
-                      <ImageUploader
-                        onUpload={handleLogoUpload}
-                        maxFiles={1}
-                        initialImages={establishment.logo_url ? [establishment.logo_url] : []}
-                        folder={`${establishment.id}/logo`}
-                        isLogo
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </TabsContent>
-
             <TabsContent value="gallery" className="space-y-6">
               <Card>
                 <CardHeader>
@@ -329,7 +291,7 @@ export default function EstablishmentSettings() {
           </Tabs>
 
           <div className="mt-6 flex justify-end">
-            <Button type="submit" disabled={saving}>
+            <Button type="submit" disabled={saving} className="bg-gradient-to-r from-nude-600 to-warm-600 hover:from-nude-700 hover:to-warm-700 text-white">
               {saving ? 'Enregistrement...' : 'Enregistrer les modifications'}
             </Button>
           </div>

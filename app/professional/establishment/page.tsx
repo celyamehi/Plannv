@@ -237,19 +237,19 @@ export default function EstablishmentPage() {
       <div className="p-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <div className="flex items-center gap-4">
-            {establishment.logo_url ? (
-              <div className="w-16 h-16 rounded-lg overflow-hidden border">
+            {establishment.gallery && establishment.gallery[0] ? (
+              <div className="w-16 h-16 rounded-xl overflow-hidden border border-nude-200 shadow-xs">
                 <Image
-                  src={establishment.logo_url}
-                  alt={`Logo de ${establishment.name}`}
+                  src={establishment.gallery[0]}
+                  alt={`Photo de ${establishment.name}`}
                   width={64}
                   height={64}
                   className="w-full h-full object-cover"
                 />
               </div>
             ) : (
-              <div className="w-16 h-16 rounded-lg bg-muted flex items-center justify-center">
-                <Building className="h-8 w-8 text-muted-foreground" />
+              <div className="w-16 h-16 rounded-xl bg-nude-100 flex items-center justify-center border border-nude-200">
+                <Building className="h-8 w-8 text-nude-600" />
               </div>
             )}
             <div>

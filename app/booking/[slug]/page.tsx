@@ -450,11 +450,11 @@ export default function BookingPage({ params }: { params: { slug: string } }) {
         <div className="max-w-6xl mx-auto">
           <h1 className="text-3xl font-bold mb-2">Réserver un rendez-vous</h1>
           <div className="flex items-center gap-4 mb-8">
-            {establishment?.logo_url && (
-              <div className="w-14 h-14 rounded-xl overflow-hidden border">
+            {(establishment?.logo_url || (establishment?.gallery && establishment.gallery[0])) && (
+              <div className="w-14 h-14 rounded-xl overflow-hidden border border-nude-200 shadow-xs">
                 <img
-                  src={establishment.logo_url}
-                  alt={`Logo ${establishment.name}`}
+                  src={establishment.logo_url || establishment.gallery[0]}
+                  alt={`Photo ${establishment.name}`}
                   className="w-full h-full object-cover"
                 />
               </div>

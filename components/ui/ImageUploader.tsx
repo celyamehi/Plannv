@@ -32,16 +32,24 @@ export function ImageUploader({
     setError(null)
     
     try {
+      const cleanFolder = (folder || 'gallery').replace(/^\/+|\/+$/g, '')
+
       const uploadPromises = acceptedFiles.map(async (file) => {
-        const fileExt = file.name.split('.').pop()
-        const fileName = `${Math.random().toString(36).substring(2)}.${fileExt}`
-        const filePath = `${folder}/${fileName}`
+        const fileExt = file.name.split('.').pop()?.toLowerCase() || 'jpg'
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(2, 9)}.${fileExt}`
+        const filePath = `${cleanFolder}/${fileName}`
         
         const { error: uploadError } = await supabase.storage
           .from('establishments')
-          .upload(filePath, file)
+          .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: true
+          })
         
-        if (uploadError) throw uploadError
+        if (uploadError) {
+          console.error('Détail erreur upload Supabase:', uploadError)
+          throw uploadError
+        }
         
         const { data: { publicUrl } } = supabase.storage
           .from('establishments')
@@ -55,9 +63,14 @@ export function ImageUploader({
       
       setImages(updatedImages)
       onUpload(updatedImages)
-    } catch (err) {
+    } catch (err: any) {
       console.error('Error uploading images:', err)
-      setError('Une erreur est survenue lors du téléchargement des images.')
+      const message = err?.message || err?.error || ''
+      if (message.includes('row-level security') || message.includes('violates')) {
+        setError('Accès refusé par Supabase (RLS). Veuillez exécuter le script fix_storage_rls_establishments.sql dans votre Dashboard Supabase.')
+      } else {
+        setError('Une erreur est survenue lors du téléchargement des images.')
+      }
     } finally {
       setUploading(false)
     }

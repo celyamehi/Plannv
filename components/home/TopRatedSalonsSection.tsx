@@ -192,50 +192,51 @@ export default function TopRatedSalonsSection() {
                   </div>
 
                   {/* Body Content */}
-                  <div className="pt-8 px-6 pb-4">
-                    {/* Salon Name & Verified Badge */}
-                    <div className="flex items-center gap-1.5 mb-1.5">
-                      <h3 className="font-extrabold text-lg text-gray-900 group-hover:text-nude-700 transition-colors line-clamp-1">
-                        {salon.name}
-                      </h3>
-                      {salon.is_verified && (
-                        <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
-                      )}
-                    </div>
+                  <div className="pt-8 px-6 pb-5 flex-1 flex flex-col justify-between">
+                    <div>
+                      {/* Salon Name & Verified Badge */}
+                      <div className="flex items-center gap-1.5 mb-1.5">
+                        <h3 className="font-extrabold text-lg text-gray-900 group-hover:text-nude-700 transition-colors line-clamp-1">
+                          {salon.name}
+                        </h3>
+                        {salon.is_verified && (
+                          <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                        )}
+                      </div>
 
-                    {/* Wilaya / Localisation */}
-                    <div className="flex items-center text-xs font-medium text-gray-500 mb-4">
-                      <MapPin className="w-3.5 h-3.5 text-nude-600 mr-1 flex-shrink-0" />
-                      <span className="line-clamp-1">{salon.city}</span>
-                    </div>
+                      {/* Wilaya / Localisation */}
+                      <div className="flex items-center text-xs font-medium text-gray-500 mb-2.5">
+                        <MapPin className="w-3.5 h-3.5 text-nude-600 mr-1.5 flex-shrink-0" />
+                        <span className="line-clamp-1">{salon.address ? `${salon.address}, ${salon.city}` : salon.city}</span>
+                      </div>
 
-                    {/* Services de l'établissement */}
-                    {salon.services && salon.services.length > 0 && (
-                      <div className="mb-4">
-                        <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-2">
-                          Prestations proposées :
-                        </p>
-                        <div className="flex flex-wrap gap-1.5">
-                          {salon.services.slice(0, 3).map((service, sIdx) => (
-                            <span
-                              key={sIdx}
-                              className="text-xs bg-nude-50 text-nude-900 px-2.5 py-1 rounded-lg border border-nude-100 font-medium"
-                            >
-                              {service}
-                            </span>
+                      {/* Étoiles & Note */}
+                      <div className="flex items-center gap-1.5 mb-4">
+                        <div className="flex items-center text-amber-400">
+                          {[1, 2, 3, 4, 5].map((s) => (
+                            <Star key={s} className="w-4 h-4 fill-amber-400 text-amber-400" />
                           ))}
                         </div>
+                        <span className="text-xs font-bold text-gray-900 ml-1">
+                          {salon.average_rating ? salon.average_rating.toFixed(1) : "5.0"}
+                        </span>
+                        <span className="text-xs text-gray-400">
+                          ({salon.total_reviews || 0})
+                        </span>
                       </div>
-                    )}
-                  </div>
-                </div>
+                    </div>
 
-                {/* Footer Action Button */}
-                <div className="px-6 pb-6 pt-2">
-                  <div className="w-full py-3 px-4 rounded-xl bg-gray-900 group-hover:bg-gradient-to-r group-hover:from-nude-700 group-hover:to-warm-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-sm transition-all duration-300">
-                    <Calendar className="w-4 h-4" />
-                    <span>Réserver un rendez-vous</span>
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    {/* Ligne inférieure : Catégorie à gauche + Bouton "Voir le salon >" à droite */}
+                    <div className="pt-3 border-t border-gray-100 flex items-center justify-between mt-auto">
+                      <span className="px-3 py-1 bg-gray-100/90 text-gray-700 text-xs font-medium rounded-full truncate max-w-[140px]">
+                        {salon.category || "Beauté"}
+                      </span>
+
+                      <span className="inline-flex items-center gap-1 bg-gradient-to-r from-nude-600 to-warm-600 group-hover:from-nude-700 group-hover:to-warm-700 text-white font-medium text-xs px-4 py-2 rounded-xl shadow-xs group-hover:shadow-md transition-all active:scale-95">
+                        Voir le salon
+                        <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                      </span>
+                    </div>
                   </div>
                 </div>
               </Link>

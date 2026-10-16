@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import Link from 'next/link'
-import { Search, MapPin, Star, Navigation, Loader2, SlidersHorizontal, X, ChevronDown } from 'lucide-react'
+import { Search, MapPin, Star, Navigation, Loader2, SlidersHorizontal, X, ChevronDown, ChevronRight } from 'lucide-react'
 import { supabase } from '../../lib/supabase/client'
 import { Card, CardContent } from '../../components/ui/card'
 import { Button } from '../../components/ui/button'
@@ -468,42 +468,44 @@ export default function SearchPage() {
         </div>
       ) : (
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {results.map((establishment) => (
-            <Link
-              key={establishment.id}
-              href={`/establishments/${establishment.slug}`}
-            >
-              <Card className="hover:shadow-xl transition-all duration-300 cursor-pointer h-full group">
-                <div className="relative h-48 bg-gradient-to-br from-nude-100 to-warm-100 rounded-t-lg overflow-hidden">
-                  {(() => {
-                    const galleryImages = Array.isArray(establishment.gallery) ? establishment.gallery : []
-                    const coverImage =
-                      establishment.cover_image_url ||
-                      (galleryImages.length > 0 ? galleryImages[0] : null) ||
-                      establishment.logo_url
+          {results.map((establishment) => {
+            const galleryImages = Array.isArray(establishment.gallery) ? establishment.gallery : []
+            const coverImage =
+              establishment.cover_image_url ||
+              (galleryImages.length > 0 ? galleryImages[0] : null) ||
+              establishment.logo_url
 
-                    if (coverImage) {
-                      return (
-                        <img
-                          src={coverImage}
-                          alt={establishment.name}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                        />
-                      )
-                    }
+            const categoryLabel = CATEGORY_LABELS[establishment.category?.toLowerCase()] || establishment.category || 'Esthétique'
+            const displayRating = establishment.average_rating ? establishment.average_rating.toFixed(1) : '5.0'
+            const displayAddress = establishment.address ? `${establishment.address}, ${establishment.city}` : establishment.city
 
-                    return (
-                      <div className="w-full h-full flex items-center justify-center">
-                        <span className="text-6xl font-bold text-nude-200">
-                          {establishment.name.charAt(0)}
-                        </span>
-                      </div>
-                    )
-                  })()}
-                  
-                  {/* Badge distance */}
+            return (
+              <Link
+                key={establishment.id}
+                href={`/establishments/${establishment.slug}`}
+                className="group block bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.04)] hover:shadow-[0_16px_36px_rgba(154,115,86,0.12)] hover:border-nude-300 hover:-translate-y-1.5 transition-all duration-300 h-full flex flex-col justify-between cursor-pointer"
+              >
+                {/* Photo de couverture */}
+                <div className="relative h-52 sm:h-56 w-full overflow-hidden bg-gradient-to-br from-nude-50 to-warm-100">
+                  {coverImage ? (
+                    <img
+                      src={coverImage}
+                      alt={establishment.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+                    />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center bg-nude-100">
+                      <span className="text-6xl font-bold text-nude-300">
+                        {establishment.name.charAt(0)}
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-60 group-hover:opacity-80 transition-opacity" />
+
+                  {/* Badge distance (si géolocalisé) */}
                   {establishment.distance !== undefined && establishment.distance < 9999 && (
-                    <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-sm px-2 py-1 rounded-full text-xs font-medium text-nude-600">
+                    <div className="absolute top-3 right-3 bg-white/95 backdrop-blur-md px-2.5 py-1 rounded-full text-xs font-semibold text-nude-700 shadow-sm">
                       {establishment.distance < 1 
                         ? `${Math.round(establishment.distance * 1000)}m` 
                         : `${establishment.distance.toFixed(1)}km`}
@@ -511,49 +513,51 @@ export default function SearchPage() {
                   )}
                 </div>
 
-                <CardContent className="p-5">
-                  <div className="flex items-start justify-between mb-2">
-                    <h3 className="text-lg font-semibold line-clamp-1">{establishment.name}</h3>
-                    <span className="px-2.5 py-1 bg-nude-100 text-nude-700 text-xs font-medium rounded-full whitespace-nowrap ml-2">
-                      {CATEGORY_LABELS[establishment.category?.toLowerCase()] || establishment.category}
+                {/* Corps de la carte */}
+                <div className="p-5 flex-1 flex flex-col justify-between">
+                  <div>
+                    {/* Nom du salon */}
+                    <h3 className="text-lg font-bold text-gray-900 group-hover:text-nude-700 transition-colors line-clamp-1 tracking-tight mb-1.5">
+                      {establishment.name}
+                    </h3>
+
+                    {/* Localisation */}
+                    <div className="flex items-center text-xs font-medium text-gray-600 mb-2.5">
+                      <MapPin className="w-4 h-4 text-nude-600 mr-1.5 shrink-0" />
+                      <span className="line-clamp-1">{displayAddress}</span>
+                    </div>
+
+                    {/* Étoiles & Note */}
+                    <div className="flex items-center gap-1.5 mb-4">
+                      <div className="flex items-center text-amber-400">
+                        {[1, 2, 3, 4, 5].map((s) => (
+                          <Star key={s} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                        ))}
+                      </div>
+                      <span className="text-xs font-bold text-gray-900 ml-1">
+                        {displayRating}
+                      </span>
+                      <span className="text-xs text-gray-400">
+                        ({establishment.total_reviews || 0})
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Ligne inférieure : Catégorie à gauche + Bouton "Voir le salon >" à droite */}
+                  <div className="pt-3 border-t border-gray-100 flex items-center justify-between mt-auto">
+                    <span className="px-3 py-1 bg-gray-100/90 text-gray-700 text-xs font-medium rounded-full truncate max-w-[140px]">
+                      {categoryLabel}
+                    </span>
+
+                    <span className="inline-flex items-center gap-1 bg-gradient-to-r from-nude-600 to-warm-600 group-hover:from-nude-700 group-hover:to-warm-700 text-white font-medium text-xs px-4 py-2 rounded-xl shadow-xs group-hover:shadow-md transition-all active:scale-95">
+                      Voir le salon
+                      <ChevronRight className="w-3.5 h-3.5 stroke-[2.5]" />
                     </span>
                   </div>
-
-                  {/* Note et avis */}
-                  <div className="flex items-center mb-2">
-                    <div className="flex items-center">
-                      <Star className="w-4 h-4 text-yellow-400 fill-yellow-400" />
-                      <span className="ml-1 font-medium">{establishment.average_rating?.toFixed(1) || '—'}</span>
-                    </div>
-                    <span className="text-gray-400 text-sm ml-2">
-                      ({establishment.total_reviews || 0} avis)
-                    </span>
-                  </div>
-
-                  {/* Localisation */}
-                  <div className="flex items-center text-sm text-gray-600 mb-3">
-                    <MapPin className="w-4 h-4 mr-1 flex-shrink-0" />
-                    <span className="line-clamp-1">{establishment.city}</span>
-                  </div>
-
-                  {/* Prestations principales */}
-                  {establishment.main_services && establishment.main_services.length > 0 && (
-                    <div className="flex flex-wrap gap-1 mb-3">
-                      {establishment.main_services.slice(0, 3).map((service, idx) => (
-                        <span key={idx} className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded">
-                          {service}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-
-                  <Button className="w-full bg-gradient-to-r from-nude-600 to-warm-600 group-hover:shadow-lg transition-shadow">
-                    Réserver
-                  </Button>
-                </CardContent>
-              </Card>
-            </Link>
-          ))}
+                </div>
+              </Link>
+            )
+          })}
         </div>
       )}
     </>

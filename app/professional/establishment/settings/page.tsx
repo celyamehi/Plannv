@@ -29,7 +29,7 @@ export default function EstablishmentSettings() {
     phone: string | null
     email: string | null
     website: string | null
-    logo_url: string | null
+    cover_image_url: string | null
     gallery: string[]
   } | null>(null)
 
@@ -59,6 +59,7 @@ export default function EstablishmentSettings() {
 
       setEstablishment({
         ...establishmentData,
+        cover_image_url: establishmentData.cover_image_url || null,
         gallery: establishmentData.gallery || []
       })
     } catch (error) {
@@ -89,6 +90,7 @@ export default function EstablishmentSettings() {
           phone: establishment.phone,
           email: establishment.email,
           website: establishment.website,
+          cover_image_url: establishment.cover_image_url,
           gallery: establishment.gallery,
           updated_at: new Date().toISOString()
         })
@@ -103,6 +105,14 @@ export default function EstablishmentSettings() {
     } finally {
       setSaving(false)
     }
+  }
+
+  const handleCoverUpload = (urls: string[]) => {
+    if (!establishment) return
+    setEstablishment({
+      ...establishment,
+      cover_image_url: urls[0] || null
+    })
   }
 
   const handleGalleryUpload = (urls: string[]) => {
@@ -165,7 +175,7 @@ export default function EstablishmentSettings() {
           <Tabs defaultValue="general" className="space-y-6">
             <TabsList>
               <TabsTrigger value="general">Informations générales</TabsTrigger>
-              <TabsTrigger value="gallery">Galerie photos</TabsTrigger>
+              <TabsTrigger value="gallery">Photos du salon</TabsTrigger>
             </TabsList>
 
             <TabsContent value="general" className="space-y-6">
@@ -273,18 +283,44 @@ export default function EstablishmentSettings() {
             <TabsContent value="gallery" className="space-y-6">
               <Card>
                 <CardHeader>
-                  <CardTitle>Galerie photos</CardTitle>
+                  <CardTitle>Photos du salon</CardTitle>
                   <CardDescription>
-                    Ajoutez jusqu'à 10 photos de votre établissement pour le présenter à vos clients.
+                    Gérez la photo de profil de votre salon et les photos de votre galerie.
                   </CardDescription>
                 </CardHeader>
-                <CardContent>
-                  <ImageUploader
-                    onUpload={handleGalleryUpload}
-                    maxFiles={10}
-                    initialImages={establishment.gallery || []}
-                    folder={`${establishment.id}/gallery`}
-                  />
+                <CardContent className="space-y-6">
+                  {/* Photo de profil du salon */}
+                  <div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <h3 className="text-base font-bold text-gray-900">Photo de profil du salon (Photo principale)</h3>
+                      <span className="text-[11px] bg-nude-100 text-nude-800 font-semibold px-2.5 py-0.5 rounded-full">
+                        Affichée sur la recherche & bannière
+                      </span>
+                    </div>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Cette photo représente votre salon sur la carte des résultats de recherche et s'affiche en grand sur la bannière de votre salon.
+                    </p>
+                    <ImageUploader
+                      onUpload={handleCoverUpload}
+                      maxFiles={1}
+                      initialImages={establishment.cover_image_url ? [establishment.cover_image_url] : []}
+                      folder={`${establishment.id}/cover`}
+                    />
+                  </div>
+
+                  {/* Galerie photos */}
+                  <div className="border-t border-gray-100 pt-5">
+                    <h3 className="text-base font-bold text-gray-900 mb-1">Galerie photos du salon</h3>
+                    <p className="text-xs text-muted-foreground mb-3">
+                      Ajoutez jusqu'à 10 photos supplémentaires de votre salon pour le présenter à vos clients.
+                    </p>
+                    <ImageUploader
+                      onUpload={handleGalleryUpload}
+                      maxFiles={10}
+                      initialImages={establishment.gallery || []}
+                      folder={`${establishment.id}/gallery`}
+                    />
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>

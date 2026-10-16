@@ -40,6 +40,7 @@ export default function ProSettingsPage() {
     email: '',
     website: '',
     opening_hours: '',
+    cover_image_url: '',
     gallery: [] as string[]
   })
 
@@ -98,6 +99,7 @@ export default function ProSettingsPage() {
           email: estData.email || '',
           website: estData.website || '',
           opening_hours: estData.opening_hours || '',
+          cover_image_url: estData.cover_image_url || '',
           gallery: estData.gallery || []
         })
       }
@@ -190,6 +192,7 @@ export default function ProSettingsPage() {
           email: establishmentData.email,
           website: establishmentData.website,
           opening_hours: establishmentData.opening_hours,
+          cover_image_url: establishmentData.cover_image_url,
           gallery: establishmentData.gallery
         })
         .eq('id', establishment.id)
@@ -404,12 +407,32 @@ export default function ProSettingsPage() {
                 />
               </div>
 
-              {/* Galerie photos uniquement */}
-              <div className="border border-nude-200/80 rounded-2xl p-5 bg-nude-50/20 space-y-3">
+              {/* Photos de l'établissement */}
+              <div className="border border-nude-200/80 rounded-2xl p-5 bg-white/70 space-y-6">
+                {/* 1. Photo de profil du salon (Photo principale affichée sur la recherche et la bannière) */}
                 <div>
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="text-base font-bold text-gray-900">Photo de profil du salon (Photo principale)</h3>
+                    <span className="text-[11px] bg-nude-100 text-nude-800 font-semibold px-2.5 py-0.5 rounded-full">
+                      Affichée sur la recherche & bannière
+                    </span>
+                  </div>
+                  <p className="text-xs text-gray-500 mb-3">
+                    Cette photo représente votre salon sur la carte des résultats de recherche et s'affiche en grand sur la bannière de votre salon.
+                  </p>
+                  <ImageUploader
+                    onUpload={(urls) => setEstablishmentData(prev => ({ ...prev, cover_image_url: urls[0] || '' }))}
+                    maxFiles={1}
+                    initialImages={establishmentData.cover_image_url ? [establishmentData.cover_image_url] : []}
+                    folder={establishment ? `${establishment.id}/cover` : 'default/cover'}
+                  />
+                </div>
+
+                {/* 2. Galerie photos du salon */}
+                <div className="border-t border-gray-100 pt-5">
                   <h3 className="text-base font-bold text-gray-900 mb-1">Galerie photos du salon</h3>
-                  <p className="text-sm text-gray-500 mb-4">
-                    Ajoutez jusqu'à 10 photos pour présenter votre salon, vos prestations et vos réalisations aux clients.
+                  <p className="text-xs text-gray-500 mb-3">
+                    Ajoutez jusqu'à 10 photos supplémentaires pour présenter votre établissement, l'intérieur et vos réalisations aux clients.
                   </p>
                   <ImageUploader
                     onUpload={handleGalleryUpload}

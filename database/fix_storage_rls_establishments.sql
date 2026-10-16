@@ -3,8 +3,10 @@
 -- =========================================================================
 -- À exécuter dans votre Dashboard Supabase → "SQL Editor" → "Run"
 -- Ce script configure le bucket 'establishments' pour permettre l'upload :
---   1. Des photos de la Galerie du Salon ({establishment_id}/gallery/...)
---   2. Des photos de Profil des Professionnels (avatars/{user_id}/...)
+--   1. De la PHOTO DE PROFIL DU SALON ({establishment_id}/cover/...)
+--      (affichée sur la carte de recherche et en grand sur la bannière du salon)
+--   2. Des photos de la GALERIE DU SALON ({establishment_id}/gallery/...)
+--   3. Des photos de profil personnel des professionnels (avatars/{user_id}/...)
 -- =========================================================================
 
 -- 1. S'assurer que le bucket 'establishments' existe et est PUBLIC
